@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Cassandra备份、恢复 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="备份和数据恢复关于镜像Cassandra 通过直接保存所有在data目录中的磁盘数据文件（SSTable file）的镜像来备份数据。当系统还在线的时候，你可以保存所有的keyspace数据或者单个keyspace数据，或者某一张表的数据。 使用并行的ssh工具，比如pssh，你可以给整个集群做镜像。这提供一种最终一致性备份。虽然没有一个节点可以在镜像制作过程中保证他和备份节点数据的一致性，Cas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cassandra备份、恢复">
+<meta property="og:url" content="http://www.yangbajing.me/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="备份和数据恢复关于镜像Cassandra 通过直接保存所有在data目录中的磁盘数据文件（SSTable file）的镜像来备份数据。当系统还在线的时候，你可以保存所有的keyspace数据或者单个keyspace数据，或者某一张表的数据。 使用并行的ssh工具，比如pssh，你可以给整个集群做镜像。这提供一种最终一致性备份。虽然没有一个节点可以在镜像制作过程中保证他和备份节点数据的一致性，Cas">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-12-05T06:27:42.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header">未分类</h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-cassandra备份、恢复" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Cassandra备份、恢复
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/" class="article-date">
+  <time datetime="2017-12-05T06:27:42.000Z" itemprop="datePublished">2017-12-05</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-cassandra备份、恢复" data-title="Cassandra备份、恢复" data-url="http://www.yangbajing.me/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="备份和数据恢复"><a href="#备份和数据恢复" class="headerlink" title="备份和数据恢复"></a>备份和数据恢复</h2><h3 id="关于镜像"><a href="#关于镜像" class="headerlink" title="关于镜像"></a>关于镜像</h3><p>Cassandra 通过直接保存所有在data目录中的磁盘数据文件（SSTable file）的镜像来备份数据。当系统还在线的时候，你可以保存所有<br>的keyspace数据或者单个keyspace数据，或者某一张表的数据。</p>
+<p>使用并行的ssh工具，比如pssh，你可以给整个集群做镜像。这提供一种最终一致性备份。虽然没有一个节点可以在镜像制作过程中保证<br>他和备份节点数据的一致性，Cassandra内置一致性机制会使用一个恢复镜像恢复一致性。</p>
+<p>当整个系统范围内的镜像都已经完成，你可以开启每个节点的增量备份，它将备份那些最后一次镜像后有改变的数据：每次SSTable刷新，<br>一个硬链接被复制到 data目录的/backups 子目录中（provided JNA is enabled）</p>
+<p>如果允许JNA，镜像将只是建立一个硬链接。否则io将由于文件被从一个地方拷贝到另一处而增长，将明显降低效率。</p>
+<h2 id="创建镜像"><a href="#创建镜像" class="headerlink" title="创建镜像"></a>创建镜像</h2><p><strong>操作过程</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nodetool -h localhost -p 7199 snapshot &lt;keyspace name&gt;</span><br></pre></td></tr></table></figure>
+<p><em>请使用实际的 keyspace 名替换 <code>&lt;keyspace name&gt;</code> 段</em>。</p>
+<p>看下面实际操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ /home/app/local/cassandra/bin/nodetool snapshot ig_crawler</span><br><span class="line">Requested creating snapshot(s) for [ig_crawler] with snapshot name [1514377074990] and options &#123;skipFlush=false&#125;</span><br><span class="line">Snapshot directory: 1514377074990</span><br></pre></td></tr></table></figure>
+<p><code>1514377074990</code> 为生成的镜像快照名字，我们使用 <code>tree</code> 命令看看执行创建镜像后的 ig_crawler keyspace 目录结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[devops@dn126 ig_crawler]$ tree -d -L 4</span><br><span class="line">.</span><br><span class="line">├── c_gather_task_log-7ec1ecb062f411e78129670c2365db09</span><br><span class="line">│   ├── backups</span><br><span class="line">│   └── snapshots</span><br><span class="line">│       └── 1514377074990</span><br><span class="line">├── c_web_parsed-ad1019e0567711e7ba3fb1ef858b2357</span><br><span class="line">│   ├── backups</span><br><span class="line">│   └── snapshots</span><br><span class="line">│       └── 1514377074990</span><br><span class="line">└── c_web_raw-78427450564611e7ba3fb1ef858b2357</span><br><span class="line">    ├── backups</span><br><span class="line">    └── snapshots</span><br><span class="line">        └── 1514377074990</span><br><span class="line"></span><br><span class="line">12 directories</span><br></pre></td></tr></table></figure>
+<p>可以看到，在 ig_crawler keyspace中有3张表，<code>snapshot</code> 命令为每张表都生成了一个镜像，镜像名为：<code>1514377074990</code>。在这里，<br>我们将需要的 <code>&lt;table name&gt;-&lt;uuid&gt;/&lt;snapshot name&gt;</code> 目录下的数据都拷贝出来，复制到需要恢复的机器上。</p>
+<h2 id="恢复数据"><a href="#恢复数据" class="headerlink" title="恢复数据"></a>恢复数据</h2><ol>
+<li>确保要恢复的数据表模式存在，Cassandra只能从存在的表模式中恢复镜像里的数据。如果表模式不存在，则必需首先创建它。</li>
+<li>如果可行，务必截断表。使用 <code>TRUNCATE TABLE &lt;table name&gt;</code> 将表中数据截断。我们现在做的都是全量备份，如果因为意外的删<br> 除数据造成 tombstone 的时间发生混乱，截断表可以确保不会有本应被删除的数据被恢复的情况发生。</li>
+<li>关闭所有节点 <code>nodetool stop</code></li>
+<li>将生成的镜像文件，<code>&lt;table name&gt;-&lt;uuid&gt;/&lt;snapshot name&gt;/*</code> 目录下的所有数据拷贝到目标 Cassandra 的<br><code>&lt;data directory&gt;/&lt;keyspace&gt;/&lt;table name&gt;-&lt;uuid&gt;/</code> 目录中。<em>（注意：是将镜像目录的数据拷贝到目录keyspace的表目录里）</em></li>
+<li>启动 Cassandra 并执行 <code>nodetool refresh</code> 命令恢复镜像内的数据</li>
+</ol>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/" data-id="ckmlxnrb4004qs7ugyzynd6xq" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/02/05/postgresql%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E4%B8%8D%E5%90%8E%E6%82%94/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          PostgreSQL从入门到不后悔
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2017/12/05/elasticsearch%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Elasticsearch备份、恢复</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

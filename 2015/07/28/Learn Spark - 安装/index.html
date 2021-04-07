@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Learn Spark - 安装 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装下载 Spark 1.4.1 1wget -c http:&#x2F;&#x2F;www.interior-dsgn.com&#x2F;apache&#x2F;spark&#x2F;spark-1.4.1&#x2F;spark-1.4.1.tgz 编译Spark，使用 scala 2.11 12.&#x2F;dev&#x2F;change-version-to-2.11.shmvn -Dscala-2.11 -DskipTests clean package 运行 spa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Learn Spark - 安装">
+<meta property="og:url" content="http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="安装下载 Spark 1.4.1 1wget -c http:&#x2F;&#x2F;www.interior-dsgn.com&#x2F;apache&#x2F;spark&#x2F;spark-1.4.1&#x2F;spark-1.4.1.tgz 编译Spark，使用 scala 2.11 12.&#x2F;dev&#x2F;change-version-to-2.11.shmvn -Dscala-2.11 -DskipTests clean package 运行 spa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-07-27T16:23:23.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.353Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="spark">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/spark/">spark</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-Learn Spark - 安装" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Learn Spark - 安装
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/" class="article-date">
+  <time datetime="2015-07-27T16:23:23.000Z" itemprop="datePublished">2015-07-28</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-Learn Spark - 安装" data-title="Learn Spark - 安装" data-url="http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>下载 <code>Spark 1.4.1</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -c http://www.interior-dsgn.com/apache/spark/spark-1.4.1/spark-1.4.1.tgz</span><br></pre></td></tr></table></figure>
+<p>编译Spark，使用 <code>scala 2.11</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./dev/change-version-to-2.11.sh</span><br><span class="line">mvn -Dscala-2.11 -DskipTests clean package</span><br></pre></td></tr></table></figure>
+<p>运行 <code>spark-shell</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">./bin/spark-shell</span><br><span class="line">15/07/23 17:18:48 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable</span><br><span class="line">Welcome to</span><br><span class="line">      ____              __</span><br><span class="line">     / __/__  ___ _____/ /__</span><br><span class="line">    _\ \/ _ \/ _ `/ __/  &apos;_/</span><br><span class="line">   /___/ .__/\_,_/_/ /_/\_\   version 1.4.1</span><br><span class="line">      /_/</span><br><span class="line">         </span><br><span class="line">Using Scala version 2.11.6 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_40)</span><br><span class="line">Type in expressions to have them evaluated.</span><br><span class="line">Type :help for more information.</span><br><span class="line">Spark context available as sc.</span><br><span class="line">SQL context available as sqlContext.</span><br><span class="line"></span><br><span class="line">scala&gt;</span><br></pre></td></tr></table></figure>
+<p>看到以上信息就代表 <code>Spark</code> 已经安装好了。</p>
+<h2 id="简单的配置"><a href="#简单的配置" class="headerlink" title="简单的配置"></a>简单的配置</h2><p>修改 <code>$SPARK_HOME/conf/spark-env.conf</code> 设置如下参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=&quot;/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home&quot;</span><br><span class="line">export SPARK_SCALA_VERSION=&quot;2.11&quot;</span><br><span class="line">export SPARK_MASTER_IP=&quot;192.168.1.102&quot;</span><br><span class="line">export SPARK_LOCAL_IP=&quot;192.168.1.102&quot;</span><br><span class="line">export SPARK_WORKER_MEMORY=&quot;2G&quot;</span><br><span class="line">export SPARK_WORKER_CORE=&quot;2&quot;</span><br></pre></td></tr></table></figure>
+<p>因为编译的是 <code>scala 2.11</code> 版本，所以应在配置文件里指定 <code>Spark</code> 以scala 2.11进行启动。</p>
+<p>接着就可以Standalone模式启动spark了：<code>./sbin/start-all.sh</code></p>
+<h2 id="spark-submit"><a href="#spark-submit" class="headerlink" title="spark-submit"></a>spark-submit</h2><p><code>Spark</code> 使用 <code>spark-submit</code> 部署执行程序， <code>bin/spark-submit</code> 可以轻松完成 <code>Spark</code> 应用程序在<code>local</code>、<code>Standalone</code>、<code>YARN</code>和<code>Mesos</code>上的快捷部署。我们提交一个最简单的 <code>WorldCount</code> 程序，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package learnspark.intro</span><br><span class="line"></span><br><span class="line">import org.apache.spark.&#123;SparkContext, SparkConf&#125;</span><br><span class="line"></span><br><span class="line">object WordCount &#123;</span><br><span class="line">  def main(args: Array[String]): Unit = &#123;</span><br><span class="line">    println(args.length + &quot; &quot; + args.toList)</span><br><span class="line">    if (args.length &lt; 2) &#123;</span><br><span class="line">      println(&quot;run params: inputfile outputfile&quot;)</span><br><span class="line">      System.exit(1)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    val inputFile = args(0)</span><br><span class="line">    val outputFile = args(1)</span><br><span class="line">    val conf = new SparkConf().setAppName(&quot;wordCount&quot;)</span><br><span class="line">    val sc = new SparkContext(conf)</span><br><span class="line"></span><br><span class="line">    val input = sc.textFile(inputFile)</span><br><span class="line">    val words = input.flatMap(_.split(&apos; &apos;))</span><br><span class="line">    val counts = words.map((_, 1)).reduceByKey &#123; case (x, y) =&gt; x + y &#125;</span><br><span class="line">    counts.saveAsTextFile(outputFile)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用以下脚本提交程序到 <code>Spark</code> 执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line"></span><br><span class="line">rm -rf /tmp/wordcount</span><br><span class="line"></span><br><span class="line">$SPARK_HOME/bin/spark-submit \</span><br><span class="line">  --class learnspark.intro.WordCount \</span><br><span class="line">  --master &quot;spark://192.168.1.102:7077&quot; \</span><br><span class="line">  target/scala-2.11/learn-spark_2.11-0.0.1.jar \</span><br><span class="line">  $SPARK_HOME/README.md /tmp/wordcount</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–class 指定要运行的class</li>
+<li>–master 程序要运行的master</li>
+<li>target/… 程序提交的jar包</li>
+<li>inputAttr [outputAttr …] 程序执行参数</li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/" data-id="ckmlxnr9d001vs7ugvmv80tk2" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/" rel="tag">spark</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/07/29/Play2%20+%20ReactiveMongo%20%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%B4%BB%E5%8A%A8%E6%8A%A5%E5%90%8D%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Play2 + ReactiveMongo 实现一个活动报名应用
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/07/21/%E4%BD%BF%E7%94%A8Jenkins/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">使用 Jenkins</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Linux系统运维常用工具 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文记录一些 Linux 日常运维相关工具使用方法。 （注：未做特殊说明，以下设置均指：Ubuntu Server 14.04，并测试通过。） 系统设置更改系统默认字符集 Ubuntu Server下，需要修改 &#x2F;etc&#x2F;default&#x2F;locale 文件使配置生效（需要重启系统）。也可以在每个用户的登录 .bashrc 或 .bash_profile中设置LANG、LANGUAGE等环境变量。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统运维常用工具">
+<meta property="og:url" content="http://www.yangbajing.me/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="本文记录一些 Linux 日常运维相关工具使用方法。 （注：未做特殊说明，以下设置均指：Ubuntu Server 14.04，并测试通过。） 系统设置更改系统默认字符集 Ubuntu Server下，需要修改 &#x2F;etc&#x2F;default&#x2F;locale 文件使配置生效（需要重启系统）。也可以在每个用户的登录 .bashrc 或 .bash_profile中设置LANG、LANGUAGE等环境变量。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-12T01:40:17.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="system-manager">
+<meta property="article:tag" content="devops">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-linux系统运维常用工具" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Linux系统运维常用工具
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" class="article-date">
+  <time datetime="2016-01-12T01:40:17.000Z" itemprop="datePublished">2016-01-12</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-linux系统运维常用工具" data-title="Linux系统运维常用工具" data-url="http://www.yangbajing.me/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>本文记录一些 Linux 日常运维相关工具使用方法。</p>
+<p>（注：未做特殊说明，以下设置均指：Ubuntu Server 14.04，并测试通过。）</p>
+<h2 id="系统设置"><a href="#系统设置" class="headerlink" title="系统设置"></a>系统设置</h2><p><strong>更改系统默认字符集</strong></p>
+<p>Ubuntu Server下，需要修改 <code>/etc/default/locale</code> 文件使配置生效（需要重启系统）。也可以在每个用户的登录 <code>.bashrc</code> 或 <code>.bash_profile</code>中设置<code>LANG</code>、<code>LANGUAGE</code>等环境变量。</p>
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><p><strong>创建用户</strong></p>
+<p>Linux系统下有两个命令可以创建用户：<strong>useradd</strong>和<strong>adduser</strong>。</p>
+<ul>
+<li>useradd：若后面不添加任何参数，默认创建的是一个三无用户：无主目录、元密码、元系统登录Shell。会添加用户名，并默认创建和用户名相同的组名，但不会提示创建新密码。</li>
+<li>adduser：创建用户的过程更像是一种人机对话，系统会提示你输入各种信息，并根据这些信息帮你创建用户</li>
+</ul>
+<p><code>useradd</code>是一个可执行程序，而<code>adduser</code>是一个Perl脚本。<code>adduser</code>更适合初级用户，只要跟着系统提示一步一步走下去即可。而<code>useradd</code>更适合高级用户，可以更灵活的定制。</p>
+<h2 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h2><h3 id="ps命令"><a href="#ps命令" class="headerlink" title="ps命令"></a>ps命令</h3><p><strong>查看进程运行时间</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -eo pid,tty,user,comm,stime,etime | grep java</span><br></pre></td></tr></table></figure>
+<h2 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h2><p><strong>查看已打开端口</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -tln | grep 6070</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" data-id="ckmlxnra80037s7ug6nj4z237" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/system-manager/" rel="tag">system-manager</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Cassandra用户认证
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Mongodb 3.x 用户认证</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

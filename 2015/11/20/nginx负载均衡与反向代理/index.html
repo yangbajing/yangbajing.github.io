@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Nginx负载均衡与反向代理 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一般在应用部署中都不会直接把Web Server（如：Tomcat、Jetty等）暴露给用户，我们会在Web Server前面再加一个反向代理。这篇文章介绍的就是怎样设置Nginx来做反向代理。 Nginx安装以Ubuntu 14.04为例（其它系统请自行查找安装方法）。官方安装文档在：http:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;download.html 1234567curl http:&#x2F;&#x2F;ng">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx负载均衡与反向代理">
+<meta property="og:url" content="http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="一般在应用部署中都不会直接把Web Server（如：Tomcat、Jetty等）暴露给用户，我们会在Web Server前面再加一个反向代理。这篇文章介绍的就是怎样设置Nginx来做反向代理。 Nginx安装以Ubuntu 14.04为例（其它系统请自行查找安装方法）。官方安装文档在：http:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;download.html 1234567curl http:&#x2F;&#x2F;ng">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-20T05:48:49.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="反向代理">
+<meta property="article:tag" content="负载均衡">
+<meta property="article:tag" content="upstream">
+<meta property="article:tag" content="proxy">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-nginx负载均衡与反向代理" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx负载均衡与反向代理
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" class="article-date">
+  <time datetime="2015-11-20T05:48:49.000Z" itemprop="datePublished">2015-11-20</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-nginx负载均衡与反向代理" data-title="Nginx负载均衡与反向代理" data-url="http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>一般在应用部署中都不会直接把Web Server（如：Tomcat、Jetty等）暴露给用户，我们会在Web Server前面再加一个反向代理。这篇文章介绍的就是怎样设置Nginx来做反向代理。</p>
+<h2 id="Nginx安装"><a href="#Nginx安装" class="headerlink" title="Nginx安装"></a>Nginx安装</h2><p>以Ubuntu 14.04为例（其它系统请自行查找安装方法）。官方安装文档在：<a href="http://nginx.org/en/download.html" target="_blank" rel="external">http://nginx.org/en/download.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl http://nginx.org/keys/nginx_signing.key | sudo apt-key add -</span><br><span class="line"></span><br><span class="line">echo &quot;deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx</span><br><span class="line">deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx&quot; | sudo tee /etc/apt/source.list.d/nginx.list</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get -y install nginx</span><br></pre></td></tr></table></figure>
+<h2 id="Nginx反向代理常用设置"><a href="#Nginx反向代理常用设置" class="headerlink" title="Nginx反向代理常用设置"></a>Nginx反向代理常用设置</h2><p>在<code>location</code>段中设置反向代理，必需的设置项是：<code>proxy_pass</code>，它指定将请示转发到的地址。</p>
+<ul>
+<li>proxy_pass URL：设置被代理服务的地址或被映射的URI</li>
+<li>proxy_http_version 1.1：设置HTTP协议</li>
+<li>proxy_set_header field value：设置预定义或增加字段到请求header中传到被代理的Server上。常用设置有：<ul>
+<li>X-Real-IP $remote_addr：代理远端IP</li>
+<li>X-Forwarded-Proto $scheme：代理远端scheme，一般就是使用的协议，如：http、https、ftp</li>
+<li>Connection “Keep-Alive”：启用HTTP的Keep-Alive特性，保持HTTP连接。在服务频繁连接使用时可以减少<strong>TIME_WAIT</strong>状态的发生，有效的提供性能。</li>
+</ul>
+</li>
+<li>proxy_next_upstream value：指定切换请求到下一个被代理Server的机制。默认：error timeout<ul>
+<li>error：发生错误</li>
+<li>timeout：超时发生</li>
+<li>invalid_header：header头无效</li>
+<li>http_500</li>
+<li>http_502</li>
+<li>http_503</li>
+<li>http_504</li>
+<li>http_403</li>
+<li>http_404</li>
+<li>off：禁止传到请求到下一个Server</li>
+</ul>
+</li>
+</ul>
+<p>（keepalive 这个词可能是指连接池或者tcp层面的参数，要看上下文。在http里是keep-alive，注意中间有个连字符。）</p>
+<h2 id="Nginx负载均衡"><a href="#Nginx负载均衡" class="headerlink" title="Nginx负载均衡"></a>Nginx负载均衡</h2><p>在配置文件<code>http</code>段内定义<code>upstream</code>指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">upstream crawlerApi &#123;</span><br><span class="line">    server crawler-ali:7100;</span><br><span class="line">    server crawler-ali:7101;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><code>server</code></strong>标识指令定义用于做负载均衡的Server列表。<code>server</code>标识可以定义附加参数，每个参数之间使用空格分隔。<code>crawler-ali</code>和端口改成你自己的。</p>
+<ul>
+<li>weight=number：设置当前Server的优先级权重，值越大越高。默认为1</li>
+<li>max_fails=number：设置最大重试次数，默认为1</li>
+<li>fail_timeout=time：设置重试间隔时间，默认10秒</li>
+<li>backup：设置当前Server为备份Server，当其它Server不可以时启用</li>
+<li>down：标记当前Server不可用</li>
+<li>max_conns=number：设置被代理Server最大活动连接数，默认不限制</li>
+</ul>
+<p>在需要配置负载均衡的<code>location</code>里定义代理使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxy_pass http://crawlerApi;</span><br></pre></td></tr></table></figure>
+<h2 id="Nginx做负载的键康检查（心跳检测）机制"><a href="#Nginx做负载的键康检查（心跳检测）机制" class="headerlink" title="Nginx做负载的键康检查（心跳检测）机制"></a>Nginx做负载的键康检查（心跳检测）机制</h2><p>Nginx提供了<code>health_check</code>语句来提供负载（<code>upstream</code>）时的键康检查机制（注意：此语句需要设置在<code>location</code>上下文中）。</p>
+<p>支持的参数有：</p>
+<ul>
+<li>interval=time：设置两次健康检查之间的间隔值，默认为5秒</li>
+<li>fails=number：设置将服务器视为不健康的连续检查次数，默认为1次</li>
+<li>passes=number：设置一个服务器被视为健康的连续检查次数，默认为1次</li>
+<li>uri=uri：定义健康检查的请求URI，默认为”/“</li>
+<li>match=name：指定匹配配置块的名字，用记测试响应是否通过健康检测。默认为测试返回状态码为2xx和3xx</li>
+</ul>
+<p>一个简单的设置如下，将使用默认值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_pass http://backend;</span><br><span class="line">    health_check;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对就应用，我们可以专门定义一个API用于健康检查：<code>/api/health_check</code>，并只返回HTTP状态码为200。并设置两次检查之间的间隔值为1秒。这样，<code>health_check</code>语句的配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">health_check uri=&quot;/api/health_check&quot; interval;</span><br></pre></td></tr></table></figure>
+<h2 id="对后端某个节点的优雅下线"><a href="#对后端某个节点的优雅下线" class="headerlink" title="对后端某个节点的优雅下线"></a>对后端某个节点的优雅下线</h2><p>Nginx将请求代理给一个后端节点，这个请求耗时较长，在请求未处理完时后端恰好要做发布。这时在Nginx中先将此节点标记为不可用（在<code>upstream</code>中设置<code>server</code>的<code>down</code>属性）。<strong>此时，只要请求连接还保持，Nginx并不会中断当前连接，但之后新的连接将不再使用这个节点。</strong></p>
+<p>这样在用Nginx的负载时，后端若需要做发布。只需要将对就节点标记为不可用并留出一定的时间让忆有请求都响应完毕即可。</p>
+<p>更严格一些，还应检测到后端节点的网络连接都已释放（那些EST、TIME_WAIT等连接都结束后）。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" data-id="ckmlxnr9m002es7ugztvvpdsx" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/proxy/" rel="tag">proxy</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/upstream/" rel="tag">upstream</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" rel="tag">反向代理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag">负载均衡</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/21/jvm%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%A6%E5%8D%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          JVM程序员书单
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/11/02/elasticsearch%E5%88%9D%E6%AD%A5%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Elasticsearch初步使用</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

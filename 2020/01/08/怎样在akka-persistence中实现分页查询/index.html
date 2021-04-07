@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>怎样在 Akka Persistence 中实现分页查询 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 Akka Persistence 中，数据都缓存在服务内存（状态），后端存储的都是一些持久化的事件日志，没法使用类似 SQL 一样的 DSL 来进行分页查询。利用 Akka Streams 和 Actor 我们可以通过编码的方式来实现分页查询的效果，而且这个分页查询还是分步式并行的…… EventSourcedBehaviorAkka Persistence的EventSourcedBehav">
+<meta property="og:type" content="article">
+<meta property="og:title" content="怎样在 Akka Persistence 中实现分页查询">
+<meta property="og:url" content="http://www.yangbajing.me/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="在 Akka Persistence 中，数据都缓存在服务内存（状态），后端存储的都是一些持久化的事件日志，没法使用类似 SQL 一样的 DSL 来进行分页查询。利用 Akka Streams 和 Actor 我们可以通过编码的方式来实现分页查询的效果，而且这个分页查询还是分步式并行的…… EventSourcedBehaviorAkka Persistence的EventSourcedBehav">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-08T12:01:38.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-persistence">
+<meta property="article:tag" content="cqrs">
+<meta property="article:tag" content="event-sourced">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-怎样在akka-persistence中实现分页查询" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      怎样在 Akka Persistence 中实现分页查询
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/" class="article-date">
+  <time datetime="2020-01-08T12:01:38.000Z" itemprop="datePublished">2020-01-08</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-怎样在akka-persistence中实现分页查询" data-title="怎样在 Akka Persistence 中实现分页查询" data-url="http://www.yangbajing.me/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>在 Akka Persistence 中，数据都缓存在服务内存（状态），后端存储的都是一些持久化的事件日志，没法使用类似 SQL 一样的 DSL 来进行分页查询。利用 Akka Streams 和 Actor 我们可以通过编码的方式来实现分页查询的效果，而且这个分页查询还是分步式并行的……</p>
+<h2 id="EventSourcedBehavior"><a href="#EventSourcedBehavior" class="headerlink" title="EventSourcedBehavior"></a>EventSourcedBehavior</h2><p>Akka Persistence的<code>EventSourcedBehavior</code>里实现了<strong>CQRS</strong>模型，通过<code>commandHandler</code>与<code>eventHandler</code>解耦了命令处理与事件处理。<code>commandHandler</code>处理传入的命令并返回一个事件，并可选择将这个事件持久化；若事件需要持久化，则事件将被传给<code>eventHandler</code>处理，<code>eventHandler</code>处理完事件后将返回一个“新的”状态（也可以不更新，直接返回原状态）。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">State</span>](</span><br><span class="line">      persistenceId: <span class="type">PersistenceId</span>,</span><br><span class="line">      emptyState: <span class="type">State</span>,</span><br><span class="line">      commandHandler: (<span class="type">State</span>, <span class="type">Command</span>) =&gt; <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>],</span><br><span class="line">      eventHandler: (<span class="type">State</span>, <span class="type">Event</span>) =&gt; <span class="type">State</span>): <span class="type">EventSourcedBehavior</span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">State</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="建模"><a href="#建模" class="headerlink" title="建模"></a>建模</h2><p>以我们习惯的数据库表建模来说，我们会有以下一张表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_config</span><br><span class="line">(</span><br><span class="line">    data_id     <span class="built_in">varchar</span>(<span class="number">64</span>),</span><br><span class="line">    namespace   <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    config_type <span class="built_in">varchar</span>(<span class="number">32</span>) <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    <span class="keyword">content</span>     <span class="built_in">text</span>        <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    <span class="keyword">constraint</span> t_config_pk primary <span class="keyword">key</span> (namespace, data_id)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> t_config_idx_data_id <span class="keyword">on</span> t_config (data_id);</span><br></pre></td></tr></table></figure>
+<p><code>ConfigManager</code> actor 可以看作 <code>t_config</code> 表，它的 <code>entityId</code> 就是 <code>namespace</code>， <strong>State</strong> 里保存了所有记录的主键值（<code>ConfigManagerState</code>），这就相当于 <code>t_config</code> 表的 <code>t_config_idx_data_id</code> 索引。</p>
+<p>而 <code>ConfigEntity</code> actor 可看作 <code>t_config</code> 表里存储的记录，每个 actor 实例就是一行记录。它的 <code>entityId</code> 由 <code>namespace</code> + <code>data_id</code> 组成，这就相当于 <code>t_config</code> 表的 <code>t_config_pk</code> 复合主键。<br>这里我们定义两个 <code>EventSourcedBehavior</code>：</p>
+<ul>
+<li><code>ConfigManager</code>：拥有所有配置ID列表，并作为 State 保存在 EventSourcedBehavior</li>
+<li><code>ConfigEntity</code>: 拥有每个配置数据，并作为 State 保存在 EventSourcedBehavior</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>这里先贴出 <code>ConfigManager</code> 和 <code>ConfigEntity</code> 的部分代码，接下来再详解怎样实现分页查询。</p>
+<p><strong>ConfigManager</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ConfigManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">sealed</span> <span class="class"><span class="keyword">trait</span> <span class="title">Command</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Event</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Response</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Query</span>(<span class="params">dataId: <span class="type">Option</span>[<span class="type">String</span>], configType: <span class="type">Option</span>[<span class="type">String</span>], page: <span class="type">Int</span>, size: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ReplyCommand</span>(<span class="params">in: <span class="type">AnyRef</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Response</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">private</span> <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">InternalResponse</span>(<span class="params">replyTo: <span class="type">ActorRef</span>[<span class="type">Response</span>], response: <span class="type">Response</span></span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">case</span> <span class="title">class</span> <span class="title">ConfigResponse</span>(<span class="params">status: <span class="type">Int</span>, message: <span class="type">String</span> = "", data: <span class="type">Option</span>[<span class="type">AnyRef</span>] = <span class="type">None</span></span>) <span class="keyword">extends</span> <span class="title">Response</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ConfigManagerState</span>(<span class="params">dataIds: <span class="type">Vector</span>[<span class="type">String</span>] = <span class="type">Vector</span>(</span>)) <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">val</span> <span class="title">TypeKey</span></span>: <span class="type">EntityTypeKey</span>[<span class="type">Command</span>] = <span class="type">EntityTypeKey</span>(<span class="string">"ConfigManager"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="type">ConfigManager</span>._</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConfigManager</span> <span class="title">private</span> (<span class="params">namespace: <span class="type">String</span>, context: <span class="type">ActorContext</span>[<span class="type">Command</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">implicit</span> <span class="keyword">val</span> system = context.system</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">implicit</span> <span class="keyword">val</span> timeout: <span class="type">Timeout</span> = <span class="number">5.</span>seconds</span><br><span class="line">  <span class="keyword">import</span> context.executionContext</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> configEntity = <span class="type">ConfigEntity</span>.init(context.system)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">eventSourcedBehavior</span></span>(): <span class="type">EventSourcedBehavior</span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">ConfigManagerState</span>] =</span><br><span class="line">    <span class="type">EventSourcedBehavior</span>(</span><br><span class="line">      <span class="type">PersistenceId</span>.of(<span class="type">TypeKey</span>.name, namespace),</span><br><span class="line">      <span class="type">ConfigManagerState</span>(), &#123;</span><br><span class="line">        <span class="keyword">case</span> (state, <span class="type">ReplyCommand</span>(in, replyTo)) =&gt;</span><br><span class="line">          replyCommandHandler(state, replyTo, in)</span><br><span class="line">        <span class="keyword">case</span> (_, <span class="type">InternalResponse</span>(replyTo, response)) =&gt;</span><br><span class="line">          <span class="type">Effect</span>.reply(replyTo)(response)</span><br><span class="line">      &#125;,</span><br><span class="line">      eventHandler)</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">processPageQuery</span></span>(</span><br><span class="line">      state: <span class="type">ConfigManagerState</span>,</span><br><span class="line">      replyTo: <span class="type">ActorRef</span>[<span class="type">Response</span>],</span><br><span class="line">      in: <span class="type">Query</span>): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">ConfigManagerState</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> offset = <span class="keyword">if</span> (in.page &gt; <span class="number">0</span>) (in.page - <span class="number">1</span>) * in.size <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">val</span> responseF = <span class="keyword">if</span> (offset &lt; state.dataIds.size) &#123;</span><br><span class="line">      <span class="type">Source</span>(state.dataIds)</span><br><span class="line">        .filter(dataId =&gt; in.dataId.forall(v =&gt; v.contains(dataId)))</span><br><span class="line">        .mapAsync(<span class="number">20</span>) &#123; dataId =&gt;</span><br><span class="line">          configEntity.ask[<span class="type">Option</span>[<span class="type">ConfigState</span>]](replyTo =&gt;</span><br><span class="line">            <span class="type">ShardingEnvelope</span>(dataId, <span class="type">ConfigEntity</span>.<span class="type">Query</span>(in.configType, replyTo)))</span><br><span class="line">        &#125;</span><br><span class="line">        .collect &#123; <span class="keyword">case</span> <span class="type">Some</span>(value) =&gt; value &#125;</span><br><span class="line">        .drop(offset)</span><br><span class="line">        .take(in.size)</span><br><span class="line">        .runWith(<span class="type">Sink</span>.seq)</span><br><span class="line">        .map(items =&gt; <span class="type">ConfigResponse</span>(<span class="type">IntStatus</span>.<span class="type">OK</span>, data = <span class="type">Some</span>(items)))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="type">Future</span>.successful(<span class="type">ConfigResponse</span>(<span class="type">IntStatus</span>.<span class="type">NOT_FOUND</span>, data = <span class="type">Some</span>(<span class="type">Nil</span>)))</span><br><span class="line">    &#125;</span><br><span class="line">    context.pipeToSelf(responseF) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Success</span>(value) =&gt; <span class="type">InternalResponse</span>(replyTo, value)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Failure</span>(e)     =&gt; <span class="type">InternalResponse</span>(replyTo, <span class="type">ConfigResponse</span>(<span class="type">IntStatus</span>.<span class="type">INTERNAL_ERROR</span>, e.getLocalizedMessage))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">Effect</span>.none</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>ConfigEntity</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ConfigEntity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigState</span>(<span class="params">namespace: <span class="type">String</span>, dataId: <span class="type">String</span>, configType: <span class="type">String</span>, content: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Command</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Event</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Query</span>(<span class="params">configType: <span class="type">Option</span>[<span class="type">String</span>], replyTo: <span class="type">ActorRef</span>[<span class="type">Option</span>[<span class="type">ConfigState</span>]]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ConfigEntityState</span>(<span class="params">config: <span class="type">Option</span>[<span class="type">ConfigState</span>] = <span class="type">None</span></span>) <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">val</span> <span class="title">TypeKey</span></span>: <span class="type">EntityTypeKey</span>[<span class="type">Command</span>] = <span class="type">EntityTypeKey</span>(<span class="string">"ConfigEntity"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="type">ConfigEntity</span>._</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConfigEntity</span> <span class="title">private</span> (<span class="params">namespace: <span class="type">String</span>, dataId: <span class="type">String</span>, context: <span class="type">ActorContext</span>[<span class="type">Command</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">eventSourcedBehavior</span></span>(): <span class="type">EventSourcedBehavior</span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">ConfigEntityState</span>] =</span><br><span class="line">    <span class="type">EventSourcedBehavior</span>(<span class="type">PersistenceId</span>.of(<span class="type">TypeKey</span>.name, dataId), <span class="type">ConfigEntityState</span>(), commandHandler, eventHandler)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">commandHandler</span></span>(state: <span class="type">ConfigEntityState</span>, command: <span class="type">Command</span>): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">ConfigEntityState</span>] = command <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Query</span>(configType, replyTo) =&gt;</span><br><span class="line">      state.config <span class="keyword">match</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">          <span class="type">Effect</span>.reply(replyTo)(<span class="type">None</span>)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">Some</span>(config) =&gt;</span><br><span class="line">          <span class="keyword">val</span> resp = <span class="keyword">if</span> (configType.forall(v =&gt; config.configType.contains(v))) <span class="type">Some</span>(config) <span class="keyword">else</span> <span class="type">None</span></span><br><span class="line">          <span class="type">Effect</span>.reply(replyTo)(resp)</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ConfigManager#processPageQuery</code> 函数实现了大部分的分页查询逻辑（有部分逻辑需要由 <code>ConfigEntity</code> 处理）。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> offset = <span class="keyword">if</span> (in.page &gt; <span class="number">0</span>) (in.page - <span class="number">1</span>) * in.size <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">val</span> responseF = <span class="keyword">if</span> (offset &lt; state.dataIds.size) &#123;</span><br><span class="line">  <span class="comment">// process paging</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="type">Future</span>.successful(<span class="type">ConfigResponse</span>(<span class="type">IntStatus</span>.<span class="type">OK</span>, data = <span class="type">Some</span>(<span class="type">Nil</span>)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里首先获取实际的分页数据偏移量 <code>offset</code> ，再于 <code>ConfigManager</code> 状态里保存的 <code>dataIds</code> 的大小进行判断，若 <code>offset</code> &lt; <code>state.dataIds.size</code> 则我们进行分页逻辑，否则直接返回一个空列表给前端。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Source</span>(state.dataIds)</span><br><span class="line">  .filter(dataId =&gt; in.dataId.forall(v =&gt; v.contains(dataId)))</span><br><span class="line">  .mapAsync(<span class="number">20</span>) &#123; dataId =&gt;</span><br><span class="line">    configEntity.ask[<span class="type">Option</span>[<span class="type">ConfigState</span>]](replyTo =&gt;</span><br><span class="line">      <span class="type">ShardingEnvelope</span>(<span class="string">s"<span class="subst">$namespace</span>@<span class="subst">$dataId</span>"</span>, <span class="type">ConfigEntity</span>.<span class="type">Query</span>(in.configType, replyTo)))</span><br><span class="line">  &#125;</span><br><span class="line">  .collect &#123; <span class="keyword">case</span> <span class="type">Some</span>(value) =&gt; value &#125;</span><br><span class="line">  .drop(offset)</span><br><span class="line">  .take(in.size)</span><br><span class="line">  .runWith(<span class="type">Sink</span>.seq)</span><br><span class="line">  .map(items =&gt; <span class="type">ConfigResponse</span>(<span class="type">IntStatus</span>.<span class="type">OK</span>, data = <span class="type">Some</span>(items)))</span><br></pre></td></tr></table></figure>
+<p>这个 Akka Streams 流即是分页处理的主要实现，若是SQL的话，它类似：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_config <span class="keyword">where</span> data_id <span class="keyword">like</span> <span class="string">'%"in.dataId"%'</span> <span class="keyword">offset</span> <span class="string">"offset"</span> <span class="keyword">limit</span> <span class="string">"in.size"</span></span><br></pre></td></tr></table></figure>
+<p><code>.mapAsync</code> 在流执行流程中起了20个并发的异步操作，将委托每个匹配的 <code>ConfigEntity</code> （由<code>s&quot;$namespace@$dataId&quot;</code>生成<code>entityId</code>）执行 <code>config_type</code> 字段的查询。这样，完整的SQL语句类似：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_config <span class="keyword">where</span> data_id <span class="keyword">like</span> <span class="string">'%"in.dataId"%'</span> <span class="keyword">and</span> config_type = <span class="string">"in.configType"</span> <span class="keyword">offset</span> <span class="string">"offset"</span> <span class="keyword">limit</span> <span class="string">"in.size"</span></span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span>ConfigEntity<span class="string">` 对 `</span>config_type<span class="string">` 部分的查询逻辑实现如下：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>scala</span><br><span class="line"><span class="keyword">case</span> <span class="keyword">Query</span>(configType, replyTo) =&gt;</span><br><span class="line">  state.config <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">None</span> =&gt;</span><br><span class="line">      Effect.reply(replyTo)(<span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">Some</span>(config) =&gt;</span><br><span class="line">      val resp = <span class="keyword">if</span> (configType.forall(v =&gt; config.configType.contains(v))) <span class="keyword">Some</span>(config) <span class="keyword">else</span> <span class="keyword">None</span></span><br><span class="line">      Effect.reply(replyTo)(resp)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>若<code>in.configType</code>为空，既不需要判断 <code>config_type</code> 这个字段，直接返回 <code>Some(config)</code> 即可，而这时的SQL语句类似：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_config <span class="keyword">where</span> data_id <span class="keyword">like</span> <span class="string">'%"in.dataId"%'</span> <span class="keyword">and</span> <span class="literal">true</span> <span class="keyword">offset</span> <span class="string">"offset"</span> <span class="keyword">limit</span> <span class="string">"in.size"</span></span><br></pre></td></tr></table></figure>
+<p><em><strong>Tip</strong>这里有个小技巧，对于 <code>Option[T]</code> 字段的判断，直接使用了 <code>.forall</code> 方法，它等价于：</em></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option <span class="keyword">match</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Some</span>(x) =&gt; p(x)</span><br><span class="line">  <span class="keyword">case</span> <span class="type">None</span>    =&gt; <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>完整代码可在此 <a href="https://github.com/yangbajing/yangbajing-blog/tree/master/src/main/scala/blog/persistence/config" target="_blank" rel="external">https://github.com/yangbajing/yangbajing-blog/tree/master/src/main/scala/blog/persistence/config</a> 找到。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/" data-id="ckmlxnrhl00lbs7ug7n4uf5kg" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-persistence/" rel="tag">akka-persistence</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cqrs/" rel="tag">cqrs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/event-sourced/" rel="tag">event-sourced</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          OAuth 2 服务的 Akka 实现：access_token 管理
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/12/22/%E8%AE%B0%EF%BC%9A2019-12%E6%B7%B1%E5%9C%B3scala-meetup%E5%88%86%E4%BA%AB%E3%80%8Aakka-http%E3%80%81grpc%E3%80%81typed-actor%E4%B8%8Ecluster%E3%80%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">2019.12深圳Scala Meetup分享《Akka HTTP、gRPC、Typed Actor与Cluster工程实践》演讲视频</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

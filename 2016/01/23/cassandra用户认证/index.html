@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Cassandra用户认证 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Cassandra默认是不需要用户名和密码登录的，这样其实并不安全。 修改配置文件：conf&#x2F;cassandra.yaml 启动用户名密码登录： 12authenticator: PasswordAuthenticatorauthorizer: CassandraAuthorizer 重新启动Cassandra，再次使用 bin&#x2F;cqlsh 登录会提示 AuthenticationFailed(‘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cassandra用户认证">
+<meta property="og:url" content="http://www.yangbajing.me/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Cassandra默认是不需要用户名和密码登录的，这样其实并不安全。 修改配置文件：conf&#x2F;cassandra.yaml 启动用户名密码登录： 12authenticator: PasswordAuthenticatorauthorizer: CassandraAuthorizer 重新启动Cassandra，再次使用 bin&#x2F;cqlsh 登录会提示 AuthenticationFailed(‘">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-23T03:55:37.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="cassandra">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/cassandra/">cassandra</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-cassandra用户认证" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Cassandra用户认证
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" class="article-date">
+  <time datetime="2016-01-23T03:55:37.000Z" itemprop="datePublished">2016-01-23</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-cassandra用户认证" data-title="Cassandra用户认证" data-url="http://www.yangbajing.me/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Cassandra默认是不需要用户名和密码登录的，这样其实并不安全。</p>
+<p>修改配置文件：conf/cassandra.yaml 启动用户名密码登录：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">authenticator:</span> <span class="string">PasswordAuthenticator</span></span><br><span class="line"><span class="attr">authorizer:</span> <span class="string">CassandraAuthorizer</span></span><br></pre></td></tr></table></figure>
+<p>重新启动Cassandra，再次使用 bin/cqlsh 登录会提示 <strong>AuthenticationFailed(‘Remote end requires authentication.’,)</strong>。这时使用用户名和密码登录即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./cqlsh 192.168.0.101 -u cassandra -p cassandra</span><br></pre></td></tr></table></figure>
+<p>使用 PasswordAuthenticator 后，cassandra会默认创建super user，用户名和密码均为：cassandra。那么，如何修改该super user的密码呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter user cassandra with password &apos;cassandra1&apos;;</span><br></pre></td></tr></table></figure>
+<p>执行语句后密码立即生效。</p>
+<p><strong>创建用户</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user user1 with password &apos;password1&apos;;</span><br></pre></td></tr></table></figure>
+<p><strong>分配权限</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GRANT ALL PERMISSIONS ON KEYSPACE data TO data;</span><br></pre></td></tr></table></figure>
+<p><em>建议分配可访问表</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRANT select PERMISSION ON system.size_estimates TO devser;</span><br><span class="line">GRANT select PERMISSION ON system_auth.roles TO devser;</span><br></pre></td></tr></table></figure>
+<p>分配权限语句如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRANT permission_name PERMISSION</span><br><span class="line">| ( GRANT ALL PERMISSIONS ) ON resource TO user_name | role_name</span><br></pre></td></tr></table></figure>
+<p>其中 permission_name 为权限列表，有如下：</p>
+<ul>
+<li>ALL</li>
+<li>ALTER</li>
+<li>AUTHORIZE</li>
+<li>CREATE</li>
+<li>DROP</li>
+<li>MODIFY</li>
+<li>SELECT</li>
+</ul>
+<p>resource 为被分配的资源，如下几种：</p>
+<ul>
+<li>ALL KEYSPACES</li>
+<li>KEYSPACE keyspace_name</li>
+<li>TABLE keyspace_name.table_name</li>
+</ul>
+<h2 id="集群安全"><a href="#集群安全" class="headerlink" title="集群安全"></a>集群安全</h2><ul>
+<li>authenticator: org.apache.cassandra.auth.PasswordAuthenticator: 用户密码将保存在 system_auth.credentials 表</li>
+<li>authorizer: org.apache.cassandra.auth.CassandraAuthorizer: 用户权限将保存在 system_auth.permissions 表。</li>
+</ul>
+<p>system_auth 的默认 replication 因子为1，这在集群中是非常危险的。若其中一个节点挂掉，而正好账号相关数据只保存在挂掉的那一台上会造成登录时不能通过授权认证。最好通过 <code>ALTER KEYSPACE</code> 命令修改默认设置。</p>
+<p><strong>SimpleStrategy</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER KEYSPACE &quot;system_auth&quot; WITH REPLICATION = &#123; &apos;class&apos; : &apos;SimpleStrategy&apos;, &apos;replication_factor&apos; : 3 &#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>NetworkTopology</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER KEYSPACE &quot;system_auth&quot; WITH REPLICATION = &#123;&apos;class&apos; : &apos;NetworkTopologyStrategy&apos;, &apos;dc1&apos; : 2, &apos;dc2&apos; : 3&#125;;</span><br></pre></td></tr></table></figure>
+<p><em>注：使用<code>NetworkTopology</code>需要设置<code>cassandra.yaml</code>的<code>endpoint_snitch: GossipingPropertyFileSnitch</code>等具有机架感知功能的snitch</em></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" data-id="ckmlxnraa0039s7ugxe6wy77w" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cassandra/" rel="tag">cassandra</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/02/27/%E5%AE%89%E8%A3%85spark1-5%E4%B8%8Ehadoop2-6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          安装Spark1.5.2与Hadoop2.6.2
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Linux系统运维常用工具</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/01/23/cassandra%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

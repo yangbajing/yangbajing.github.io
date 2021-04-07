@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>微服务下的用户系统设计 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="简述微服务下的用户系统从设计与传统单体应用是不一样的，传统单体应用下本质上用户系统是一个模块。用户系统是与整个应用紧耦合在一起的，具体来说，它们共享一套代码、一个数据库、通过代码级的API调用…… 而微服务下的用户系统设计很不一样，因为微服务的特点，各功能都独立成一个Server在运行，那用户系统首先需要支持远程的API调用。基本来说，微服务下的用户系统设计需要满足以下要求：  独立的用户系统：用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务下的用户系统设计">
+<meta property="og:url" content="http://www.yangbajing.me/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="简述微服务下的用户系统从设计与传统单体应用是不一样的，传统单体应用下本质上用户系统是一个模块。用户系统是与整个应用紧耦合在一起的，具体来说，它们共享一套代码、一个数据库、通过代码级的API调用…… 而微服务下的用户系统设计很不一样，因为微服务的特点，各功能都独立成一个Server在运行，那用户系统首先需要支持远程的API调用。基本来说，微服务下的用户系统设计需要满足以下要求：  独立的用户系统：用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.yangbajing.me/img/micro_serv_user/4A系统使用流程.svg">
+<meta property="og:image" content="http://www.yangbajing.me/img/micro_serv_user/SSO-业务调用图.svg">
+<meta property="article:published_time" content="2018-08-17T14:16:53.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="micro-service">
+<meta property="article:tag" content="4a">
+<meta property="article:tag" content="user-system">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.yangbajing.me/img/micro_serv_user/4A系统使用流程.svg">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/essay/">essay</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-微服务下的用户系统设计" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      微服务下的用户系统设计
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" class="article-date">
+  <time datetime="2018-08-17T14:16:53.000Z" itemprop="datePublished">2018-08-17</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-微服务下的用户系统设计" data-title="微服务下的用户系统设计" data-url="http://www.yangbajing.me/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>微服务下的用户系统从设计与传统单体应用是不一样的，传统单体应用下本质上用户系统是一个模块。用户系统是与整个应用紧耦合在一起的，具体来说，它们共享一套代码、一个数据库、通过代码级的API调用……</p>
+<p>而微服务下的用户系统设计很不一样，因为微服务的特点，各功能都独立成一个Server在运行，那用户系统首先需要支持远程的API调用。基本来说，微服务下的用户系统设计需要满足以下要求：</p>
+<ol>
+<li>独立的用户系统：用户系统应该是一个独立的应用程序，它不应该和业务系统紧耦合在一起。</li>
+<li>用户认证、授权：用户认证、授权是用户系统的核心，可以基于 OAuth 2 协议来实现闪统一认证、单点登录。</li>
+<li>单点登录：统一的用户登录入口。</li>
+<li>接入应用管理：对接入用户系统的各个子应用，用户系统可对接入应用进行管理。比如：应用接口账户、应用SSO回调地址、应用用户管理……</li>
+<li>丰富的API：微服务下各服务节点之间都通过API接口进行通信，支持RESTful风格的接口是最低要求，对于像用户系统这样的核心系统可以考虑使用protobuf、grpc这样的机制来提供传输效率。</li>
+<li>丰富的功能：像组织管理、角色权限等功能，虽然不是设计用户系统的必要功能，等若能支持对于用户系统来说也是加分项。</li>
+<li>高性能、高可用、可扩展</li>
+</ol>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>基于以上考虑，用户系统计划实现如下功能：</p>
+<ol>
+<li>用户管理：所有子系统不再有用户管理模块，统一到用户系统来实现。</li>
+<li>统一认证：基于 OAuth 2 实现。</li>
+<li>单点登录：可以采用 OAuth 2 的静默登录来实现。</li>
+<li>应用管理：各应用接入用户系统，需要通过接口来操作用户，比如：创建、获取、遍历用户信息。同时对于单点登录、角色权限管理等功能也可以进行设置是否启用。</li>
+<li>角色权限管理：应用可以选择将角色、权限上提到用户系统来进行统一管理，或者应用可以选择自己管理角色权限，只使用用户系统的统一用户认证和单点登录功能。</li>
+<li>组织管理：对于企业级应用，组织架构管理是一个不可或缺的功能。用户系统支持树型机制的组织架构管理功能。</li>
+</ol>
+<h4 id="用户模块"><a href="#用户模块" class="headerlink" title="用户模块"></a>用户模块</h4><p>用户模块本身并不复杂，主要需要规划好数据模型。在设计用户模型时可以充分利用PG的特性来简化用户模型。这里我们来看一个用户模型的示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ig_passport</span><br><span class="line">(</span><br><span class="line">  <span class="keyword">id</span>            <span class="built_in">CHAR</span>(<span class="number">24</span>)                              <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">    <span class="keyword">CONSTRAINT</span> ig_pk PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">  <span class="keyword">account</span>       <span class="built_in">VARCHAR</span>(<span class="number">255</span>),</span><br><span class="line">  code          <span class="built_in">varchar</span>(<span class="number">64</span>)                           <span class="literal">null</span>,</span><br><span class="line">  <span class="keyword">salt</span>          <span class="built_in">CHAR</span>(<span class="number">12</span>)                              <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  salt_password <span class="built_in">CHAR</span>(<span class="number">64</span>)                              <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="keyword">status</span>        <span class="built_in">INTEGER</span> <span class="keyword">DEFAULT</span> <span class="number">1</span>                     <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="keyword">data</span>          JSONB                                 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  permissions   <span class="built_in">INTEGER</span> [] <span class="keyword">DEFAULT</span> <span class="string">'&#123;&#125;'</span> :: <span class="built_in">INTEGER</span> [] <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  phone         <span class="built_in">varchar</span>(<span class="number">32</span>)                           <span class="literal">null</span>,</span><br><span class="line">  created_at    <span class="built_in">TIMESTAMP</span> <span class="keyword">WITH</span> <span class="built_in">TIME</span> ZONE              <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> <span class="keyword">index</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> ig_passport_code_uidx</span><br><span class="line">  <span class="keyword">on</span> ig_passport (code);</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> <span class="keyword">INDEX</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ig_passport_account_uidx</span><br><span class="line">  <span class="keyword">ON</span> ig_passport (<span class="keyword">account</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ig_app_user</span><br><span class="line">(</span><br><span class="line">  app_id        <span class="built_in">CHAR</span>(<span class="number">24</span>)                 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  passport_id   <span class="built_in">CHAR</span>(<span class="number">24</span>)                 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  user_id       <span class="built_in">VARCHAR</span>(<span class="number">512</span>)             <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  updated_at    <span class="built_in">TIMESTAMP</span> <span class="keyword">WITH</span> <span class="built_in">TIME</span> ZONE <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  permissions   <span class="built_in">INTEGER</span> []               <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="keyword">status</span>        <span class="built_in">INTEGER</span>                  <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="keyword">data</span>          JSONB,</span><br><span class="line">  app_resources <span class="built_in">text</span> []                  <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="string">'&#123;&#125;'</span>,</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> ig_app_user_pk PRIMARY <span class="keyword">KEY</span> (app_id, passport_id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>可以看到，与用户模型相关的有两张表：<code>ig_passport</code>和<code>ig_app_user</code>。<code>ig_passport</code>是实际的用户数据模型。</p>
+<p><strong>ig_passport</strong></p>
+<p>这里<code>id</code>是用户主键，采用了 <a href="https://docs.mongodb.com/manual/reference/method/ObjectId/" target="_blank" rel="external">ObjectId</a> 的十六进制字符串来表示。没有使用自增的整形字段来作为ID，主要考虑还是数据迁移的方便。为了 <strong>ObjectId</strong> 是一个分布式系统下的唯一ID，对于多个用户系统需要合并或拆分的情况，就不需要再去处理主键ID重复的情况了，同时，数据备份、恢复时也不会有自增序例不一至的问题。</p>
+<p>其它字段都是用户表设计中常见的字段，这里就不再过多介绍。需要注意的是 <code>data</code> 字段，可以看到它的数据类型是：<code>JSONB</code>，这是PG数据库特有的数据类型。它可以让我们在传统的SQL表里存储无模式数据，这里就是JSON数据。使用 <code>data</code> 字段的好处在，对于一些用户个性数据，比如：年龄、爱好、工作等，我们可以让前端将这些数据做为一个JSON类型提交上来。简单说就是，数据模型不限制应用可以上传哪些字段，由应用来决定。因为作为一个用户系统，它只需存储必要的字段即可，如id、登录账号名、密码、状态、权限等。用户的个性化数据可以待系统实现使用时由使用系统来决定，这样即可在不修改数据表（模型）的情况下做到用户模型的可扩展性。</p>
+<p>对于需要通过用户个性化数据进行检索的情况，PG也支持对JSONB类型字段建立索引，可以选择对整个JSON字段数据建立索引，也可以选择对具体的key对应的值建立索引。</p>
+<p><strong>ig_app_user</strong></p>
+<p><code>ig_app_user</code>表是应用内用户的映射，对于某些已建应用集成到用户系统时特别有用。已建应用已经拥有了一套自己的用户体系，当它们集成到用户系统时，已用的用户体系是不能直接废掉的（或者需要一段时间的过滤）。这时候就使用 <code>ig_app_user</code> 来将应用已有用户和用户系统的用户进行映射了。可以看到，<code>ig_app_user</code>里面有一个 <code>user_id</code> 字段，这就是应用已有用户的ID，可以通过 <code>app_id</code>、<code>passport_id</code>、<code>user_id</code>三个字段来唯一确定一个应用内的已有用户。而 <code>ig_app_user.data</code> 字段也是JSONB类型，我们可以将应用原来用户表里的数据当做一个JSON格式数据存储在此，这样无论接入应用的原有用户表是怎么设计的，用户系统都可以在不修改表结构的情况下对其进行存储。</p>
+<h4 id="应用管理"><a href="#应用管理" class="headerlink" title="应用管理"></a>应用管理</h4><p><img src="/img/micro_serv_user/4A系统使用流程.svg" alt="系统使用流程"></p>
+<p>用户系统需要管理多个接入应用的用户，甚至角色和权限也可以纳入统一管理。这首先需要一个应用管理模块，用于应用的创建、编辑、接入。应用模型可参考设计如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ig_app</span><br><span class="line">(</span><br><span class="line">  <span class="keyword">id</span>               <span class="built_in">CHAR</span>(<span class="number">24</span>)     <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">    <span class="keyword">CONSTRAINT</span> ig_app_pk</span><br><span class="line">    PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">  <span class="keyword">name</span>             <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  creator          <span class="built_in">CHAR</span>(<span class="number">24</span>)     <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  sso_redirect_uri <span class="built_in">VARCHAR</span>(<span class="number">1024</span>),</span><br><span class="line">  <span class="keyword">domain</span>           <span class="built_in">VARCHAR</span>(<span class="number">255</span>),</span><br><span class="line">  <span class="keyword">status</span>           <span class="built_in">INTEGER</span>      <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  created_at       timestamptz  <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  data_url         <span class="built_in">varchar</span>(<span class="number">1024</span>),</span><br><span class="line">  options          <span class="built_in">text</span> []      <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="string">'&#123;&#125;'</span>,</span><br><span class="line">  updater          <span class="built_in">char</span>(<span class="number">24</span>),</span><br><span class="line">  updated_at       timestamptz  <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>其中几个关键字段说明如下：</p>
+<ul>
+<li>sso_redirect_uri：单点登录成功后重定向页面到应用的地址</li>
+<li>domain：是否校验请求应用的域名是否合法</li>
+<li>data_url：数据推送地址。当用户系统发生某些事件时将数据推关给应用。比如：用户创建、修改，应用创建、修改等。</li>
+</ul>
+<h4 id="OAuth-2"><a href="#OAuth-2" class="headerlink" title="OAuth 2"></a>OAuth 2</h4><p>用户系统很重要的一个功能就是用户认证和单点登录，这两个功能可以使用 OAuth 2 协议来实现。这里，我们并没有使用现成的 OAuth 2 库或框架，而是基于 <a href="https://oauth.net/2/" target="_blank" rel="external">OAuth 2 协议规范</a> 使用 Akka HTTP 实现了一套，因为我们不需要所有的 OAuth 2 功能，另外就是用户系统本身也是使用Akka HTTP 开发的，本着能造轮子就造的原则（正好，这玩意不太复杂，可以造）自行开发了一套。</p>
+<p><em>注：之后会写一篇文章：《Scala实战：OAuth 2 服务》来介绍怎样使用 Akka HTTP 实现 OAuth 2</em></p>
+<h5 id="统一认证"><a href="#统一认证" class="headerlink" title="统一认证"></a>统一认证</h5><p>OAuth 2 是OAuth协议的延续版本，但不向后兼容OAuth 1.0即完全废止了OAuth 1.0。 OAuth 2关注客户端开发者的简易性。要么通过组织在资源拥有者和HTTP服务商之间的被批准的交互动作代表用户，要么允许第三方应用代表用户获得访问的权限。同时为Web应用，桌面应用和手机，和起居室设备提供专门的认证流程。2012年10月，OAuth 2协议正式发布为 <a href="https://tools.ietf.org/html/rfc6749" target="_blank" rel="external">RFC 6749</a>。</p>
+<p>Web ServerFlow是把OAuth 1.0的三个步骤缩略为两个步骤，首先这个是适合有server的第三方使用的。</p>
+<p><strong>OAuth 2认证流程</strong></p>
+<ol>
+<li>客户端通过HTTP请求Authorize</li>
+<li>服务端接收到Authorize请求，返回用户登陆页面</li>
+<li>用户在登陆页面登陆</li>
+<li>登录成功后，服务端将浏览器定位到redirect_uri，并同时传递Authorization Code</li>
+<li>客户端使用HTTPS发送Authorization Code</li>
+<li>服务器端收到access_token请求，验证Authorization Code——生成access_token，refresh_token和expires_in（过期时间）——access_token和refresh_token和过期时间入库</li>
+<li>返回access_token和refresh_token，expires_in（过期时间）</li>
+<li>用户使用HTTPS协议，发送access_token及相应参数请求开放平台接口</li>
+</ol>
+<p>OAuth 2除了支持浏览器端认证外，还支持APP、C/S客户端认证。</p>
+<p><strong>用户系统的单点登录</strong></p>
+<p>用户系统除了支持 <strong>access_token</strong> 这样的登录认证方式外，还支持传统的基于 session 的认证（session加密后通过cookie存储在浏览器端）。这种认证方式对于大部分基于Web的应用来说更熟悉，集成更方便。</p>
+<p>它的区别在于 OAuth 2 认证的第4步，redirect_uri重定向回应用时直接带上 sessionCode ，这时客户端就可以通过设置 cookie 来将 session 存储到浏览器上来实现登录会话的保持。</p>
+<p><img src="/img/micro_serv_user/SSO-业务调用图.svg" alt="SSO-业务调用图"></p>
+<h5 id="静默登录"><a href="#静默登录" class="headerlink" title="静默登录"></a>静默登录</h5><p>OAuth 2登录时可以选择静默登录模式。单用户已经登录过一次用户系统，他再访问另一个未登录的应用时，应用将页面重定向到用户系统的登录页面，这时候用户系统可以判断出已经有用户登录session，这时用户系统将直接重定向回到请求登录的应用并带上用户会话信息。一般，这是通过cookie来实现的。</p>
+<p><em>有一个真实的案例来演示这一模式。你先登录新浪微博，这时会跳转到新浪通行证的登录页面。若你之前已经登录过新浪通行证，则回直接返回新浪微博并已设置为登录状态，否则会提示你输入用户名、密码进行登录。</em></p>
+<h5 id="客户端保存-session"><a href="#客户端保存-session" class="headerlink" title="客户端保存 session"></a>客户端保存 session</h5><p>通过cookie这样的客户端技术来保存session，服务端不需要记录session信息。这样，服务端重启不会影响session会话的状态，也不会造成session的丢失，同时，在服务端扩展时也没有session同步的问题。</p>
+<p>但是，在某些业务场景下，服务端保存session是必要的。比如下一节讲到的统一登出和一次登录功能，还有当前登录用户数统计等。</p>
+<h4 id="统一登出与一次登录"><a href="#统一登出与一次登录" class="headerlink" title="统一登出与一次登录"></a>统一登出与一次登录</h4><p>一般情况下，将 session 通过 cookie 存储在浏览器客户端就可以满足用户会话保持的需求。但是，对于很多系统来说，都有统一登出和一次登录的业务需求。</p>
+<ul>
+<li>统一登出：用户登出任一应用，则同时所有应用的登录状态都将无效。</li>
+<li>一次登录：用户同一时段只能在一个IP地址登录（包括不同应用）。</li>
+</ul>
+<p>要实现以上两个功能，就必需在服务端保存 session 。通过在每次收到论证请求时和服务端session数据比较来实现统一拿出和一次登录。除了在服务端保存session以外，对于接入应用也需要做一些改造。</p>
+<h5 id="统一登出"><a href="#统一登出" class="headerlink" title="统一登出"></a>统一登出</h5><p>应用的Server端在每次收到客户端请求时，必需将sessionCode提交到用户系统进行验证。用户系统将返回些sessionCode是否有效。若用户已经在另一个应用上登出，则用户系统将返回此sessionCode已经无效的错误信息，这时应用将重定向请求到用户系统的登录页面或其它不需要登录即可访问的公共页面。</p>
+<h5 id="一次登录"><a href="#一次登录" class="headerlink" title="一次登录"></a>一次登录</h5><p>若用户系统提示用户已经在另一个IP地址登录，则当前sessionCode被新的登录会话给挤掉（当前sessionCode不再指向当前登录用户ID）。这时应用应弹出会话失效提示框告知用户，再跳转到可公开访问页面（若无，则跳转到登录页面）。</p>
+<h4 id="角色权限"><a href="#角色权限" class="headerlink" title="角色权限"></a>角色权限</h4><p><em>角色权限，应用可以选择自己管理，也可以选择由用户系统来管理。</em></p>
+<p>在角色权限功能的设计上，我们可以通过两个基本的抽象来实现：</p>
+<ul>
+<li>Resource：资源。资源可以为应用系统的功能权限、菜单权限、接口权限、按钮权限等，在用户系统里统一将此类控制相关的权限称为 <strong>资源</strong>。</li>
+<li>Role：角色。角色就是拥有一系列资源的集合体，通过角色这样的概念来命名并使用。</li>
+</ul>
+<p>有了资源和角色，我们就可以实现复杂的权限控制功能。</p>
+<h4 id="组织管理"><a href="#组织管理" class="headerlink" title="组织管理"></a>组织管理</h4><p>组织在企业级应用中非常重要，通常来说组织都需要作为一个树型结构来设计。组织在这里可以代表企业法人、事业法人或政府部门等。</p>
+<p>比如在政府行业：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">有市级组织 --&gt; 市发改委 --&gt; 市发改委科室</span><br><span class="line">                 　　　--&gt; 区/县发改委 --&gt; 区/县发改委科室</span><br></pre></td></tr></table></figure>
+<p>组织模型的设计，可以把 <code>parent</code> 和 <code>parents</code> 两个字段加到表字段中。<code>parent</code> 是直接父组织ID、<code>parents</code> 是完整父组织ID列表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ig_org</span><br><span class="line">(</span><br><span class="line">  <span class="keyword">id</span>            <span class="built_in">CHAR</span>(<span class="number">24</span>)                 <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">    <span class="keyword">CONSTRAINT</span> ig_org_pk</span><br><span class="line">    PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">  <span class="keyword">name</span>          <span class="built_in">VARCHAR</span>(<span class="number">128</span>)             <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  code          <span class="built_in">varchar</span>(<span class="number">64</span>)              <span class="literal">null</span>,</span><br><span class="line">  contact       jsonb                    <span class="literal">null</span>,</span><br><span class="line">  <span class="keyword">data</span>          JSONB                    <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  creator       <span class="built_in">CHAR</span>(<span class="number">24</span>)                 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="keyword">parent</span>        <span class="built_in">CHAR</span>(<span class="number">24</span>)                 <span class="literal">null</span>,</span><br><span class="line">  parents       <span class="built_in">CHAR</span>(<span class="number">24</span>) []              <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="string">'&#123;&#125;'</span>,</span><br><span class="line">  direct_parent <span class="built_in">char</span>(<span class="number">24</span>)                 <span class="literal">null</span>,</span><br><span class="line">  <span class="keyword">sort</span>          <span class="built_in">int</span>                      <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">99999</span>,</span><br><span class="line">  <span class="keyword">status</span>        <span class="built_in">int</span>                      <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</span><br><span class="line">  updater       <span class="built_in">char</span>(<span class="number">24</span>),</span><br><span class="line">  app_ids       <span class="built_in">text</span> []                  <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="string">'&#123;&#125;'</span>,</span><br><span class="line">  created_at    <span class="built_in">TIMESTAMP</span> <span class="keyword">WITH</span> <span class="built_in">TIME</span> ZONE <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  updated_at    timestamptz              <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> <span class="keyword">index</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> ig_org_code_uidx <span class="keyword">on</span> ig_org (code);</span><br></pre></td></tr></table></figure>
+<p>利用PG的 <a href="http://www.postgres.cn/docs/10/arrays.html" target="_blank" rel="external">数组字段类型</a> 使用一个字段就可以存储组织的完整父ID列表。一般数据库需要使用关系表存储或需要把数组按分隔符连接成字符串来存储，使用关系表需要多维护一张表，对工作量有所增加，而且类似的关系表过多有可能会造成表爆炸；而使用分隔符连接的字符串对查询不友好……</p>
+<p>单需要获得某个组织的所有子组织（包括间接子组织时），使用类似如下sql即可：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> ig_org <span class="keyword">where</span> <span class="string">'&lt;org id&gt;'</span> = <span class="keyword">any</span>(parents);</span><br></pre></td></tr></table></figure>
+<h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><p><strong>Server</strong></p>
+<p>用户系统在微服务架构设计中是一个核心系统，它必需具有高可用、高性能、可扩展。这里，我选择了使用 <a href="https://doc.akka.io/docs/akka-http/current/index.html" target="_blank" rel="external">Akka HTTP</a> 来进行设计。使用 <a href="https://doc.akka.io/docs/akka-http/current/routing-dsl/index.html" target="_blank" rel="external">Routing DSL</a> 可以很灵活的设计出用户系统的 RESTful 接口。<a href="https://doc.akka.io/docs/akka-http/current/common/marshalling.html" target="_blank" rel="external">Marshalling</a>和<a href="https://doc.akka.io/docs/akka-http/current/common/unmarshalling.html" target="_blank" rel="external">Unmarshalling</a>可用来对数据模型与HttpRequest、HttpResponse做高效的相互转换。</p>
+<p>Akka HTTP完整的支持HTTP/HTTPs，同时也支持 HTTP 2，它底层基于 Akka/Akka Stream 实现。具备高可用、高性能、可扩展，还拥有容错、集群等特性。同时，Akka做为一个库，而非框架。不像 Spring 那样“巨重”，它足够轻量，很适合用来实现一个微服务。</p>
+<p><strong>Storage</strong></p>
+<p>用户系统使用 <a href="https://www.postgresql.org/" target="_blank" rel="external">PostgreSQL</a>（以下简称：PG）数据库来做为数据存储，PG 10原生已经支持表分区、逻辑复杂等功能，具备良好的横向可扩展性。同时，PG丰富的数据类型可简化我们的数据模型设计，如：JSONB、Array……</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在微服务下设计一个用户系统，需要考虑到各接入应用都是独立的服务，在系统设计之初就要考虑到各功能模块的可扩展性。统一认证和单点登录做为核心，<br>可以采用 OAuth 2 协议来设计。</p>
+<p>技术架构上，Akka HTTP可作为实现微服务的一套强有力的工作库。具有异步、高性能、集群管理等特性。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" data-id="ckmlxnrjw00p1s7ug4oq604qx" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/4a/" rel="tag">4a</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/micro-service/" rel="tag">micro-service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/user-system/" rel="tag">user-system</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/08/24/%E3%80%8Ascala-web%E5%BC%80%E5%8F%91%E3%80%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          《Scala Web开发》
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2018/08/05/%E6%B5%8B%E8%AF%95%EF%BC%9Aakka-http%E8%B7%AF%E7%94%B1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">测试：Akka HTTP路由</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2018/08/17/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%9A%84%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

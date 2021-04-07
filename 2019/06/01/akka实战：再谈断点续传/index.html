@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Akka实战：再谈断点上传 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="去年的文章：《Akka实战：HTTP大文件断点上传、下载，秒传》 通过示例介绍了在Akka HTTP里怎样实现断点上传功能。通过一段时间的应用，发现了些问题，这篇文章再深入介绍下。在 https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;scala-applications&#x2F;tree&#x2F;master&#x2F;file-upload能找到完整的源码。 Nginx代理Nginx代理时默认会在Nginx端收">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka实战：再谈断点上传">
+<meta property="og:url" content="http://www.yangbajing.me/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="去年的文章：《Akka实战：HTTP大文件断点上传、下载，秒传》 通过示例介绍了在Akka HTTP里怎样实现断点上传功能。通过一段时间的应用，发现了些问题，这篇文章再深入介绍下。在 https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;scala-applications&#x2F;tree&#x2F;master&#x2F;file-upload能找到完整的源码。 Nginx代理Nginx代理时默认会在Nginx端收">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-01T10:08:20.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-http">
+<meta property="article:tag" content="akka-stream">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-akka实战：再谈断点续传" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Akka实战：再谈断点上传
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" class="article-date">
+  <time datetime="2019-06-01T10:08:20.000Z" itemprop="datePublished">2019-06-01</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-akka实战：再谈断点续传" data-title="Akka实战：再谈断点上传" data-url="http://www.yangbajing.me/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>去年的文章：<a href="https://www.yangbajing.me/2018/12/29/akka%E5%AE%9E%E6%88%98%EF%BC%9Ahttp%E5%A4%A7%E6%96%87%E4%BB%B6%E6%96%AD%E7%82%B9%E4%B8%8A%E4%BC%A0%E3%80%81%E4%B8%8B%E8%BD%BD%EF%BC%8C%E7%A7%92%E4%BC%A0/">《Akka实战：HTTP大文件断点上传、下载，秒传》</a> 通过示例介绍了在Akka HTTP里怎样实现断点上传功能。通过一段时间的应用，发现了些问题，这篇文章再深入介绍下。在 <a href="https://github.com/yangbajing/scala-applications/tree/master/file-upload" target="_blank" rel="external">https://github.com/yangbajing/scala-applications/tree/master/file-upload</a>能找到完整的源码。</em></p>
+<h2 id="Nginx代理"><a href="#Nginx代理" class="headerlink" title="Nginx代理"></a>Nginx代理</h2><p>Nginx代理时默认会在Nginx端收到完整的请求数据以后再将其转发到被代理的服务，这样会造成通过Akka HTTP实现的断点上传功能用不上。原因：</p>
+<ol>
+<li>客户端断开或网络问题会造成Nginx端返回错误响应，根本就不向被代理的服务发送数据。</li>
+<li>需要断点上传的一般都是大文件，若文件太大会使Nginx服务的资源造成不必要的浪费。因为我们使用Akka HTTP实现的断点上传是通过stream处理实时将上传数据存储到磁盘上的，这样可以保证在一定的内存使用情况下支持大文件上传。</li>
+</ol>
+<p><strong>对于第2点，就因为Nginx默认缓冲整个请求数据，造成我们第一版文件服务申请了一台64G内存的服务器（第一版未使用Akka HTTP来实现断点上传功能，是直接使用Spring写的一个文件服务）。</strong></p>
+<p>这个问题要解决也比较简单，在Nginx中添加如下配置即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">client_max_body_size 4g;</span><br><span class="line">proxy_request_buffering off;</span><br><span class="line">proxy_http_version 1.1;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>client_max_body_size</code> 指令告诉Nginx在判断<code>Content-Length</code>头时，超过4G的请求才报错。</li>
+<li><code>proxy_request_buffering</code> 指令关闭Nginx的代理缓冲，将客户端的请求数据直接转发到被代码服务。</li>
+<li><code>proxy_http_version</code> 强制代理使用HTTP 1.1版本，否则通过<code>proxy_request_buffering off</code>在通过Chunk的方式进行的请求时还是会在Nginx端缓冲数据。</li>
+</ul>
+<p>但请注意：<strong>Tengine</strong>（Taobao的Nginx发行版）或低于<strong>1.7.11</strong>的官方发行版是没法通过这种方式来调整的。</p>
+<ol>
+<li><code>proxy_request_buffering</code>指令在1.7.11版才添加到官方Nginx。</li>
+<li>Tengine的<code>proxy_request_buffering</code>语言与官方的不一样，它始终会在Nginx端缓冲数据，区别是在内存缓冲还是在磁盘缓冲。</li>
+</ol>
+<p>这种情况下需要将Akka HTTP服务直接开发出去，或通过TCP代理来转发请求到Akka HTTP。</p>
+<h2 id="异常时保存状态"><a href="#异常时保存状态" class="headerlink" title="异常时保存状态"></a>异常时保存状态</h2>
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" data-id="ckmlxnrbq005us7ugpbh2enrn" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-http/" rel="tag">akka-http</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-stream/" rel="tag">akka-stream</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          WS SSL快速起步 - lightbend SSL Config
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Firewall快速使用</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

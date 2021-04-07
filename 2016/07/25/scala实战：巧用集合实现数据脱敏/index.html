@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战：巧用集合实现数据脱敏 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="（原文在：《http:&#x2F;&#x2F;www.yangbajing.me&#x2F;2016&#x2F;07&#x2F;25&#x2F;Scala实战：巧用集合实现数据脱敏》，转载请注明！） 在日常开发中，经常会遇到对数据进行脱敏处理的需求。像隐藏身份证或者手机号中间几位。比如对于：13812345678这个手机号，我们会使用*号替换中间4位来达到隐藏的目的，就像这样：138****5678。这是一个很常见也很简单的功能需求，这里记录下开发中对这个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战：巧用集合实现数据脱敏">
+<meta property="og:url" content="http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="（原文在：《http:&#x2F;&#x2F;www.yangbajing.me&#x2F;2016&#x2F;07&#x2F;25&#x2F;Scala实战：巧用集合实现数据脱敏》，转载请注明！） 在日常开发中，经常会遇到对数据进行脱敏处理的需求。像隐藏身份证或者手机号中间几位。比如对于：13812345678这个手机号，我们会使用*号替换中间4位来达到隐藏的目的，就像这样：138****5678。这是一个很常见也很简单的功能需求，这里记录下开发中对这个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-25T12:54:53.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="collection">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/scala%E5%AE%9E%E6%88%98/">scala实战</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala实战：巧用集合实现数据脱敏" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战：巧用集合实现数据脱敏
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/" class="article-date">
+  <time datetime="2016-07-25T12:54:53.000Z" itemprop="datePublished">2016-07-25</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala实战：巧用集合实现数据脱敏" data-title="Scala实战：巧用集合实现数据脱敏" data-url="http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>（原文在：<a href="http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/">《http://www.yangbajing.me/2016/07/25/Scala实战：巧用集合实现数据脱敏<br>》</a>，转载请注明！）</em></p>
+<p>在日常开发中，经常会遇到对数据进行脱敏处理的需求。像隐藏身份证或者手机号中间几位。比如对于：13812345678这个手机号，我们会使用*号替换中间4位来达到隐藏的目的，就像这样：138****5678。这是一个很常见也很简单的功能需求，这里记录下开发中对这个需求的实现。从一开始命令式的风格到函数式风格，从一开始硬编码隐藏范围和替换字符到调用者可以自定义，从繁琐和代码实现到清晰、简洁……本文将一步一步的给读者展示Scala强大的表现力、丰富的API和高效的生产率体现。</p>
+<h2 id="命令式"><a href="#命令式" class="headerlink" title="命令式"></a>命令式</h2><p>首先来看看一开始实现的隐藏手机号函数：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="function"><span class="keyword">def</span> <span class="title">hidePhone</span></span>(phone: <span class="type">String</span>): <span class="type">String</span> = &#123;</span><br><span class="line">     |   phone.substring(<span class="number">0</span>, <span class="number">3</span>) + <span class="string">"****"</span> + phone.substring(<span class="number">7</span>)</span><br><span class="line">     | &#125;</span><br><span class="line">hidePhone: (phone: <span class="type">String</span>)<span class="type">String</span></span><br><span class="line"></span><br><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>)</span><br><span class="line">res1: <span class="type">String</span> = <span class="number">138</span>****<span class="number">5678</span></span><br></pre></td></tr></table></figure>
+<p>咋一看，代码量很少嘛，也很简洁明了，需求实现的非常好。但其实这段代码有很多坏的和不完善的地方。如：有3个数字，它们决定了哪些字符需要原样保留。但万一业务需求是隐藏末尾5个字符呢？难到我们需要再写一个<code>hideLastPhone</code>函数？这样子太low了……</p>
+<p>于是，对<code>hidePhone</code>完成第一次改进，我们让调用方来决定需要隐藏哪些字符而不是在代码里写死保留哪些字符。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hidePhone</span></span>(phone: <span class="type">String</span>, start: <span class="type">Int</span>, end: <span class="type">Int</span>): <span class="type">String</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> builder = <span class="keyword">new</span> <span class="type">StringBuilder</span>(phone.substring(<span class="number">0</span>, start))</span><br><span class="line">  <span class="keyword">var</span> i = start</span><br><span class="line">  <span class="keyword">while</span> (i &lt; end) &#123;</span><br><span class="line">    builder.append('*')</span><br><span class="line">    i += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  builder.append(phone.substring(end))</span><br><span class="line">  builder.toString()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码看起来有点多，但实现了调用方设置隐藏范围，实用性更好了。来看看测试效果：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">6</span>, <span class="number">6</span> + <span class="number">5</span>)</span><br><span class="line">res2: <span class="type">String</span> = <span class="number">138123</span>*****</span><br><span class="line"></span><br><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">3</span>, <span class="number">3</span> + <span class="number">4</span>)</span><br><span class="line">res3: <span class="type">String</span> = <span class="number">138</span>****<span class="number">5678</span></span><br></pre></td></tr></table></figure>
+<p>不错，效果很好。正确！但是，我们换个参数再试试……</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">6</span>, <span class="number">6</span> + <span class="number">6</span>)</span><br><span class="line">java.lang.<span class="type">StringIndexOutOfBoundsException</span>: <span class="type">String</span> index out of range: <span class="number">-1</span></span><br><span class="line">  at java.lang.<span class="type">String</span>.substring(<span class="type">String</span>.java:<span class="number">1931</span>)</span><br><span class="line">  at .hidePhone(&lt;console&gt;:<span class="number">18</span>)</span><br><span class="line">  ... <span class="number">32</span> elided</span><br></pre></td></tr></table></figure>
+<p>Oh……数据越界错误。要修正这个错误也很简单：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hidePhone</span></span>(phone: <span class="type">String</span>, start: <span class="type">Int</span>, end: <span class="type">Int</span>): <span class="type">String</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> builder = <span class="keyword">new</span> <span class="type">StringBuilder</span>(phone.substring(<span class="number">0</span>, start))</span><br><span class="line">  <span class="keyword">var</span> i = start</span><br><span class="line">  <span class="keyword">while</span> (i &lt; math.min(phone.length, end)) &#123;</span><br><span class="line">    builder.append('*')</span><br><span class="line">    i += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (end &lt; phone.length) &#123;</span><br><span class="line">    builder.append(phone.substring(end))</span><br><span class="line">  &#125;</span><br><span class="line">  builder.toString()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们修复了两个地方：</p>
+<ol>
+<li><code>while</code>语句不是直接小于<code>end</code>变量，而是小于<code>phone.length</code>和<code>end</code>两个变量之间更小的那个</li>
+<li>最后一个<code>builder.append</code>语句加上了一个<code>if</code>防卫措施，只有当<code>end</code>小于手机号长度时才添加。</li>
+</ol>
+<p>这时，我们再次尝试刚才错误的那个示例。发现它已经可以正确的执行了。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">6</span>, <span class="number">6</span> + <span class="number">6</span>)</span><br><span class="line">res5: <span class="type">String</span> = <span class="number">138123</span>*****</span><br></pre></td></tr></table></figure>
+<h2 id="函数式"><a href="#函数式" class="headerlink" title="函数式"></a>函数式</h2><p>我们已经看过了命令式的数据税敏代码，没想到这样一个简单的功能还是需要写不少代码的。现在已经使用了具有函数式特性的高级的Scala语言，我们能不能把代码写得更<strong>functional</strong>、<strong>更漂亮</strong>呢<strong><em>（代码丑陋也是不可忍的……）</em></strong>？我们尝试着再次改进一下。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hidePhone</span></span>(phone: <span class="type">String</span>, start: <span class="type">Int</span>, end: <span class="type">Int</span>): <span class="type">String</span> = &#123;</span><br><span class="line">  phone</span><br><span class="line">    .zipWithIndex</span><br><span class="line">    .map &#123; <span class="keyword">case</span> (ch, idx) =&gt; <span class="keyword">if</span> (idx &gt;= start &amp;&amp; idx &lt; end) '*' <span class="keyword">else</span> ch &#125;</span><br><span class="line">    .mkString</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相比之前那段命令式的代码，这是不是简洁、清晰了很多？我们先使用<code>.zipWithIndex</code>方法将字符串变成一个带索引的Tuple序列，形如：<code>Seq((&#39;1&#39;, 0), (&#39;3&#39;, 1), (&#39;8&#39;, 2), ....)</code>。再通过判断索引<code>idx</code>是否在[<code>start</code>, <code>end</code>)范围来判断返回对应字符还是返回替换后的*号字符。最后再调用<code>mkString</code>方法把<code>Seq[Char]</code>（字符序列）格式化成一个字符串。</p>
+<p><strong>到了这里，我们还有改进的地方：</strong></p>
+<ol>
+<li>我们想可以自定义替换字符，用户可以使用’-‘、’|’等符号来替换，而不是默认的’*’号。</li>
+<li>对于<code>end</code>这个参数，当前代码实现是不替换这个索引的字符。那万一我们的需求是要替换这个索引的字符呢？当然，你可以说传入参数时将<code>end + 1</code>不就行了，但感觉不太好……因为我们还有更好的方案。</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hidePhone</span></span>(phone: <span class="type">String</span>, replaceRange: <span class="type">Range</span>, replaceChar: <span class="type">Char</span> = '*'): <span class="type">String</span> = &#123;</span><br><span class="line">  phone</span><br><span class="line">    .zipWithIndex</span><br><span class="line">    .map &#123; <span class="keyword">case</span> (ch, idx) =&gt; <span class="keyword">if</span> (replaceRange.contains(idx)) replaceChar <span class="keyword">else</span> ch &#125;</span><br><span class="line">    .mkString</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时的使用方式就和之前不一样了：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">6</span> until <span class="number">6</span> + <span class="number">5</span>)</span><br><span class="line">res6: <span class="type">String</span> = <span class="number">138123</span>*****</span><br><span class="line"></span><br><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">3</span> until <span class="number">3</span> + <span class="number">4</span>, '-')</span><br><span class="line">res9: <span class="type">String</span> = <span class="number">138</span>---<span class="number">-5678</span></span><br><span class="line"></span><br><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">3</span> to <span class="number">3</span> + <span class="number">4</span>, '-')</span><br><span class="line">res7: <span class="type">String</span> = <span class="number">138</span>----<span class="number">-678</span></span><br><span class="line"></span><br><span class="line">scala&gt; hidePhone(<span class="string">"13812345678"</span>, <span class="number">6</span> until <span class="number">6</span> + <span class="number">6</span>, '^')</span><br><span class="line">res8: <span class="type">String</span> = <span class="number">138123</span>^^^^^</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一个常用的数据脱敏函数，需要注意的地方还是挺多的。而函数式风格的实现相对命令式风格来说从可读性上更具优势。Scala以一种从左到右顺序编写、链式调用实现了数据脱敏这个功能，同时兼具了灵活性和健壮性。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/" data-id="ckmlxnrak003ns7ug2zj44tfk" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/collection/" rel="tag">collection</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/26/about/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          About
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/07/24/%E5%86%99%E7%BB%99java%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84scala%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">写给Java程序员的Scala入门教程</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/07/25/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A7%E7%94%A8%E9%9B%86%E5%90%88%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E8%84%B1%E6%95%8F/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

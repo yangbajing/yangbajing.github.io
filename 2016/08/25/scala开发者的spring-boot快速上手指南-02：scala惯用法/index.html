@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="(这是一篇迟来的文章，从3月份计划到成文花了5个月多……以后需要避免这样的低效率。) 之前写第一篇文章时，只是想试试在Spring中使用Scala。但现在随着工作的需要，已经决定在应用层基于Spring boot进行开发。后面的数据服务和数据整合部分将采用Akka。作者是一个Scala粉，但不脑残。鉴于团队、招人及社区生态多方面考虑，整体使用Scala技术栈还是比较困难的。之前就有考虑过把Spri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法">
+<meta property="og:url" content="http://www.yangbajing.me/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="(这是一篇迟来的文章，从3月份计划到成文花了5个月多……以后需要避免这样的低效率。) 之前写第一篇文章时，只是想试试在Spring中使用Scala。但现在随着工作的需要，已经决定在应用层基于Spring boot进行开发。后面的数据服务和数据整合部分将采用Akka。作者是一个Scala粉，但不脑残。鉴于团队、招人及社区生态多方面考虑，整体使用Scala技术栈还是比较困难的。之前就有考虑过把Spri">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-25T14:11:21.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="spring-boot">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="gradle">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala开发者的spring-boot快速上手指南-02：scala惯用法" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/" class="article-date">
+  <time datetime="2016-08-25T14:11:21.000Z" itemprop="datePublished">2016-08-25</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala开发者的spring-boot快速上手指南-02：scala惯用法" data-title="Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法" data-url="http://www.yangbajing.me/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>(这是一篇迟来的文章，从3月份计划到成文花了5个月多……以后需要避免这样的低效率。)</em></p>
+<p>之前写第一篇文章时，只是想试试在Spring中使用Scala。但现在随着工作的需要，已经决定在应用层基于Spring boot进行开发。后面的数据服务和数据整合部分将采用Akka。作者是一个Scala粉，但不脑残。鉴于团队、招人及社区生态多方面考虑，整体使用Scala技术栈还是比较困难的。之前就有考虑过把Spring和Scala结合起来。后来了解到挖财的技术选型，他们就是基于Spring和Scala的，还开源了很多不错的Spring Boot增强插件。这坚定了我之前的想法，也有了我5个月后续写第2篇的能量。</p>
+<p>对于Scala还不熟悉的朋友可以先看看<a href="http://www.yangbajing.me/2016/07/24/%E5%86%99%E7%BB%99java%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84scala%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/">《写给Java程序员的Scala入门教程》</a>，好对Scala有个初步映像。</p>
+<h2 id="从Maven到Gradle"><a href="#从Maven到Gradle" class="headerlink" title="从Maven到Gradle"></a>从Maven到Gradle</h2><p>第一篇文章是基于Maven做项目配置的，现在换成了Gradle。原因？Spring官方默认都是基于Gradle了，而且现在很多大型的Java项目都是基于Gradle进行构建了。如：Android、Kafka（Linkdin整体采用Gradle）。再加上我是一个比较爱折腾的人，既然现在有时间，为什么不试试Gradle呢？</p>
+<p>代码在这里：<a href="https://github.com/yangbajing/spring-boot-scala" target="_blank" rel="external">https://github.com/yangbajing/spring-boot-scala</a>，这次不但把构建工具换成了Gradle，还一步到位使用了多项目的构建方式，这样更符合真实开发的场景。<br> <strong>注意：在build.gradle配置中，需要重新设置Scala和Java源码的搜索路径，把Java源码路径移动Scala的搜索路径来。不然编译时会遇到Java代码找不到Scala代码符号问题
+</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sourceSets</span> &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        scala &#123;</span><br><span class="line">            srcDirs = [<span class="string">'src/main/scala'</span>, <span class="string">'src/main/java'</span>]</span><br><span class="line">        &#125;</span><br><span class="line">        java &#123;</span><br><span class="line">            srcDirs = []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    test &#123;</span><br><span class="line">        scala &#123;</span><br><span class="line">            srcDirs = [<span class="string">'src/test/scala'</span>, <span class="string">'src/test/java'</span>]</span><br><span class="line">        &#125;</span><br><span class="line">        java &#123;</span><br><span class="line">            srcDirs = []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="支持Scala数据类型"><a href="#支持Scala数据类型" class="headerlink" title="支持Scala数据类型"></a>支持Scala数据类型</h2><p>Spring Boot默认可以自动转换JSON数据格式到Java类型或反之，但怎样支持Scala数据类型呢？其实很简单，只需要加入<code>jackson-module-scala</code>依赖：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span>(<span class="string">"com.fasterxml.jackson.module:jackson-module-scala_$scalaLibVersion:2.8.0.rc2"</span>)</span><br></pre></td></tr></table></figure>
+<p>并添加<code>jacksonModuleScala</code> Bean 即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Module <span class="title">jacksonModuleScala</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DefaultScalaModule();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，我们就可以在Spring中自由的使用<code>case class</code>、<code>Scala Collection</code>、<code>Option</code>等类型和数据结构，甚至还可以和Java类型混合使用。比如我们把Java类型嵌入到Scala的case class里。</p>
+<p><em>User.java</em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String nickname;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getNickname</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> nickname;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNickname</span><span class="params">(String nickname)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.nickname = nickname;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>Message.scala</em></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">name: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">                   age: <span class="type">Int</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">                   user: <span class="type">User</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">                   status: <span class="type">Option</span>[<span class="type">Boolean</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="meta">@BeanProperty</span> <span class="keyword">val</span> createdAt: <span class="type">LocalDateTime</span> = <span class="type">LocalDateTime</span>.now()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>Scala控制器 (ApiController.scala）：</em></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(path = <span class="type">Array</span>(<span class="string">"message"</span>), method = <span class="type">Array</span>(<span class="type">RequestMethod</span>.<span class="type">POST</span>))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">message</span></span>(<span class="meta">@RequestBody</span> reqMsg: <span class="type">Message</span>): <span class="type">Seq</span>[<span class="type">Message</span>] = &#123;</span><br><span class="line">  <span class="type">List</span>(</span><br><span class="line">    reqMsg,</span><br><span class="line">    reqMsg.copy(age = reqMsg.age + <span class="number">1</span>, status = <span class="type">Some</span>(<span class="literal">true</span>))</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用Scala编写Spring控制器方法，有些和Java不一样的地方和Scala的惯用法：</p>
+<ul>
+<li>注解属性为数组时，Scala必需显示使用数组形式传参。如<code>@RequestMapping</code>注解的<code>path</code>发型是一个数组类型，在Scala中需要显示传入一个数组类型的参数：<code>Array(&quot;message&quot;)</code>。</li>
+<li>Scala中，方法返回值类型是可以自动推导的。但在写Spring控制器方法时推荐显示注明返回类型。</li>
+<li>Scala的所有表达式都有值，且代码块最后一个表达式的值就是代码块的值。这样，在Scala的函数里不需要使用<code>return</code>显示返回数据，也不推荐使用<code>return</code>。</li>
+</ul>
+<p>另外，若在Java代码中使用Scala的数据类型。如：case class。在Java中必需使用<code>new</code>关键字进行实例化，像Scala那样直接通过类名实例化是不支持的。</p>
+<p><em>Java控制器（WebController.java）：</em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(path = <span class="string">"message"</span>, method = RequestMethod.POST)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Message <span class="title">message</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Message(<span class="string">"Yang Jing"</span>, <span class="number">30</span>, user, <span class="keyword">new</span> Some(<span class="keyword">false</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ curl -XPOST -H &apos;content-type: application/json;utf8&apos; -d &apos;&#123;&quot;user&quot;:&quot;杨景&quot;,&quot;nickname&quot;:&quot;羊八井&quot;&#125;&apos; http://localhost:18080/web/message</span><br><span class="line"></span><br><span class="line">&#123;&quot;name&quot;:&quot;Yang Jing&quot;,&quot;age&quot;:30,&quot;user&quot;:&#123;&quot;name&quot;:null,&quot;nickname&quot;:&quot;羊八井&quot;&#125;,&quot;status&quot;:false,&quot;createdAt&quot;:&quot;2016-08-25T17:22:50.841&quot;&#125;</span><br><span class="line"></span><br><span class="line">$ curl -XPOST -H &apos;content-type: application/json;utf8&apos; -d &apos;&#123;&quot;name&quot;:&quot;yangbajing&quot;,&quot;age&quot;:30,&quot;user&quot;:&#123;&quot;name&quot;:&quot;杨景&quot;,&quot;nickname&quot;:&quot;羊八井&quot;&#125;&#125;&apos; http://localhost:18080/api/message</span><br><span class="line"></span><br><span class="line">[&#123;&quot;name&quot;:&quot;yangbajing&quot;,&quot;age&quot;:30,&quot;user&quot;:&#123;&quot;name&quot;:&quot;杨景&quot;,&quot;nickname&quot;:&quot;羊八井&quot;&#125;,&quot;status&quot;:null,&quot;createdAt&quot;:&quot;2016-08-25T17:26:03.352&quot;&#125;,&#123;&quot;name&quot;:&quot;yangbajing&quot;,&quot;age&quot;:31,&quot;user&quot;:&#123;&quot;name&quot;:&quot;杨景&quot;,&quot;nickname&quot;:&quot;羊八井&quot;&#125;,&quot;status&quot;:true,&quot;createdAt&quot;:&quot;2016-08-25T17:26:03.352&quot;&#125;]</span><br></pre></td></tr></table></figure>
+<h2 id="Java-Function-和-Scala-Function-N"><a href="#Java-Function-和-Scala-Function-N" class="headerlink" title="Java Function 和 Scala Function[N]"></a>Java Function 和 Scala Function[N]</h2><p>Java 8开始，支持Lambda函数。但是Java的Lambda函数与Scala的函数类型是不兼容的（好消息是，从Scala 2.12开始，将兼容Java Lambda函数）。我们可以使用<code>scala-java8-compat</code>这个库来还算优雅的解决这个问题。</p>
+<p>首先添加<code>scala-java8-comat</code>依赖：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span>(<span class="string">"org.scala-lang.modules:scala-java8-compat_$scalaLibVersion:0.7.0"</span>)</span><br></pre></td></tr></table></figure>
+<p>在Scala中访问Java8 Function，可以使用如下方式：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.compat.java8.<span class="type">FunctionConverters</span>._</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span></span>(<span class="meta">@RequestParam</span> name: <span class="type">Optional</span>[<span class="type">String</span>], ...</span><br><span class="line"></span><br><span class="line">  name.orElseGet(asJavaSupplier(() =&gt; reqMsg.name))</span><br></pre></td></tr></table></figure>
+<p>除了显示的使用<code>asJavaSupplier</code>来转换特定的Java8 Function，还可以使用<code>asJava</code>隐式转换来自动转换：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name.orElseGet((() =&gt; reqMsg.name).asJava)</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>也许你并不喜欢Scala，也不需要在Spring中使用Scala，Java 8也足够。但我希望能为你打开了一扇门，在JVM平台上还有如此有意思的语言。</p>
+<p><strong>本系列文章</strong></p>
+<ul>
+<li><a href="/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/">Scala开发者的Spring-Boot快速上手指南 01</a></li>
+<li><a href="/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/">Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/" data-id="ckmlxnrc6006ps7ug64h19ktv" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/" rel="tag">spring-boot</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/10/10/java-scala%E4%BA%92%E6%93%8D%E4%BD%9C%E5%AE%9E%E8%B7%B5%201%EF%BC%9A%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Java/Scala互操作实践 1：基础操作
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/08/21/%E6%88%91%E7%9A%84ubuntu%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">我的Ubuntu开发环境设置</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Nacos SDK for Scala | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Nacos SDK for Scala：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;nacos-sdk-scala 。 支持 Scala 2.12, 2.13 ；支持 Akka Discovery 和 Play WS。 使用12345678&#x2F;&#x2F; Scala APIlibraryDependencies +&#x3D; &quot;me.yangbajing.nacos4s&quot; %% &quot;nacos-cli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nacos SDK for Scala">
+<meta property="og:url" content="http://www.yangbajing.me/2020/04/09/nacos-sdk-for-scala/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Nacos SDK for Scala：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;nacos-sdk-scala 。 支持 Scala 2.12, 2.13 ；支持 Akka Discovery 和 Play WS。 使用12345678&#x2F;&#x2F; Scala APIlibraryDependencies +&#x3D; &quot;me.yangbajing.nacos4s&quot; %% &quot;nacos-cli">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-09T04:56:40.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="nacos">
+<meta property="article:tag" content="spring-cloud">
+<meta property="article:tag" content="play">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/%E4%BD%9C%E5%93%81/">作品</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/%E4%BD%9C%E5%93%81/nacos-sdk-scala/">nacos-sdk-scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-nacos-sdk-for-scala" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Nacos SDK for Scala
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/04/09/nacos-sdk-for-scala/" class="article-date">
+  <time datetime="2020-04-09T04:56:40.000Z" itemprop="datePublished">2020-04-09</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-nacos-sdk-for-scala" data-title="Nacos SDK for Scala" data-url="http://www.yangbajing.me/2020/04/09/nacos-sdk-for-scala/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><a href="https://nacos.io/" target="_blank" rel="external">Nacos</a> SDK for Scala：<a href="https://github.com/yangbajing/nacos-sdk-scala" target="_blank" rel="external">https://github.com/yangbajing/nacos-sdk-scala</a> 。</p>
+<p>支持 Scala 2.12, 2.13 ；支持 Akka Discovery 和 Play WS。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Scala API</span></span><br><span class="line">libraryDependencies += <span class="string">"me.yangbajing.nacos4s"</span> %% <span class="string">"nacos-client-scala"</span> % <span class="string">"1.2.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Akka Discovery</span></span><br><span class="line">libraryDependencies += <span class="string">"me.yangbajing.nacos4s"</span> %% <span class="string">"nacos-akka"</span> % <span class="string">"1.2.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Play WS</span></span><br><span class="line">libraryDependencies += <span class="string">"me.yangbajing.nacos4s"</span> %% <span class="string">"nacos-play-ws"</span> % <span class="string">"1.2.0"</span></span><br></pre></td></tr></table></figure>
+<p>需要添加以下源：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resolvers += <span class="type">Resolver</span>.bintrayRepo(<span class="string">"helloscala"</span>, <span class="string">"maven"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="在线文档"><a href="#在线文档" class="headerlink" title="在线文档"></a>在线文档</h2><p>在线文档：<a href="https://yangbajing.github.io/nacos-sdk-scala" target="_blank" rel="external">https://yangbajing.github.io/nacos-sdk-scala</a></p>
+<p><strong>本地阅读：</strong></p>
+<p>以下命令将自动编译并打开默认浏览器以阅读文档：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/yangbajing/nacos-sdk-scala</span><br><span class="line">cd nacos-sdk-scala</span><br><span class="line">sbt nacos-docs/paradoxBrowse</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/04/09/nacos-sdk-for-scala/" data-id="ckmlxnrcj007cs7ugahz0xyd1" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/04/09/nacos-sdk-for-scala/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nacos/" rel="tag">nacos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/play/" rel="tag">play</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/" rel="tag">spring-cloud</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/05/12/%E5%8F%8D%E5%BA%94%E5%BC%8F%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%9Aspring-akka-docker/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          微服务开放环境：Spring &amp; Akka &amp; Docker
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/04/06/akka-http-chinese-edition/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Akka HTTP 非官方中文翻译</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/04/09/nacos-sdk-for-scala/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

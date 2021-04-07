@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Spark实战：工程实践 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="工欲善其事，必先利其器。 （本文是基于 sbt 来配置 Spark 开发的工程化，支持 Scala&#x2F;Java 编程语言。Python 和 R 用户需要使用其它方式来实现工程化。） 今天谈谈Spark开发中的工程化问题。我们都知道Spark程序是在集群上跑的，需要把程序打包后使用 $SPARK_HOME&#x2F;bin&#x2F;spark-sumibt 到Spark集群上。 在开发、测试时，每次代码修改后都打包、提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark实战：工程实践">
+<meta property="og:url" content="http://www.yangbajing.me/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="工欲善其事，必先利其器。 （本文是基于 sbt 来配置 Spark 开发的工程化，支持 Scala&#x2F;Java 编程语言。Python 和 R 用户需要使用其它方式来实现工程化。） 今天谈谈Spark开发中的工程化问题。我们都知道Spark程序是在集群上跑的，需要把程序打包后使用 $SPARK_HOME&#x2F;bin&#x2F;spark-sumibt 到Spark集群上。 在开发、测试时，每次代码修改后都打包、提">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-12T09:17:38.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="sbt">
+<meta property="article:tag" content="spark">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/spark/">spark</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-spark实战：工程实践" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Spark实战：工程实践
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="article-date">
+  <time datetime="2016-03-12T09:17:38.000Z" itemprop="datePublished">2016-03-12</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-spark实战：工程实践" data-title="Spark实战：工程实践" data-url="http://www.yangbajing.me/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong>工欲善其事，必先利其器。</strong></p>
+<p><em>（本文是基于 <a href="http://www.scala-sbt.org/0.13/docs/index.html" target="_blank" rel="external">sbt</a> 来配置 Spark 开发的工程化，支持 Scala/Java 编程语言。Python 和 R 用户需要使用其它方式来实现工程化。）</em></p>
+<p>今天谈谈Spark开发中的工程化问题。我们都知道Spark程序是在集群上跑的，需要把程序打包后使用 <code>$SPARK_HOME/bin/spark-sumibt</code> 到Spark集群上。</p>
+<p>在开发、测试时，每次代码修改后都打包、提交、运行……效率还是比较差的。而提交到集群上的程序一般情况下都是连接的生产环境的数据，先不说安全问题，就当每次都要完整跑完生产环境的数据也是很费时的事情。</p>
+<p>更佳的实践是我们在开发时连接 <code>local</code> 模式，或者使用一个单独的比较小的集群，以及一个数量比较少的数据集来进行测试。</p>
+<h2 id="使用sbt配置开发环境"><a href="#使用sbt配置开发环境" class="headerlink" title="使用sbt配置开发环境"></a>使用sbt配置开发环境</h2><p>我们来看看 build.sbt 配置，在开发 spark 应用时需要的基本设置。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">scalaVersion := <span class="string">"2.11.7"</span></span><br><span class="line"></span><br><span class="line">scalacOptions ++= <span class="type">Seq</span>(</span><br><span class="line">  <span class="string">"-encoding"</span>, <span class="string">"utf8"</span>,</span><br><span class="line">  <span class="string">"-unchecked"</span>,</span><br><span class="line">  <span class="string">"-feature"</span>,</span><br><span class="line">  <span class="string">"-deprecation"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">assemblyJarName in assembly := <span class="string">"spark-startup.jar"</span></span><br><span class="line"></span><br><span class="line">assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">test in assembly := &#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> verSpark = <span class="string">"1.5.2"</span></span><br><span class="line"><span class="keyword">val</span> verHadoop = <span class="string">"2.6.2"</span></span><br><span class="line">      </span><br><span class="line">libraryDependencies ++= <span class="type">Seq</span>(</span><br><span class="line">  <span class="string">"org.apache.spark"</span> %% <span class="string">"spark-core"</span> % <span class="string">"1.5.2"</span> % <span class="string">"provided,test"</span>,</span><br><span class="line">  <span class="string">"org.apache.spark"</span> %% <span class="string">"spark-sql"</span> % <span class="string">"1.5.2"</span> % <span class="string">"provided,test"</span>,</span><br><span class="line">  <span class="string">"org.scalatest"</span> %% <span class="string">"scalatest"</span> % <span class="string">"2.2.6"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>我们添加 <code>spark-core</code>、<code>spark-sql</code>和<code>scalatest</code>两个依赖库，前两个提供了 Spark RDD和 Spark SQL/DataFrame 编程支持，后一个提供了测试支持。</p>
+<p>这里需要注意的点是：<code>provided</code> 配置，它的含意是在打包所指定的库由运行时环境提供，这里只是开发时需要依赖它。这一点很重要，若我们在提交给 Spark 的jar包里包含了 spark-xxx 库，会引起运行时错误。</p>
+<p>我们还需要给 sbt 添加 <a href="https://github.com/sbt/sbt-assembly" target="_blank" rel="external">sbt-assembly</a> 插件，用于更好的控制打包过程。<code>project/plugins.sbt</code>：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addSbtPlugin(<span class="string">"com.eed3si9n"</span> % <span class="string">"sbt-assembly"</span> % <span class="string">"0.14.2"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p>Spark的开发不是本文重点，这里会分享些我在日常开发中的经验。关于：测试和提交到集群运行。先来看看代码：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> example</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.<span class="type">SQLContext</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * Created by Yang Jing (yangbajing@gmail.com) on 2016-03-12.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SparkApp</span>(<span class="params">sc: <span class="type">SparkContext</span></span>) <span class="keyword">extends</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> sqlContext = <span class="keyword">new</span> <span class="type">SQLContext</span>(sc)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>() = &#123;</span><br><span class="line">    <span class="keyword">val</span> jsonStrings = <span class="type">Seq</span>(</span><br><span class="line">      <span class="string">""</span><span class="string">"&#123;"</span><span class="string">name":"</span>杨景<span class="string">","</span><span class="string">age":31&#125;"</span><span class="string">""</span>,</span><br><span class="line">      <span class="string">""</span><span class="string">"&#123;"</span><span class="string">name":"</span>羊八井<span class="string">","</span><span class="string">age"31&#125;"</span><span class="string">""</span>,</span><br><span class="line">      <span class="string">""</span><span class="string">"&#123;"</span><span class="string">name":"</span><span class="string">yangbajing","</span><span class="string">age":31&#125;"</span><span class="string">""</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">val</span> rdd = sc.parallelize(jsonStrings)</span><br><span class="line">    <span class="keyword">val</span> sql = sqlContext.read.json(rdd)</span><br><span class="line">    sql.show()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">SparkApp</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">    <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> app = <span class="keyword">new</span> <span class="type">SparkApp</span>(sc)</span><br><span class="line">    app.run()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们定义了 SparkApp 类和它的伴生对象，业务逻辑将写在 SparkApp 类里，<code>SparkConf</code> 将在伴生对象的 <code>main</code> 方法中定义。<code>SparkContext</code> 是做为参数传入 SparkApp 类的，在 <code>object SparkAPP</code> 中并未设置 master 和 appName ，因为这两个值将会在提交脚本（一个简单的shell脚本，用以指定 <code>spark-submit</code> 的相关参数）中设置。</p>
+<p><strong>（需要注意的是 SparkApp class要实现 <code>Serializable</code> 接口，只有这样 Spark 才能正常的使用序列化将代码分配的集群中运行。）</strong></p>
+<p><strong>提交脚本</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$SPARK_HOME</span>/bin/spark-submit \</span><br><span class="line">    --class sample.SparkApp \</span><br><span class="line">    --master spark://sc-data-server-1:7077 \</span><br><span class="line">    --name <span class="string">"sample.SparkApp"</span> \</span><br><span class="line">    --executor-memory 10G \</span><br><span class="line">    --driver-memory 2G \</span><br><span class="line">    --total-executor-cores 4 \</span><br><span class="line">    --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \</span><br><span class="line">    ../target/scala-2.11/spark-startup.jar &amp;</span><br></pre></td></tr></table></figure>
+<p>提交脚本里我们设置了将程序提交到 Spark 集群运行所需要的参数：</p>
+<ul>
+<li>–class: 指定 jar 包里要执行的 main 方法所在类</li>
+<li>–master: 指定 spark master 地址</li>
+<li>–name: 设置程序名字</li>
+<li>–executor-memory: 指定每个 Work 所能使用内存</li>
+<li>–total-executor-cores: 设置集群使用CPU core总数</li>
+<li>–driver-memory: 指定驱动程序使用内存</li>
+<li>–conf: 设置额外参数，有多个参数需要设置可使用多个 –conf 配置项</li>
+<li>jar path: 脚本的最后一荐设置 jar 包路径</li>
+</ul>
+<p>这里 –class, –master, –mane 和最后的 jar 包路径是必需设置的参数。</p>
+<p>提交脚本已经写好了，那怎样生成 jar（<code>../target/scala-2.11/spark-startup.jar</code>） 包呢？使用 <code>sbt assembly</code> 命令可以生成 jar 包在 target/scala-2.11` 目录下。</p>
+<p>使用 sbt 来开发 spark 的产品级程序，这样就可以了。但若每次修改代码都执行以上打包、提交到集群等步骤。效率还是有点慢，且实际上也不是个好的方式。接下来，再介绍下怎么使用 <a href="http://www.scalatest.org/" target="_blank" rel="external">scalatest</a> 来测试我们的 spark 程序。</p>
+<p><strong>测试程序</strong></p>
+<p>首先来看看我们的 <code>SparkAppTest</code> 测序程序代码：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SparkAppTest</span> <span class="keyword">extends</span> <span class="title">WordSpec</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="string">"SparkAppTest"</span> should &#123;</span><br><span class="line"></span><br><span class="line">    <span class="string">"run"</span> in &#123;</span><br><span class="line">      <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">        .setAppName(<span class="string">"SparkAppTest"</span>)</span><br><span class="line">        .setMaster(<span class="string">"local[*]"</span>)</span><br><span class="line">      <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> app = <span class="keyword">new</span> <span class="type">SparkApp</span>(sc)</span><br><span class="line">      app.run()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在测试程序中，我们设置了 appName，并将 master 地址设置为：<strong>local[*]</strong>，含义是使用本地 Spark 模式，并使用所有CPU核。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><em>做为一篇实战文章，是肯定会有代码详示的，代码在此：<a href="https://github.com/yangbajing/scala-applications/tree/master/spark-startup" target="_blank" rel="external">https://github.com/yangbajing/scala-applications/tree/master/spark-startup</a>。</em></p>
+<p>sbt 是一款不错的项目构建工具，但是国内用户使用时会遇到“墙”的问题。现在好了，国内 Scala 社区建立了 <a href="http://centaur.github.io/repox/" target="_blank" rel="external">Repox 社区公服</a>，它解决了 Scala 开发者除了语法外最大的一个难题。</p>
+<p>Spark是优化的大数据工具（平台），希望能和各位爱好者多交流、学习。</p>
+<p><strong>相关文章：</strong></p>
+<ul>
+<li><a href="http://www.yangbajing.me/2015/07/28/Learn%20Spark%20-%20%E5%AE%89%E8%A3%85/">Learn Spark - 安装</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" data-id="ckmlxnrax004as7ugh94o8yii" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sbt/" rel="tag">sbt</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/" rel="tag">spark</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/31/hive%E4%B8%8Espark/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Hive与Spark
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Cassandra升级更新</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

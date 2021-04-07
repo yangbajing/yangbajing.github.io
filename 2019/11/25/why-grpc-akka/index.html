@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Why gRPC (Akka) ? | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文链接：https:&#x2F;&#x2F;doc.akka.io&#x2F;docs&#x2F;akka-grpc&#x2F;current&#x2F;whygrpc.html 什么是gRPC？gRPC是一个支持请求&#x2F;响应和流式处理（非持久化）用例的传输机制。 它是一个模式优先的RPC框架，协议在 Protobuf服务描述符（protobuf service descriptor）中声明，请求和响应将通过 HTTP&#x2F;2 连接流式的传输。 它有几个优点：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why gRPC (Akka) ?">
+<meta property="og:url" content="http://www.yangbajing.me/2019/11/25/why-grpc-akka/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="原文链接：https:&#x2F;&#x2F;doc.akka.io&#x2F;docs&#x2F;akka-grpc&#x2F;current&#x2F;whygrpc.html 什么是gRPC？gRPC是一个支持请求&#x2F;响应和流式处理（非持久化）用例的传输机制。 它是一个模式优先的RPC框架，协议在 Protobuf服务描述符（protobuf service descriptor）中声明，请求和响应将通过 HTTP&#x2F;2 连接流式的传输。 它有几个优点：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-25T01:49:03.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-grpc">
+<meta property="article:tag" content="grpc">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-why-grpc-akka" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Why gRPC (Akka) ?
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/11/25/why-grpc-akka/" class="article-date">
+  <time datetime="2019-11-25T01:49:03.000Z" itemprop="datePublished">2019-11-25</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-why-grpc-akka" data-title="Why gRPC (Akka) ?" data-url="http://www.yangbajing.me/2019/11/25/why-grpc-akka/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>原文链接：<a href="https://doc.akka.io/docs/akka-grpc/current/whygrpc.html" target="_blank" rel="external">https://doc.akka.io/docs/akka-grpc/current/whygrpc.html</a></em></p>
+<h1 id="什么是gRPC？"><a href="#什么是gRPC？" class="headerlink" title="什么是gRPC？"></a>什么是gRPC？</h1><p>gRPC是一个支持请求/响应和流式处理（非持久化）用例的传输机制。</p>
+<p>它是一个模式优先的RPC框架，协议在 <strong>Protobuf服务描述符</strong>（<strong>protobuf service descriptor</strong>）中声明，请求和响应将通过 HTTP/2 连接流式的传输。</p>
+<p>它有几个优点：</p>
+<ul>
+<li>模式优先设计倾向于定义良好且分享的服务接口，而不是脆弱的自组织方案；</li>
+<li>基于Protobuf的wire协议是高效的、众所周知的，并且允许兼容的模式演化；</li>
+<li>基于 HTTP/2 ，这样它允许在单个连接上复用多个数据流；</li>
+<li>流式处理的请求和响应是第一类的；</li>
+<li>许多语言都有可用的工具，不同语言编写的客户端与服务之间可无缝互操作。</li>
+</ul>
+<p>这使得gRPC非常适合：</p>
+<ul>
+<li>内部服务之间的连接</li>
+<li>连接到公开的gRPC API外部服务（甚至是用其它语言编写的服务）</li>
+<li>给Web或移动设备前端提供数据</li>
+</ul>
+<h2 id="gRPC-vs-REST"><a href="#gRPC-vs-REST" class="headerlink" title="gRPC vs REST"></a>gRPC vs REST</h2><ul>
+<li>REST在编码方面更灵活，而gRPC基于Protobuf标准化了编码格式；</li>
+<li>REST是无模式的或可以使用第三方模式，而gRPC总是在Protobuf模式定义中声明服务和消息。</li>
+</ul>
+<p><em>注：REST的编码灵活性是有代价的，随着时间的推移，不兼容或不同步会造成越来越多的问题；而gRPC通过Protobuf在编码阶段既强制了模式与数据类型，同时还提供了很好的向后兼容性解决方案。</em></p>
+<h2 id="gRPC-vs-SOAP"><a href="#gRPC-vs-SOAP" class="headerlink" title="gRPC vs SOAP"></a>gRPC vs SOAP</h2><ul>
+<li>SOAP在传输（协议）方面更灵活，而gRPC只能在 HTTP/2 上使用；</li>
+<li>在SOPA中，一旦定义了协议，它们通常就固定下来（通常要求每个服务版本都使用一个新的路径），而Protobuf明确地支持模式演进（注：可增加字段）。</li>
+</ul>
+<h2 id="gRPC-vs-Message-bus"><a href="#gRPC-vs-Message-bus" class="headerlink" title="gRPC vs Message bus"></a>gRPC vs Message bus</h2><ul>
+<li>虽然gRPC建立在高效的非阻塞实现之上，但它仍然是 <strong>同步的</strong> ，因为它要求通信 <strong>双方</strong> 同时可用。当使用（持久地）消息总线（Message bus）时，需要生产者和总线必须启动，消息者可按需启动，从而导致更高程序的分离（解耦）；</li>
+<li>gRPC支持每个请求的双向数据流处理，而消息总线的数据流处理是分离的。</li>
+</ul>
+<p><em>注：解耦并不总是好的，某些时候更需要请求可以即时响应，通常消息总线并不适合用于提供服务API的场景。</em></p>
+<h2 id="gRPC-vs-Akka-Remoting"><a href="#gRPC-vs-Akka-Remoting" class="headerlink" title="gRPC vs Akka Remoting"></a>gRPC vs Akka Remoting</h2><ul>
+<li>虽然Akka Remoting允许在不同的Akka ActorSystem之间透明地交换消息，但它仍然需要大量地工作来支持高效并兼容的消息序列化。且大消息会阻塞消息传输。与gRPC相比，Akka Remoting不是流式的（streaming，不直接支持streams），它需要建立在消息传递的基础之上（例如：使用 StreamRefs 来模拟流式传输）；</li>
+<li>Akka Remoting的协议（数据序列化协议）可能会随着Akka版本和配置的变化而变化，这需要你确保系统的所有部分都运行足够相似的版本（版本不兼容问题比较突出）。而gRPC，保证了协议的长期稳定，因此gRPC客户端和服务更加松耦合；</li>
+<li>当Akka Remoting中的消息使用 fire-and-forget 方式传递会分离服务的执行，而任务类型的RPC都需要等待远程过程调用得到响应。任何RPC情况下等待（甚至是非阻塞的）响应通常都会绑定重要的资源（<em>注：请求ID、上下文、超时等</em>）。公平地说，（Akka）actor通信（Akka Remoting）通常是以请求/响应的方式构造的，这使得它非常类似于更传统的RPC技术，并且具有相同的缺点（比如：需要保持 <strong>客户端</strong> 状态，在等待响应时需要超时机制）。</li>
+</ul>
+<h2 id="Akka生态里怎样使用gRPC？"><a href="#Akka生态里怎样使用gRPC？" class="headerlink" title="Akka生态里怎样使用gRPC？"></a>Akka生态里怎样使用gRPC？</h2><p>Akka从2.6开始，<code>akka-remote</code>已不建议在用户代码里使用，同时<code>akka-cluster-client</code>也被 <strong>Deprecated</strong>。这样导致两个结果：</p>
+<ol>
+<li>使用 Akka Cluster 机制进行集群内消息通信，如：akka-cluster-sharding、akka-cluster-distributed-data、akka-cluster-pubsub。</li>
+<li>Akka Cluster 之间（集群外）使用 Akka gRPC 进行通信。</li>
+</ol>
+<p><strong><em>一句话总结：Akka Cluster之外推荐使用Akka gRPC！</em></strong></p>
+<p>接下来，也许你会对 <a href="https://www.yangbajing.me/akka-cookbook/">《Akka Cookbook》</a> 感兴趣。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/11/25/why-grpc-akka/" data-id="ckmlxnrc2006is7ug1o46ld53" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/11/25/why-grpc-akka/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-grpc/" rel="tag">akka-grpc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/grpc/" rel="tag">grpc</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/11/24/akka-cookbook/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Akka Cookbook</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/11/25/why-grpc-akka/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

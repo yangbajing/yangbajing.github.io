@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="当前代码tag: v0.0.1，https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;wechat-meal&#x2F;tree&#x2F;v0.0.1 微信公众号提供了详尽的API文档说明，提供了明文和加密两种接入方式。这里，我们选择加密的接入方式微信公众号接入指南。 本此实战的代码部署到了Heroku，读者也可以下载代码尝试部署到Heroku并连接微信公众号。本章末尾讲讲述Heroku的部署及怎样与微信公众">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API">
+<meta property="og:url" content="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="当前代码tag: v0.0.1，https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;wechat-meal&#x2F;tree&#x2F;v0.0.1 微信公众号提供了详尽的API文档说明，提供了明文和加密两种接入方式。这里，我们选择加密的接入方式微信公众号接入指南。 本此实战的代码部署到了Heroku，读者也可以下载代码尝试部署到Heroku并连接微信公众号。本章末尾讲讲述Heroku的部署及怎样与微信公众">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/_images/wechat-dev-conn.png">
+<meta property="article:published_time" content="2015-08-15T01:09:46.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="微信开发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/_images/wechat-dev-conn.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-Scala实战-通过微信聊天窗口实现应答式点餐_1：连接微信API" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/" class="article-date">
+  <time datetime="2015-08-15T01:09:46.000Z" itemprop="datePublished">2015-08-15</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-Scala实战-通过微信聊天窗口实现应答式点餐_1：连接微信API" data-title="Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API" data-url="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong>当前代码tag: v0.0.1，<a href="https://github.com/yangbajing/wechat-meal/tree/v0.0.1" target="_blank" rel="external">https://github.com/yangbajing/wechat-meal/tree/v0.0.1</a></strong></p>
+<p>微信公众号提供了详尽的API文档说明，提供了明文和加密两种接入方式。这里，我们选择加密的接入方式<a href="http://mp.weixin.qq.com/wiki/17/2d4265491f12608cd170a95559800f2d.html" target="_blank" rel="external">微信公众号接入指南</a>。</p>
+<p>本此实战的代码部署到了<code>Heroku</code>，读者也可以下载代码尝试部署到<code>Heroku</code>并连接微信公众号。本章末尾讲讲述<code>Heroku</code>的部署及怎样与微信公众号连接。</p>
+<h2 id="微信API"><a href="#微信API" class="headerlink" title="微信API"></a>微信API</h2><p>现在主要的功能是实现与微信公众号的连接，我们将在微信里实现一个<code>echo</code>功能。就是用户在公众号聊天窗口里输入一段文本，系统原样返回。</p>
+<p>连接微信API的代码<a href="https://github.com/yangbajing/wechat-meal/blob/v0.0.1/app/controllers/api/WeixinCtrl.scala" target="_blank" rel="external"><code>WeixinCtrl</code></a>。微信公众号的连接分两个部分：</p>
+<ol>
+<li><p>验证服务器地址有效性<br>这个接口为<code>WeixinCtrl.get</code>方法，用户校验服务器的有效性</p>
+</li>
+<li><p>依据接口文档实现业务逻辑<br>这个接口为<code>WeixinCtrl.post</code>方法，通过微信公众号聊天窗口发送的各类消息都会发送的这里。</p>
+</li>
+</ol>
+<p>代码<a href="https://github.com/yangbajing/wechat-meal/blob/master/platform/src/main/scala/me/yangbajing/wechatmeal/service/WeixinService.scala" target="_blank" rel="external"><code>WeixinService</code></a>是所以微信API相关功能实现的入口，现在提供了签名校验、加密消息和解密消息功能。</p>
+<p>在<code>WeixinCtrl</code>控制器中，我们将收到的微信公众号消息原样返回给用户：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">post</span> </span>= <span class="type">Action</span>.async(parse.tolerantText) &#123; request =&gt;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">getBody</span> </span>= ......</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">responseContent</span></span>(body: <span class="type">String</span>) = &#123;</span><br><span class="line">    <span class="keyword">val</span> node = scala.xml.<span class="type">XML</span>.loadString(body)</span><br><span class="line">    <span class="type">OrdinaryMessage</span>.msgType(node) <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">MessageTypes</span>.<span class="type">Event</span> =&gt; <span class="comment">// event</span></span><br><span class="line">        ......</span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="comment">// message</span></span><br><span class="line">        getContent(node)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    body &lt;- getBody</span><br><span class="line">    resp &lt;- responseContent(body)</span><br><span class="line">  &#125; <span class="keyword">yield</span> &#123;</span><br><span class="line">    <span class="type">Ok</span>(resp).withHeaders(<span class="string">"Content-Type"</span> -&gt; <span class="string">"application/xml; charset=UTF-8"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getContent</span></span>(node: <span class="type">Elem</span>, reply: <span class="type">String</span> = <span class="string">""</span>): <span class="type">Future</span>[<span class="type">String</span>] = &#123;</span><br><span class="line">  <span class="keyword">val</span> msg = <span class="type">OrdinaryMessage</span>(node)</span><br><span class="line">  <span class="keyword">val</span> newTs = <span class="type">Utils</span>.currentTimeSeconds()</span><br><span class="line">  <span class="keyword">val</span> replyContent =</span><br><span class="line">    <span class="keyword">if</span> (<span class="type">StringUtils</span>.isEmpty(reply)) &#123;</span><br><span class="line">      msg.contentOption getOrElse <span class="string">"欢迎关注羊八井花园"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      reply</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">val</span> respStr = <span class="type">OrdinaryTextResponse</span>(msg.fromUserName, msg.toUserName, newTs, replyContent).stringify()</span><br><span class="line">  weixinService.encryptMsg(respStr, newTs, <span class="type">Utils</span>.randomString(<span class="number">8</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Play-2的依赖注入"><a href="#Play-2的依赖注入" class="headerlink" title="Play 2的依赖注入"></a><code>Play 2</code>的依赖注入</h2><p>从<code>Play 2.4</code>开始，官方推荐使用依赖注入的方式定义路由和服务了，<code>Play</code>使用了一个<code>Java</code>标准注入方式的实现：<code>Guice</code>。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Singleton</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WeixinCtrl</span> <span class="title">@Inject</span>(<span class="params"></span>)(<span class="params">weixinService: <span class="type">WeixinService</span></span>) <span class="keyword">extends</span> <span class="title">Controller</span> <span class="keyword">with</span> <span class="title">BaseController</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get</span></span>(signature: <span class="type">String</span>, echostr: <span class="type">String</span>, timestamp: <span class="type">String</span>, nonce: <span class="type">String</span>) = <span class="type">Action</span>.async &#123; request =&gt;</span><br><span class="line">    logger.debug(request.rawQueryString)</span><br><span class="line"></span><br><span class="line">    weixinService.validateSign(timestamp, nonce).map &#123;</span><br><span class="line">      <span class="keyword">case</span> `signature` =&gt; <span class="type">Ok</span>(echostr)</span><br><span class="line">      <span class="keyword">case</span> s =&gt;</span><br><span class="line">        logger.error(<span class="string">s"<span class="subst">$s</span> not match <span class="subst">$signature</span>"</span>)</span><br><span class="line">        <span class="type">BadRequest</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p><code>@singleton</code>注解表示这个控制器将做为单例存在于整个应用生命周期，默认情况是每次调用时都会重新生成一个。</p>
+<p>在<code>Play</code>中，注入依赖的方式和Java很不一样，它是在<code>scala</code>类定义的主构造器中注入的，而<code>Java</code>代码中我们一般是在类的私用属性变量上进行注入。<code>@Inject()</code>是一个特殊的语法，用于修饰构造函数，之后的参数实例将由注解框架自动注入。在这里，<code>weixinService</code>这个服务就由系统框架注入了，我们不需要手动管理它的生命周期。</p>
+<h2 id="部署代码到Heroku"><a href="#部署代码到Heroku" class="headerlink" title="部署代码到Heroku"></a>部署代码到<a href="https://www.heroku.com" target="_blank" rel="external"><code>Heroku</code></a></h2><p>到<code>Heroku</code>官网<a href="https://www.heroku.com" target="_blank" rel="external">https://www.heroku.com</a>注册开发者账号。</p>
+<ul>
+<li>登陆<code>Heroku</code>的Dashboard，点击屏幕右上方的<code>+</code>号按钮添加新应用。</li>
+<li>安装<a href="https://toolbelt.heroku.com/" target="_blank" rel="external"><code>Heroku Toolbelt</code></a>，支持<code>Mac</code>、<code>Linux</code>和<code>Windows</code>系统。</li>
+<li>有3种部署代码到<code>Heroku</code>的方式：<ul>
+<li>通过<code>Toolbelt</code>用<code>Git</code>方式提交</li>
+<li>连接到你的<code>Github</code>代码库</li>
+<li>通过<code>Dropbox</code>提交。</li>
+</ul>
+</li>
+</ul>
+<p>这里选择了通过<code>Toolbelt</code>手动提交到<code>Heroku</code>的GIT代码库的方式。</p>
+<ol>
+<li>添加新的或已存的项目到<code>GIT</code>版本库</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> cd wechat-meal/</span><br><span class="line"><span class="meta">$</span> git init</span><br><span class="line"><span class="meta">$</span> heroku git:remote -a wechat-meal</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>部署应用</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git add .</span><br><span class="line"><span class="meta">$</span> git commit -am "make it better"</span><br><span class="line"><span class="meta">$</span> git push heroku master</span><br></pre></td></tr></table></figure>
+<h2 id="连接微信公众号"><a href="#连接微信公众号" class="headerlink" title="连接微信公众号"></a>连接微信公众号</h2><p>程序使用“加密连接”的方式，示例代码已经整合了微信提供的<code>Java版</code>加密、解密功能。</p>
+<p><img src="_images/wechat-dev-conn.png" alt="配置微信接口参数"></p>
+<p>在<code>URL(服务器地址)</code>配置好连接微信API的服务地址，这里注意需要使用http协议（必需为80端口）。设置好<code>Token(令牌)</code>和<code>EncodingAESKey(消息加解密密钥)</code>，并选择“安全模式”。</p>
+<p>当全部配置都设置好后就可以点击“提交”按钮了。若微信API校验成功，这时你从公众号的聊天窗口输入一段文本，公众号应该会回显你的输入内容。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="http://www.yangbajing.me/post/scala/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D.html">Scala实战-通过微信聊天窗口实现应答式点餐 0</a></li>
+<li><a href="http://www.yangbajing.me/post/scala/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API.html">Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API</a></li>
+</ol>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/" data-id="ckmlxnr9q002ks7ugojg802ha" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91/" rel="tag">微信开发</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/23/Spark%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Spark小试牛刀
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Scala实战-通过微信聊天窗口实现应答式点餐 0</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

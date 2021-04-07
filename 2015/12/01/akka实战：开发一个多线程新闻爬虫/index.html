@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Akka实战：开发一个多线程新闻爬虫 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="代码：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;crawler-service 使用Scala开发一个多线程爬虫，利用Akka库来管理多个爬虫任务的分散和聚合操作。同时使用scheduleOnce来设置爬取任务在指定时间内完成。详细需求如下：  可同时从多个新闻源（搜索引擎）检索新闻 已爬取过的新闻存库，第二次访问时直接从库里读取 提供duration参数，调用方可设置调用超时。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka实战：开发一个多线程新闻爬虫">
+<meta property="og:url" content="http://www.yangbajing.me/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="代码：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;crawler-service 使用Scala开发一个多线程爬虫，利用Akka库来管理多个爬虫任务的分散和聚合操作。同时使用scheduleOnce来设置爬取任务在指定时间内完成。详细需求如下：  可同时从多个新闻源（搜索引擎）检索新闻 已爬取过的新闻存库，第二次访问时直接从库里读取 提供duration参数，调用方可设置调用超时。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-12-01T04:32:05.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="cassandra">
+<meta property="article:tag" content="crawler">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-akka实战：开发一个多线程新闻爬虫" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Akka实战：开发一个多线程新闻爬虫
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/" class="article-date">
+  <time datetime="2015-12-01T04:32:05.000Z" itemprop="datePublished">2015-12-01</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-akka实战：开发一个多线程新闻爬虫" data-title="Akka实战：开发一个多线程新闻爬虫" data-url="http://www.yangbajing.me/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>代码：<a href="https://github.com/yangbajing/crawler-service" target="_blank" rel="external">https://github.com/yangbajing/crawler-service</a></p>
+<p>使用Scala开发一个多线程爬虫，利用Akka库来管理多个爬虫任务的分散和聚合操作。同时使用<code>scheduleOnce</code>来设置爬取任务在指定时间内完成。详细需求如下：</p>
+<ul>
+<li>可同时从多个新闻源（搜索引擎）检索新闻</li>
+<li>已爬取过的新闻存库，第二次访问时直接从库里读取</li>
+<li>提供<code>duration</code>参数，调用方可设置调用超时。超时到，则Server返回已爬取新闻。且爬虫任务需继续进行，并完成存库</li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/" data-id="ckmlxnra0002xs7ug64m42ip3" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cassandra/" rel="tag">cassandra</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/crawler/" rel="tag">crawler</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/02/2015%E6%80%BB%E7%BB%93%E6%9A%A82016%E5%B1%95%E6%9C%9B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          2015总结暨2016展望
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/11/28/%E5%86%99%E7%BB%99python%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84scala%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">写给Python程序员的Scala入门教程</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

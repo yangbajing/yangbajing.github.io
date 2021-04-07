@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Spring应用enum处理 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文地址：https:&#x2F;&#x2F;www.yangbajing.me&#x2F;2019&#x2F;04&#x2F;17&#x2F;spring应用enum处理&#x2F; 在Spring应用开发中，Java枚举（enum）默认都是使用字符串进行序列化&#x2F;反序列化的。都通常我们都想将其序列化&#x2F;反序列化为int值。 MyBatisMyBatis-plus提供了插件用于自定义enum的序列化&#x2F;反序列化，非常方便。只需要在application.properti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring应用enum处理">
+<meta property="og:url" content="http://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="原文地址：https:&#x2F;&#x2F;www.yangbajing.me&#x2F;2019&#x2F;04&#x2F;17&#x2F;spring应用enum处理&#x2F; 在Spring应用开发中，Java枚举（enum）默认都是使用字符串进行序列化&#x2F;反序列化的。都通常我们都想将其序列化&#x2F;反序列化为int值。 MyBatisMyBatis-plus提供了插件用于自定义enum的序列化&#x2F;反序列化，非常方便。只需要在application.properti">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-04-17T11:10:12.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="jackson">
+<meta property="article:tag" content="enum">
+<meta property="article:tag" content="mybatis-plus">
+<meta property="article:tag" content="mybatis">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/java/">java</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-spring应用enum处理" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Spring应用enum处理
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/" class="article-date">
+  <time datetime="2019-04-17T11:10:12.000Z" itemprop="datePublished">2019-04-17</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-spring应用enum处理" data-title="Spring应用enum处理" data-url="http://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>原文地址：<a href="https://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/">https://www.yangbajing.me/2019/04/17/spring应用enum处理/</a></em></p>
+<p>在Spring应用开发中，Java枚举（enum）默认都是使用字符串进行序列化/反序列化的。都通常我们都想将其序列化/反序列化为int值。</p>
+<h2 id="MyBatis"><a href="#MyBatis" class="headerlink" title="MyBatis"></a>MyBatis</h2><p>MyBatis-plus提供了插件用于自定义enum的序列化/反序列化，非常方便。只需要在<code>application.properties</code>配置文件中指定默认的枚举处理器即可，配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mybatis-plus.configuration.default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler</span><br></pre></td></tr></table></figure>
+<p>枚举类需要实现IEnum<t>接口或将字段标记<code>@EnumValue</code>注解，这样MyBatis-plus在遇到相关枚举类型时就会通过指定的配置来序列/反序列化。</t></p>
+<h2 id="Jackson"><a href="#Jackson" class="headerlink" title="Jackson"></a>Jackson</h2><h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p>Jackson的配置要相对复杂一点，Jackson对序列化提供了默认的支持，在要使用的字段上加<code>JsonValue</code>注解即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> UserStatusEnum implements IEnum&lt;Integer&gt; &#123;</span><br><span class="line">    DISABLE(<span class="number">0</span>, <span class="string">"禁用"</span>),</span><br><span class="line">    NORMAL(<span class="number">1</span>, <span class="string">"正常"</span>),</span><br><span class="line">    PLAIN(<span class="number">999</span>, <span class="string">"普通"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonValue</span></span><br><span class="line">    <span class="keyword">private</span> Integer value;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    UserStatusEnum(Integer value, String name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h3><p>从int反序列化到enum，需要自定义<code>IEnumDeserializer</code>反序列化器，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EnumDeserializers</span> <span class="keyword">extends</span> <span class="title">Deserializers</span>.<span class="title">Base</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> JsonDeserializer&lt;?&gt; findEnumDeserializer(Class&lt;?&gt; type, DeserializationConfig config, BeanDescription beanDesc) <span class="keyword">throws</span> JsonMappingException &#123;</span><br><span class="line">        <span class="keyword">if</span> (IEnum<span class="class">.<span class="keyword">class</span>.<span class="title">isAssignableFrom</span>(<span class="title">type</span>)) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> IEnumDeserializer(EnumResolver.constructUnsafe(type, config.getAnnotationIntrospector()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.findEnumDeserializer(type, config, beanDesc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IEnumDeserializer</span> <span class="keyword">extends</span> <span class="title">StdScalarDeserializer</span>&lt;<span class="title">IEnum</span>&lt;<span class="title">Integer</span>&gt;&gt; <span class="keyword">implements</span> <span class="title">ContextualDeserializer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IEnum&lt;Integer&gt;[] enums;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> EnumResolver enumResolver;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">IEnumDeserializer</span><span class="params">(EnumResolver byNameResolver)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(byNameResolver.getEnumClass());</span><br><span class="line">        <span class="keyword">this</span>.enumResolver = byNameResolver;</span><br><span class="line">        <span class="keyword">this</span>.enums = (IEnum&lt;Integer&gt;[]) enumResolver.getRawEnums();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IEnum&lt;Integer&gt; <span class="title">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span> <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> value = p.getIntValue();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(<span class="keyword">this</span>.enums).filter(e -&gt; e.getValue() == value).findFirst()</span><br><span class="line">                .orElseThrow(() -&gt; <span class="keyword">new</span> JsonParseException(p, <span class="string">"枚举需要为整数类型"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> JsonDeserializer&lt;?&gt; createContextual(DeserializationContext ctxt, BeanProperty property) <span class="keyword">throws</span> JsonMappingException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并实现Jackson Module：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyModule</span> <span class="keyword">extends</span> <span class="title">Module</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getModuleName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"MyModule"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Version <span class="title">version</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Version.unknownVersion();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setupModule</span><span class="params">(SetupContext context)</span> </span>&#123;</span><br><span class="line">        context.addDeserializers(<span class="keyword">new</span> EnumDeserializers());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反序列化器和Jackson Module定义好后就需要把它加入Jackson里了，有两种方式：</p>
+<h4 id="手动注册："><a href="#手动注册：" class="headerlink" title="手动注册："></a>手动注册：</h4><p>获取<code>objectMapper</code>，将<code>MyModule</code>注册到Jackson。</p>
+<p><code>objectMapper.registerModule(new MyModule());</code></p>
+<h4 id="自动注册："><a href="#自动注册：" class="headerlink" title="自动注册："></a>自动注册：</h4><p>通过Java自带的<code>ServiceLoader</code>服务提供商加载机制来自动注册模块到Jackson。在<code>resources</code>资源目录创建服务配置文件，文件路径如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">resources</span><br><span class="line">  META-INF.services</span><br><span class="line">    com.fasterxml.jackson.databind.Module</span><br></pre></td></tr></table></figure>
+<p>服务配置文件内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.fasterxml.jackson.module.yangbajing.MyModule</span><br></pre></td></tr></table></figure></p>
+<p><strong>自定义Spring Boot Jackson</strong></p>
+<p>反序列化器、Jackson模块都写好了，我们需要自定义Spring Boot来启动Jackson的模块自动注册功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@EnableWebFlux</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfiguration</span> <span class="keyword">implements</span> <span class="title">WebFluxConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureHttpMessageCodecs</span><span class="params">(ServerCodecConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        ServerCodecConfigurer.ServerDefaultCodecs defaultCodecs = configurer.defaultCodecs();</span><br><span class="line">        defaultCodecs.jackson2JsonEncoder(<span class="keyword">new</span> Jackson2JsonEncoder(objectMapper));</span><br><span class="line">        defaultCodecs.jackson2JsonDecoder(<span class="keyword">new</span> Jackson2JsonDecoder(objectMapper));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Order</span>(-<span class="number">1</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ObjectMapper <span class="title">objectMapper</span><span class="params">(Jackson2ObjectMapperBuilder builder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> builder.createXmlMapper(<span class="keyword">false</span>).build().findAndRegisterModules();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>findAndRegisterModules()</code>方法将通过<code>ServiceLoader</code>机制从classpath路径中找到所有的<code>Module</code>并注册到Jackson。</p>
+<p>在<code>void configureHttpMessageCodecs(ServerCodecConfigurer configurer)</code>函数中自定义<code>ServerDefaultCodecs</code>，使用新的<code>ObjectMapper</code>来注册<code>jackson2JsonEncoder</code>和<code>jackson2JsonDecoder</code>。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Java提供了丰富而完善的enum机制，但大部化序列化/反序列化工具都使用<strong>文字</strong>来对其进行序列化/反序列化。而通常我们都会枚举序列化/反序列化为int。</p>
+<p>Spring还是一个优秀的框架的，从公司/组织层面选择它不会错。</p>
+<p>可以在 <a href="https://github.com/yangbajing/spring-reactive-sample" target="_blank" rel="external">https://github.com/yangbajing/spring-reactive-sample</a> 找到示例代码。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/" data-id="ckmlxnrbh005is7ug23t8y4u8" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/enum/" rel="tag">enum</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jackson/" rel="tag">jackson</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis-plus/" rel="tag">mybatis-plus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          反应式的Spring
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Scala实战：迁移文件</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

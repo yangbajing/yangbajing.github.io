@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>DevOps实践：Gitlab、Jenkins | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Wiki百科上对DevOps一词的解释：DevOps（Development和Operations的组合詞）是一种重视「软件开发人员（Dev）」和「IT运维技术人员（Ops）」之间沟通合作的文化、运动或慣例。 透过自动化「软件交付」和「架构变更」的流程，来使得构建、测试、发布软件能够更加地快捷、频繁和可靠。 而Gitlab和Jenkins是我们在DevOps中常用的工具，本文将简单介绍下怎样搭配G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevOps实践：Gitlab、Jenkins">
+<meta property="og:url" content="http://www.yangbajing.me/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Wiki百科上对DevOps一词的解释：DevOps（Development和Operations的组合詞）是一种重视「软件开发人员（Dev）」和「IT运维技术人员（Ops）」之间沟通合作的文化、运动或慣例。 透过自动化「软件交付」和「架构变更」的流程，来使得构建、测试、发布软件能够更加地快捷、频繁和可靠。 而Gitlab和Jenkins是我们在DevOps中常用的工具，本文将简单介绍下怎样搭配G">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.yangbajing.me/img/gitlab/profile-access-token.png">
+<meta property="og:image" content="http://www.yangbajing.me/img/jenkins/jenkins-credentials.png">
+<meta property="og:image" content="http://www.yangbajing.me/img/jenkins/job-new-pipeline.png">
+<meta property="article:published_time" content="2019-03-20T09:31:38.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="jenkins">
+<meta property="article:tag" content="devops">
+<meta property="article:tag" content="gitlab">
+<meta property="article:tag" content="jenkins-pipeline">
+<meta property="article:tag" content="jenkinsfile">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.yangbajing.me/img/gitlab/profile-access-token.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-devops实践：gitlab、jenkins" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      DevOps实践：Gitlab、Jenkins
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/" class="article-date">
+  <time datetime="2019-03-20T09:31:38.000Z" itemprop="datePublished">2019-03-20</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-devops实践：gitlab、jenkins" data-title="DevOps实践：Gitlab、Jenkins" data-url="http://www.yangbajing.me/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Wiki百科上对<strong>DevOps</strong>一词的解释：DevOps（Development和Operations的组合詞）是一种重视「软件开发人员（Dev）」和「IT运维技术人员（Ops）」之间沟通合作的文化、运动或慣例。 透过自动化「软件交付」和「架构变更」的流程，来使得构建、测试、发布软件能够更加地快捷、频繁和可靠。</p>
+<p>而Gitlab和Jenkins是我们在DevOps中常用的工具，本文将简单介绍下怎样搭配Gitlab与Jenkins来起步DevOps。</p>
+<h2 id="Gitlab"><a href="#Gitlab" class="headerlink" title="Gitlab"></a>Gitlab</h2><h3 id="生成Access-Token"><a href="#生成Access-Token" class="headerlink" title="生成Access Token"></a>生成Access Token</h3><p>访问 <em>User Settings &gt; Access Token</em>，生成<strong>Personal Access Tokens</strong>。如下图：</p>
+<p><img src="/img/gitlab/profile-access-token.png" alt></p>
+<p>点击<code>Create personal access token</code>生成访问令牌，并记住它。之后配置Jenkins时需要。</p>
+<h2 id="创建一个Jenkins-pipeline作业"><a href="#创建一个Jenkins-pipeline作业" class="headerlink" title="创建一个Jenkins pipeline作业"></a>创建一个Jenkins pipeline作业</h2><h3 id="配置Jenkins的Gitlab访问凭据"><a href="#配置Jenkins的Gitlab访问凭据" class="headerlink" title="配置Jenkins的Gitlab访问凭据"></a>配置Jenkins的Gitlab访问凭据</h3><p>进入Jenkins的全局设置，配置Gitlab。分别设置<code>Connection name</code>、<code>Gitlab host URL</code>和<code>Credentials</code>。</p>
+<p>点击<code>Credentials</code>右侧的<code>Add</code>按钮，添加<code>Gitlab API token</code>。在弹框里选择<code>Gitlab API token</code>类型，并设置<code>API token</code>。</p>
+<p><img src="/img/jenkins/jenkins-credentials.png" alt></p>
+<p><code>API token</code>为之前从Gitlab里生成的<strong>Access Token</strong>。</p>
+<h3 id="创建Job"><a href="#创建Job" class="headerlink" title="创建Job"></a>创建Job</h3><p>创建一个流水线（pipeline）风格的作业（Job）。</p>
+<p><img src="/img/jenkins/job-new-pipeline.png" alt></p>
+<h4 id="Build-Triggers"><a href="#Build-Triggers" class="headerlink" title="Build Triggers"></a>Build Triggers</h4><p>构建触发规则选中<code>Build when a change is pushed to Gitlab. Gitlab webhook URL: &lt;jenkins job url&gt;</code>。<code>Advanced...</code>按钮，并在<code>Secret token</code>选项点击<code>Generate</code>生成<strong>Secret token</strong>（记住这个token，在配置Gitlab仓库时需要）。</p>
+<h4 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h4><ol>
+<li><strong>Definition</strong>选择<code>Pipeline script from SCM</code></li>
+<li><strong>SCM</strong>选择<code>Git</code><ul>
+<li><code>Repository URL</code>填写需要Jenkins自动化构建的Git仓库</li>
+<li><code>Credentials</code>选择已定义的一个凭据或者新建一个</li>
+<li><code>Branches to build</code>请填写自己希望构建的分支</li>
+<li><code>Script Path</code>填写相对Git仓库根目录的<strong>Jenkinsfile</strong>路径，这里我们设置为<code>Jenkinsfile.develop</code></li>
+</ul>
+</li>
+<li>点击<strong>Save</strong>按钮保存</li>
+</ol>
+<h3 id="配置Gitlab代码Push时自动通知Jenkins"><a href="#配置Gitlab代码Push时自动通知Jenkins" class="headerlink" title="配置Gitlab代码Push时自动通知Jenkins"></a>配置Gitlab代码Push时自动通知Jenkins</h3><p>进入Gitlab某个项目，从左侧菜单选择<code>Settings &gt; Integrations</code>。</p>
+<ol>
+<li><strong>URL</strong>：填写Jenkins作业地址，如：<code>http://&lt;ip&gt;:&lt;port&gt;/project/&lt;job name&gt;</code></li>
+<li><strong>Secret Token</strong>：填写在作罢Jenkins作业<strong>Build Triggers</strong>步骤时获得的token</li>
+<li><strong>Push events</strong>：选中<code>Push events</code>（酌情可以指定具体的分支名）和<code>Merge request events</code>。</li>
+</ol>
+<p>最后点击<code>Save chagens</code>按钮保存设置，也可以在保存前先点击<code>Test</code>按钮测试下配置是否正确。<code>也许你需要去掉**Enable SSL verification**，这看你的具体情况设置</code>。</p>
+<h3 id="示例Jenkinsfile"><a href="#示例Jenkinsfile" class="headerlink" title="示例Jenkinsfile"></a>示例Jenkinsfile</h3><p>这里有一个示例的<strong>Jenkinsfile</strong>配置文件，定义了3个阶段，分别是：</p>
+<ol>
+<li><strong>Test</strong>：执行单元测试，测试完成后收集测试结果。可以在pipeline在<strong>Test</strong>界面查看测试报告。</li>
+<li></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    options &#123;</span><br><span class="line">        timeout(time: 2, unit: &apos;HOURS&apos;)</span><br><span class="line">    &#125;</span><br><span class="line">    stages  &#123;</span><br><span class="line">        stage(&apos;Test&apos;) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh &apos;./sbt test&apos;</span><br><span class="line">            &#125;</span><br><span class="line">            post &#123;</span><br><span class="line">                always &#123;</span><br><span class="line">                    junit &apos;**/target/test-reports/*.xml&apos;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(&apos;Package&apos;) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh &apos;./sbt &quot;project hongka-resource-app&quot; assembly &quot;project hongka-resource-converter-app&quot; assembly&apos;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(&apos;Deliver for develop&apos;) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                expression &#123;</span><br><span class="line">                    currentBuild.result == null || currentBuild.result == &apos;SUCCESS&apos;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            environment &#123;</span><br><span class="line">                DEPLOY_CREDENTIALS = credentials(&apos;develop_username_password&apos;)</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh &quot;./scripts/deploy_develop.sh $DEPLOY_CREDENTIALS_USR $DEPLOY_CREDENTIALS_PSW&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    post &#123;</span><br><span class="line">        always &#123;</span><br><span class="line">            echo &apos;This will always run&apos;</span><br><span class="line">        &#125;</span><br><span class="line">        success &#123;</span><br><span class="line">            archiveArtifacts artifacts: &apos;**/target/scala-2.12/*.jar&apos;, fingerprint: true</span><br><span class="line">        &#125;</span><br><span class="line">        failure &#123;</span><br><span class="line">            echo &apos;This will run only if failed&apos;</span><br><span class="line">        &#125;</span><br><span class="line">        unstable &#123;</span><br><span class="line">            echo &apos;This will run only if the run was marked as unstable&apos;</span><br><span class="line">        &#125;</span><br><span class="line">        changed &#123;</span><br><span class="line">            echo &apos;This will run only if the state of the Pipeline has changed&apos;</span><br><span class="line">            echo &apos;For example, if the Pipeline was previously failing but is now successful&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><ol>
+<li>这里没有选择Jenkins的多分支pipeline构建，而是使用单分支pipeline构建。考虑主要如下：<ol>
+<li>通常仓库里都会有一些不属于开发、测试的分支及临时分支存在，不希望每次这些分支被Push时都会触发自动编译</li>
+<li>多分支构建都使用同一个Jenkinsfile，会造成Jenkinsfile内容变多且复杂</li>
+<li>我更喜欢对不同的分支建立不同的Jenkins作业，这样从管理上，特别是权限控制上更方便</li>
+</ol>
+</li>
+<li>因为使用了单分支pipeline，所以需要为不同的构建环境创建不同的<strong>Jenkinsfile</strong>配置文件。这里有一个推荐：<ul>
+<li><code>scripts/Jenkinsfile.develop</code>：开发环境</li>
+<li><code>scripts/Jenkinsfile.test</code>：测试环境</li>
+<li><code>scripts/Jenkinsfile.production</code>：所产环境</li>
+<li><code>scripts/Jenkinsfile.master</code>：演示环境（可选）</li>
+</ul>
+</li>
+</ol>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/" data-id="ckmlxnrbe005bs7ugh5sr0g1w" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gitlab/" rel="tag">gitlab</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/" rel="tag">jenkins</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins-pipeline/" rel="tag">jenkins-pipeline</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkinsfile/" rel="tag">jenkinsfile</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Scala实战：迁移文件
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/02/23/alpakka-kafka%EF%BC%8C%E5%8F%8D%E5%BA%94%E5%BC%8Fkafka%E5%AE%A2%E6%88%B7%E7%AB%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Alpakka Kafka，反应式Kafka客户端</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

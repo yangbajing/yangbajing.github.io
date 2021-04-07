@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>转发：一次操作系统报错OutOfMemory Error的处理记录 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文地址：https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;3f8692eb3660 原文作者：1nfinity  在启动公司内嵌的tomcat容器时出现报错, 如下： 1234# There is insufficient memory for the Java Runtime Environment to continue.# Native memory allocation (mallo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="转发：一次操作系统报错OutOfMemory Error的处理记录">
+<meta property="og:url" content="http://www.yangbajing.me/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="原文地址：https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;3f8692eb3660 原文作者：1nfinity  在启动公司内嵌的tomcat容器时出现报错, 如下： 1234# There is insufficient memory for the Java Runtime Environment to continue.# Native memory allocation (mallo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-30T02:34:52.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="outofmemory">
+<meta property="article:tag" content="vm.overcommit_memory">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-转发：一次操作系统报错outofmemory-error的处理记录" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      转发：一次操作系统报错OutOfMemory Error的处理记录
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time datetime="2019-05-30T02:34:52.000Z" itemprop="datePublished">2019-05-30</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-转发：一次操作系统报错outofmemory-error的处理记录" data-title="转发：一次操作系统报错OutOfMemory Error的处理记录" data-url="http://www.yangbajing.me/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <ul>
+<li>原文地址：<a href="https://www.jianshu.com/p/3f8692eb3660" target="_blank" rel="external">https://www.jianshu.com/p/3f8692eb3660</a></li>
+<li>原文作者：1nfinity</li>
+</ul>
+<p>在启动公司内嵌的tomcat容器时出现报错, 如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># There is insufficient memory for the Java Runtime Environment to continue.</span><br><span class="line"># Native memory allocation (malloc) failed to allocate 160088 bytes for AllocateHeap</span><br><span class="line"># An error report file with more information is saved as:</span><br><span class="line"># /users/xxx/hs_err_pidxxxx.log</span><br></pre></td></tr></table></figure>
+<p>然后查看/users/xxx/hs_err_pidxxxx.log内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#</span><br><span class="line"># There is insufficient memory for the Java Runtime Environment to continue.</span><br><span class="line"># Native memory allocation (mmap) failed to map 357564416 bytes for committing reserved memory.</span><br><span class="line"># Possible reasons:</span><br><span class="line">#   The system is out of physical RAM or swap space</span><br><span class="line">#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap</span><br><span class="line"># Possible solutions:</span><br><span class="line">#   Reduce memory load on the system</span><br><span class="line">#   Increase physical memory or swap space</span><br><span class="line">#   Check if swap backing store is full</span><br><span class="line">#   Decrease Java heap size (-Xmx/-Xms)</span><br><span class="line">#   Decrease number of Java threads</span><br><span class="line">#   Decrease Java thread stack sizes (-Xss)</span><br><span class="line">#   Set larger code cache with -XX:ReservedCodeCacheSize=</span><br><span class="line">#   JVM is running with Unscaled Compressed Oops mode in which the Java heap is</span><br><span class="line">#     placed in the first 4GB address space. The Java Heap base address is the</span><br><span class="line">#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress</span><br><span class="line">#     to set the Java Heap base and to place the Java Heap above 4GB virtual address.</span><br><span class="line"># This output file may be truncated or incomplete.</span><br><span class="line">#</span><br><span class="line">#  Out of Memory Error (os_linux.cpp:2749), pid=4252, tid=0x00007f3f38bb5700</span><br><span class="line">#</span><br><span class="line"># JRE version:  (8.0_201-b09) (build )</span><br><span class="line"># Java VM: Java HotSpot(TM) 64-Bit Server VM (25.201-b09 mixed mode linux-amd64 compressed oops)</span><br><span class="line"># Core dump written. Default location: /users/ems/core or core.4252 (max size 521000 kB). To ensure a full core dump, try &quot;ulimit -c unlimited&quot; before starting Java again</span><br><span class="line">#</span><br></pre></td></tr></table></figure>
+<p>翻译过来就是本地内存分配失败, 可能的原因有两种</p>
+<ol>
+<li>系统物理内存或虚拟内存不足</li>
+<li>程序在压缩指针模式下运行, Java堆会阻塞本地堆的增长</li>
+</ol>
+<p>然后使用<code>free -m</code>命令查询, 发现内存足够:</p>
+<p>那么尝试按第二个问题进行解决, 可能的方案有两种:</p>
+<ol>
+<li>禁止使用压缩指针模式<ul>
+<li>方法: 在<code>catalina.sh</code>中<code>JAVA_OPTS</code>的值后面添加<code>-XX:-UseCompressedOops</code>, 再重启tomcat</li>
+</ul>
+</li>
+<li>将Java堆的起始地址设置成使Java堆大小+起始地址大于4G,<ul>
+<li>原因: 请参考 <a href="https://blogs.oracle.com/poonam/running-on-a-64bit-platform-and-still-running-out-of-memory" target="_blank" rel="external">https://blogs.oracle.com/poonam/running-on-a-64bit-platform-and-still-running-out-of-memory</a>,</li>
+<li>方法: 在这里我将起始地址简单直接的设为4G即4294967296</li>
+</ul>
+</li>
+</ol>
+<p>在尝试过这两种方法后发现依然报同样的错误<br>这时我在想会不会是堆内存过大, 导致系统无法分配内存, 于是进行尝试: 把堆内存减少一半, 看看效果.</p>
+<ol>
+<li>方法: 在<code>catalina.sh</code>中<code>JAVA_OPTS</code>的值中把原来的<code>-Xms1024m -Xmx2048m</code>改为<code>-Xms512m -Xmx1024m</code>, 再重启tomcat</li>
+</ol>
+<p>结果JVM启动成功, 问题解决。</p>
+<p>后续思考: 为什么在可用内存充足的情况下系统无法分配给JVM更多内存? 一直没有想到完美的解释, 如果有明白的兄弟可以指教一下.<br>尝试对后续思考进行解答: 原因应该还是内存不足, 可能操作系统会预留一些内存, 而我的机器上默认的启动参数是<code>-Xms1024m -Xmx2048m</code>,<br>可能已经超过了系统允许分配的最高值, 因此无法分配内存. 当我使用<code>java -Xms10m -Xmx20m</code>可以启动成功, `java -Xms500m -Xmx2000m会失败,<br>因此, 应该还是内存不足的问题对后续思考的最终解答及该问题的完美解决方案:</p>
+<p>这个问题是由于<code>/proc/meminfo</code>下的<code>vm.overcommit_memory</code>被设置成不允许<code>overcommit</code>造成的</p>
+<p>首先了解一下<code>overcommit</code>的意思: 用户进程申请的是虚拟地址, 而这个虚拟地址是不允许任意申请的, 因为虚拟内存需要物理内存做支撑, 如果分配太多虚拟内存, 会对性能参数影响. <code>overcommit</code>就是对虚拟内存的过量分配<code>vm.overcommit_memory</code>的用处: 控制过量分配的策略. 这个参数一共有3个可选值:</p>
+<ol>
+<li><code>0</code>: Heuristic overcommit handling. 就是由操作系统自己决定过量分配策略</li>
+<li><code>1</code>: Always overcommit. 一直允许过量分配</li>
+<li><code>2</code>: Don’t overcommit. 不允许过量分配</li>
+</ol>
+<p>在这个案例里面, 使用<code>sysctl vm.overcommit_memory</code>来查看, 发现<code>vm.overcommit_memory = 2</code>, 即采用的是不允许过量分配的设置. 而在错误日志中也证明了这一点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CommitLimit:    15951192 kB</span><br><span class="line">Committed_AS:   15837036 kB</span><br></pre></td></tr></table></figure>
+<p>解决方案是<code>sudo sysctl vm.overcommit_memory=0</code>, 即<code>vm.overcommit_memory = 0</code>, 允许系统自己决定过量分配策略（推荐编辑<code>/etc/sysctl.conf</code>文件使永久生效）。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/" data-id="ckmlxnrbo005ss7ug6hn4o8cb" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/outofmemory/" rel="tag">outofmemory</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vm-overcommit-memory/" rel="tag">vm.overcommit_memory</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Firewall快速使用
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">使用WebFlux与Reactor-当流为 Empty 时的注意事项</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

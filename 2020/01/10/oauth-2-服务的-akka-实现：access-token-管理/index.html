@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>OAuth 2 服务的 Akka 实现：access_token 管理 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="实现一个 OAuth 2 服务有几个核心点：  OAuth 2 协议解析 连接的用户可能很多，系统需支持横向扩展 每个连接用户的 access_token 的状态控制：有效期控制 服务要支持容错、可恢复、可扩展、高并发等特性  使用 Akka 来实现 OAuth 2 服务会发现逻辑非常的清晰，且能很好的实现以上几个核心点。 每个连接用户或 access_token 可抽像为一个 Actor，这样多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OAuth 2 服务的 Akka 实现：access_token 管理">
+<meta property="og:url" content="http://www.yangbajing.me/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="实现一个 OAuth 2 服务有几个核心点：  OAuth 2 协议解析 连接的用户可能很多，系统需支持横向扩展 每个连接用户的 access_token 的状态控制：有效期控制 服务要支持容错、可恢复、可扩展、高并发等特性  使用 Akka 来实现 OAuth 2 服务会发现逻辑非常的清晰，且能很好的实现以上几个核心点。 每个连接用户或 access_token 可抽像为一个 Actor，这样多">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-10T07:20:30.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-cluster">
+<meta property="article:tag" content="akka-persistence">
+<meta property="article:tag" content="oauth-2">
+<meta property="article:tag" content="oauth2">
+<meta property="article:tag" content="access_token">
+<meta property="article:tag" content="akka-cluster-sharding">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-oauth-2-服务的-akka-实现：access-token-管理" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      OAuth 2 服务的 Akka 实现：access_token 管理
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/" class="article-date">
+  <time datetime="2020-01-10T07:20:30.000Z" itemprop="datePublished">2020-01-10</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-oauth-2-服务的-akka-实现：access-token-管理" data-title="OAuth 2 服务的 Akka 实现：access_token 管理" data-url="http://www.yangbajing.me/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>实现一个 OAuth 2 服务有几个核心点：</p>
+<ol>
+<li>OAuth 2 协议解析</li>
+<li>连接的用户可能很多，系统需支持横向扩展</li>
+<li>每个连接用户的 <code>access_token</code> 的状态控制：有效期控制</li>
+<li>服务要支持容错、可恢复、可扩展、高并发等特性</li>
+</ol>
+<p>使用 Akka 来实现 OAuth 2 服务会发现逻辑非常的清晰，且能很好的实现以上几个核心点。</p>
+<p>每个连接用户或 <code>access_token</code> 可抽像为一个 <strong>Actor</strong>，这样多个连接用户或 <code>access_token</code> 即可并发访问。在 Actor 内部可以管理过期时间等状态。</p>
+<p>使用 <strong>akka-cluster-sharding</strong> 我们可以实现连接用户的集群部署、横向扩展。而 <strong>akka-persistence</strong> 提供 <code>EventSourcedBehavior</code> 为 <strong>Actor</strong> 添加了持久化能力，这实现了可恢复特性。通过使用 Akka Cluster 机制，可以减少对外部缓存系统的依赖。</p>
+<p>Akka Actor提供了监管机制，这样我们可对错误快速响应，实现了容错性。</p>
+<h2 id="access-token"><a href="#access-token" class="headerlink" title="access_token"></a>access_token</h2><p>在 Akka 中通过 Actor 模型来设计 access_token 有两种主要方案：</p>
+<ol>
+<li>每个 <code>access_token</code> 一个 Actor，通过 ClusterSharding 来水平扩展，将 Akka Actor 做为一种有状态的缓存来使用。</li>
+<li>每个用户（<strong>User</strong>）一个 Actor，在用户 Actor 内部通过状态来保存多个 <code>access_token</code> 。</li>
+</ol>
+<h2 id="每个-access-token-一个-Actor"><a href="#每个-access-token-一个-Actor" class="headerlink" title="每个 access_token 一个 Actor"></a>每个 access_token 一个 Actor</h2><p>每个 <code>access_token</code> 一个 Actor 在设计上比较简单，只需要注意在过期时间到时停止此 Actor。示例代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">AccessTokenEntity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">State</span>(<span class="params">accessToken: <span class="type">String</span>, expiresEpochMillis: <span class="type">Long</span> = 0L, refreshToken: <span class="type">String</span> = ""</span>)</span></span><br><span class="line"><span class="class">      <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Command</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">case</span> <span class="title">object</span> <span class="title">StopSelf</span> <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Check</span>(<span class="params">replyTo: <span class="type">ActorRef</span>[<span class="type">Int</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Create</span>(<span class="params">refreshToken: <span class="type">String</span>, replTo: <span class="type">ActorRef</span>[<span class="type">AccessToken</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Event</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Created</span>(<span class="params">expiresIn: <span class="type">FiniteDuration</span>, refreshToken: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Event</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">private</span> <span class="title">val</span> <span class="title">DEVIATION</span> </span>= <span class="number">5000</span>L <span class="comment">// 过期时间比实际时间多5秒，保证客户端在过期时间点时刷新时新、旧 access_token 在一定时间内都有效</span></span><br><span class="line">  <span class="keyword">val</span> <span class="type">TypeKey</span>: <span class="type">EntityTypeKey</span>[<span class="type">Command</span>] = <span class="type">EntityTypeKey</span>(<span class="string">"AccessTokenEntity"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">init</span></span>(system: <span class="type">ActorSystem</span>[_]): <span class="type">ActorRef</span>[<span class="type">ShardingEnvelope</span>[<span class="type">Command</span>]] =</span><br><span class="line">    <span class="type">ClusterSharding</span>(system).init(</span><br><span class="line">      <span class="type">Entity</span>(<span class="type">TypeKey</span>)(ec =&gt; apply(ec.entityId))</span><br><span class="line">        .withSettings(<span class="type">ClusterShardingSettings</span>(system).withPassivateIdleEntityAfter(<span class="type">Duration</span>.<span class="type">Zero</span>)))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>(accessToken: <span class="type">String</span>): <span class="type">Behavior</span>[<span class="type">Command</span>] =</span><br><span class="line">    <span class="type">Behaviors</span>.setup(context =&gt;</span><br><span class="line">      <span class="type">Behaviors</span>.withTimers &#123; timers =&gt;</span><br><span class="line">        <span class="keyword">val</span> behavior = <span class="type">EventSourcedBehavior</span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">State</span>](</span><br><span class="line">          <span class="type">PersistenceId</span>.of(<span class="type">TypeKey</span>.name, accessToken),</span><br><span class="line">          <span class="type">State</span>(accessToken),</span><br><span class="line">          (state, command) =&gt; commandHandler(timers, state, command),</span><br><span class="line">          (state, event) =&gt; eventHandler(state, event))</span><br><span class="line">        behavior.receiveSignal &#123;</span><br><span class="line">          <span class="keyword">case</span> (state, <span class="type">RecoveryCompleted</span>) =&gt;</span><br><span class="line">            <span class="keyword">val</span> now = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">            <span class="keyword">if</span> (state.expiresEpochMillis &lt; now) context.self ! <span class="type">StopSelf</span></span><br><span class="line">            <span class="keyword">else</span> timers.startSingleTimer(<span class="type">StopSelf</span>, (state.expiresEpochMillis - now).millis)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">commandHandler</span></span>(timers: <span class="type">TimerScheduler</span>[<span class="type">Command</span>], state: <span class="type">State</span>, command: <span class="type">Command</span>): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>] =</span><br><span class="line">    command <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Check</span>(replyTo) =&gt;</span><br><span class="line">        <span class="keyword">if</span> (state.expiresEpochMillis == <span class="number">0</span>L) &#123;</span><br><span class="line">          <span class="type">Effect</span>.stop().thenReply(replyTo)(_ =&gt; <span class="number">401</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">val</span> status = <span class="keyword">if</span> (<span class="type">System</span>.currentTimeMillis() &lt; state.expiresEpochMillis) <span class="number">200</span> <span class="keyword">else</span> <span class="number">401</span></span><br><span class="line">          <span class="type">Effect</span>.reply(replyTo)(status)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">Create</span>(refreshToken, replTo) =&gt;</span><br><span class="line">        <span class="keyword">if</span> (state.expiresEpochMillis &gt; <span class="number">0</span>L) <span class="comment">// 返回已存在 AccessToken</span></span><br><span class="line">          <span class="type">Effect</span>.reply(replTo)(createAccessToken(state))</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          <span class="type">Effect</span>.persist(<span class="type">Created</span>(<span class="number">2.</span>hours, refreshToken)).thenReply(replTo) &#123; st =&gt;</span><br><span class="line">            timers.startSingleTimer(<span class="type">StopSelf</span>, (st.expiresEpochMillis - <span class="type">System</span>.currentTimeMillis()).millis)</span><br><span class="line">            createAccessToken(st)</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="type">StopSelf</span> =&gt; <span class="type">Effect</span>.stop()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">eventHandler</span></span>(state: <span class="type">State</span>, event: <span class="type">Event</span>): <span class="type">State</span> = event <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Created</span>(expiresIn, refreshToken) =&gt;</span><br><span class="line">      state.copy(</span><br><span class="line">        expiresEpochMillis = <span class="type">System</span>.currentTimeMillis() + expiresIn.toMillis + <span class="type">DEVIATION</span>,</span><br><span class="line">        refreshToken = refreshToken)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方案的好处在于：</p>
+<ol>
+<li>通过 ClusterSharding 可以实现理论上无限水平扩展的集群，无论多少个 <code>access_token</code> 都可以保存下来</li>
+<li>容错、可恢复，节点挂掉后可从其它机器上恢复令牌状态</li>
+<li>生成的 <code>access_token</code> 令牌不需要含有业务信息，只需要保证唯一性即可</li>
+<li>代码逻辑直观</li>
+</ol>
+<p>这种方案的缺点有：</p>
+<ol>
+<li>每个 <code>access_token</code> 一个 Actor，Actor 所做的功能不多，相对具有过期时间（TTL）的缓存数据存储系统来说优势不明显</li>
+<li>每个无效 <code>access_token</code> 都会在生成一个 Actor 后才可以判断是否有效，这会造成创建很多无效的 Actor</li>
+</ol>
+<h2 id="每个用户一个-Actor"><a href="#每个用户一个-Actor" class="headerlink" title="每个用户一个 Actor"></a>每个用户一个 Actor</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">UserEntity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">State</span>(<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">      tokens: <span class="type">Map</span>[<span class="type">String</span>, <span class="type">DueEpochMillis</span>] = <span class="type">Map</span>(</span>),</span></span><br><span class="line"><span class="class">      <span class="title">refreshTokens</span></span>: <span class="type">Map</span>[<span class="type">String</span>, <span class="type">DueEpochMillis</span>] = <span class="type">Map</span>())</span><br><span class="line">      <span class="keyword">extends</span> <span class="type">CborSerializable</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span></span>(clearTokens: <span class="type">IterableOnce</span>[<span class="type">String</span>], clearRefreshTokens: <span class="type">IterableOnce</span>[<span class="type">String</span>]): <span class="type">State</span> =</span><br><span class="line">      copy(tokens = tokens -- clearTokens, refreshTokens = refreshTokens -- clearRefreshTokens)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addToken</span></span>(created: <span class="type">TokenCreated</span>): <span class="type">State</span> = &#123;</span><br><span class="line">      <span class="keyword">val</span> tokenDue = <span class="type">OAuthUtils</span>.expiresInToEpochMillis(created.accessTokenExpiresIn)</span><br><span class="line">      <span class="keyword">val</span> refreshTokenDue = <span class="type">OAuthUtils</span>.expiresInToEpochMillis(created.refreshTokenExpiresIn)</span><br><span class="line">      <span class="type">State</span>(tokens + (created.accessToken -&gt; tokenDue), refreshTokens + (created.refreshToken -&gt; refreshTokenDue))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addToken</span></span>(accessToken: <span class="type">String</span>, expiresIn: <span class="type">FiniteDuration</span>): <span class="type">State</span> =</span><br><span class="line">      copy(tokens = tokens + (accessToken -&gt; <span class="type">OAuthUtils</span>.expiresInToEpochMillis(expiresIn)))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">sealed</span> <span class="class"><span class="keyword">trait</span> <span class="title">Command</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">CreateToken</span>(<span class="params">replyTo: <span class="type">ActorRef</span>[<span class="type">AccessToken</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">CheckToken</span>(<span class="params">accessToken: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Int</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">RefreshToken</span>(<span class="params">refreshToken: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Option</span>[<span class="type">AccessToken</span>]]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">object</span> <span class="title">ClearTick</span> <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">sealed</span> <span class="title">trait</span> <span class="title">Event</span> <span class="keyword">extends</span> <span class="title">CborSerializable</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">TokenCreated</span>(<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">      accessToken: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">      accessTokenExpiresIn: <span class="type">FiniteDuration</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">      refreshToken: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">      refreshTokenExpiresIn: <span class="type">FiniteDuration</span></span>)</span></span><br><span class="line"><span class="class">      <span class="keyword">extends</span> <span class="title">Event</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">TokenRefreshed</span>(<span class="params">accessToken: <span class="type">String</span>, expiresIn: <span class="type">FiniteDuration</span></span>) <span class="keyword">extends</span> <span class="title">Event</span></span></span><br><span class="line"><span class="class">  <span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ClearEvent</span>(<span class="params">clearTokens: <span class="type">Set</span>[<span class="type">String</span>], clearRefreshTokens: <span class="type">Set</span>[<span class="type">String</span>]</span>) <span class="keyword">extends</span> <span class="title">Event</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">  <span class="title">val</span> <span class="title">TypeKey</span></span>: <span class="type">EntityTypeKey</span>[<span class="type">Command</span>] = <span class="type">EntityTypeKey</span>(<span class="string">"UserEntity"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">init</span></span>(system: <span class="type">ActorSystem</span>[_]): <span class="type">ActorRef</span>[<span class="type">ShardingEnvelope</span>[<span class="type">Command</span>]] =</span><br><span class="line">    <span class="type">ClusterSharding</span>(system).init(</span><br><span class="line">      <span class="type">Entity</span>(<span class="type">TypeKey</span>)(ec =&gt; apply(ec))</span><br><span class="line">        .withSettings(<span class="type">ClusterShardingSettings</span>(system).withPassivateIdleEntityAfter(<span class="type">Duration</span>.<span class="type">Zero</span>)))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>(ec: <span class="type">EntityContext</span>[<span class="type">Command</span>]): <span class="type">Behavior</span>[<span class="type">Command</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> userId = ec.entityId</span><br><span class="line">    <span class="type">Behaviors</span>.setup(</span><br><span class="line">      context =&gt;</span><br><span class="line">        <span class="type">Behaviors</span>.withTimers(timers =&gt;</span><br><span class="line">          <span class="keyword">new</span> <span class="type">UserEntity</span>(<span class="type">PersistenceId</span>.of(ec.entityTypeKey.name, ec.entityId), userId, timers, context)</span><br><span class="line">            .eventSourcedBehavior()))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> blog.oauth2.peruser.<span class="type">UserEntity</span>._</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserEntity</span> <span class="title">private</span> (<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    persistenceId: <span class="type">PersistenceId</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    userId: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    timers: <span class="type">TimerScheduler</span>[<span class="type">Command</span>],</span></span></span><br><span class="line"><span class="class"><span class="params">    context: <span class="type">ActorContext</span>[<span class="type">Command</span>]</span>) </span>&#123;</span><br><span class="line">  timers.startTimerWithFixedDelay(<span class="type">ClearTick</span>, <span class="number">2.</span>hours)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">eventSourcedBehavior</span></span>(): <span class="type">EventSourcedBehavior</span>[<span class="type">Command</span>, <span class="type">Event</span>, <span class="type">State</span>] =</span><br><span class="line">    <span class="type">EventSourcedBehavior</span>(</span><br><span class="line">      persistenceId,</span><br><span class="line">      <span class="type">State</span>(),</span><br><span class="line">      (state, command) =&gt;</span><br><span class="line">        command <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">CheckToken</span>(accessToken, replyTo)    =&gt; processCheckToken(state, accessToken, replyTo)</span><br><span class="line">          <span class="keyword">case</span> <span class="type">RefreshToken</span>(refreshToken, replyTo) =&gt; processRefreshToken(state, refreshToken, replyTo)</span><br><span class="line">          <span class="keyword">case</span> <span class="type">CreateToken</span>(replyTo)                =&gt; processCreateToken(replyTo)</span><br><span class="line">          <span class="keyword">case</span> <span class="type">ClearTick</span>                           =&gt; processClear(state)</span><br><span class="line">        &#125;,</span><br><span class="line">      (state, event) =&gt;</span><br><span class="line">        event <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">TokenRefreshed</span>(accessToken, expiresIn)      =&gt; state.addToken(accessToken, expiresIn)</span><br><span class="line">          <span class="keyword">case</span> created: <span class="type">TokenCreated</span>                       =&gt; state.addToken(created)</span><br><span class="line">          <span class="keyword">case</span> <span class="type">ClearEvent</span>(clearTokens, clearRefreshTokens) =&gt; state.clear(clearTokens, clearRefreshTokens)</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">processRefreshToken</span></span>(</span><br><span class="line">      state: <span class="type">State</span>,</span><br><span class="line">      refreshToken: <span class="type">String</span>,</span><br><span class="line">      replyTo: <span class="type">ActorRef</span>[<span class="type">Option</span>[<span class="type">AccessToken</span>]]): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">if</span> (state.refreshTokens.get(refreshToken).exists(due =&gt; <span class="type">System</span>.currentTimeMillis() &lt; due)) &#123;</span><br><span class="line">      <span class="keyword">val</span> refreshed = <span class="type">TokenRefreshed</span>(<span class="type">OAuthUtils</span>.generateToken(userId), <span class="number">2.</span>hours)</span><br><span class="line">      <span class="type">Effect</span></span><br><span class="line">        .persist(refreshed)</span><br><span class="line">        .thenReply(replyTo)(_ =&gt; <span class="type">Some</span>(<span class="type">AccessToken</span>(refreshed.accessToken, refreshed.expiresIn.toSeconds, refreshToken)))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="type">Effect</span>.reply(replyTo)(<span class="type">None</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">processCheckToken</span></span>(state: <span class="type">State</span>, accessToken: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Int</span>]): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> status = state.tokens.get(accessToken) <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Some</span>(dueTimestamp) =&gt; <span class="keyword">if</span> (<span class="type">System</span>.currentTimeMillis() &lt; dueTimestamp) <span class="number">200</span> <span class="keyword">else</span> <span class="number">401</span></span><br><span class="line">      <span class="keyword">case</span> <span class="type">None</span>               =&gt; <span class="number">401</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">Effect</span>.reply(replyTo)(status)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">processCreateToken</span></span>(replyTo: <span class="type">ActorRef</span>[<span class="type">AccessToken</span>]): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> createdEvent =</span><br><span class="line">      <span class="type">TokenCreated</span>(<span class="type">OAuthUtils</span>.generateToken(userId), <span class="number">2.</span>hours, <span class="type">OAuthUtils</span>.generateToken(userId), <span class="number">30.</span>days)</span><br><span class="line">    <span class="type">Effect</span>.persist(createdEvent).thenReply(replyTo) &#123; _ =&gt;</span><br><span class="line">      <span class="type">AccessToken</span>(createdEvent.accessToken, createdEvent.accessTokenExpiresIn.toSeconds, createdEvent.refreshToken)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">processClear</span></span>(state: <span class="type">State</span>): <span class="type">Effect</span>[<span class="type">Event</span>, <span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">if</span> (state.tokens.isEmpty &amp;&amp; state.refreshTokens.isEmpty) &#123;</span><br><span class="line">      <span class="type">Effect</span>.stop()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">val</span> now = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">      <span class="keyword">val</span> clearTokens = state.tokens.view.filterNot &#123; <span class="keyword">case</span> (_, due)               =&gt; now &lt; due &#125;.keys.toSet</span><br><span class="line">      <span class="keyword">val</span> clearRefreshTokens = state.refreshTokens.view.filterNot &#123; <span class="keyword">case</span> (_, due) =&gt; now &lt; due &#125;.keys.toSet</span><br><span class="line">      <span class="type">Effect</span>.persist(<span class="type">ClearEvent</span>(clearTokens, clearRefreshTokens))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个用户一个 Actor 的优势有：</p>
+<ol>
+<li>通过 ClusterSharding 可以实现理论上无限水平扩展的集群，无论多少个 <code>access_token</code> 都可以保存下来</li>
+<li>容错、可恢复，节点挂掉后可从其它机器上恢复令牌状态</li>
+<li>相比每 <code>access_token</code> 一个 Actor，此方案可以显著减少系统 Actor 的数量</li>
+<li>相比拥有过期时间（TTL）的缓存数据存储系统，使用 Actor 更灵活，且可于业务（用户）系统在同一集群</li>
+<li>无效 <code>access_token</code> 不会生成多于的 Actor</li>
+</ol>
+<p>每个用户一个 Actor 的缺点有：</p>
+<ol>
+<li>生成的 <code>access_token</code> 令牌不需要含有业务信息，如：用户ID</li>
+<li>从代码行数上可看出，相对每 <code>access_token</code> 一个 Actor ，此方案代码逻辑相对复杂，但功能更加强大！</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>完整源码在Github可以找到 <a href="https://github.com/yangbajing/yangbajing-blog/tree/master/src/main/scala/blog/oauth2" target="_blank" rel="external">https://github.com/yangbajing/yangbajing-blog/tree/master/src/main/scala/blog/oauth2</a> 。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/" data-id="ckmlxnrho00lfs7ug8hwdn4vu" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/access-token/" rel="tag">access_token</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-cluster/" rel="tag">akka-cluster</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-cluster-sharding/" rel="tag">akka-cluster-sharding</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-persistence/" rel="tag">akka-persistence</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oauth-2/" rel="tag">oauth-2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Scala实战：求解 Top K 问题
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">怎样在 Akka Persistence 中实现分页查询</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

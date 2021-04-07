@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Archives: 2017 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:type" content="website">
+<meta property="og:title" content="羊八井花园">
+<meta property="og:url" content="http://www.yangbajing.me/archives/2017/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="杨景">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><i class="icon fa fa-archive"></i>归档: 2017</h1>
+            </div>
+            <div class="main-body-content">
+              
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"></p>
+        <p class="date"><time datetime="2017-12-05T06:27:42.000Z" itemprop="datePublished">2017-12-05</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/12/05/cassandra%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/" class="title">Cassandra备份、恢复</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        备份和数据恢复关于镜像Cassandra 通过直接保存所有在data目录中的磁盘数据文件（SSTable file）的镜像来备份数据。当系统还在线的时候，你可以保存所有的keyspace数据或者单个keyspace数据，或者某一张表的数据。
+使用并行的ssh工具，比如pssh，你可以给整个集群做镜像。这提供一种最终一致性备份。虽然没有一个节点可以在镜像制作过程中保证他和备份节点数据的一致性，Cas
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/elasticsearch/">elasticsearch</a></p>
+        <p class="date"><time datetime="2017-12-05T06:27:33.000Z" itemprop="datePublished">2017-12-05</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/12/05/elasticsearch%E5%A4%87%E4%BB%BD%E3%80%81%E6%81%A2%E5%A4%8D/" class="title">Elasticsearch备份、恢复</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        迁移注意事项
+保证ES集群不再接受新的数据(如果是备份的话，这一点可以不考虑，但是做数据迁移的话，建议这样做）。同一个repository只应有一个集群可写，其它集群都应以readonly模式连接。
+不建议直接在生产环境做这些操作，最好是先在本地搭建一个和生产环境一样的集群环境，创建一些测试数据，把整个过程先跑一遍，然后再到生产环境操作。
+
+dn126 为要备份的源数据节点，而 localhost
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/postgresql/">postgresql</a></p>
+        <p class="date"><time datetime="2017-09-20T04:39:37.000Z" itemprop="datePublished">2017-09-20</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/09/20/postgresql%E9%AB%98%E5%8F%AF%E7%94%A8-%E4%B8%BB%E7%83%AD%E5%A4%87%E9%9B%86%E7%BE%A4/" class="title">PostgreSQL高可用-主/热备集群</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        
+高可用性：数据库服务器可以一起工作， 这样如果主要的服务器失效则允许一个第二服务器快速接手它的任务
+负载均衡: 允许多个计算机提供相同的数据
+
+本文使用的主要技术有：
+
+CentOS 7 x86_64
+PostgreSQL 9.6.5
+
+
+系统安装、配置CentOS 7 安装12[hldev@centos7-001 ~]$ sudo yum -y install https://download
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/learning-scala/">learning scala</a></p>
+        <p class="date"><time datetime="2017-09-13T05:04:39.000Z" itemprop="datePublished">2017-09-13</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/09/13/%E5%AD%A6%E4%B9%A0scala%EF%BC%9A%E7%8E%AF%E5%A2%83%E3%80%81%E5%B7%A5%E5%85%B7%E3%80%81%E5%B7%A5%E7%A8%8B/" class="title">学习Scala：环境、工具、工程</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        在本章中，你将学到如何从零使用Sbt来搭建一个Scala工程，如何将Scala工程导入Intellij IDEA集成开发环境。同时，我们将使用scalatest以TDD的方式来编写代码。
+本章的要点包括：
+
+下载并使用sbt: http://www.scala-sbt.org/
+使用Intellij IDEA编写Scala：https://www.jetbrains.com/idea/
+使用sca
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/work/">work</a></p>
+        <p class="date"><time datetime="2017-09-12T03:50:12.000Z" itemprop="datePublished">2017-09-12</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/09/12/%E4%BD%BF%E7%94%A8sphinx%E6%92%B0%E5%86%99%E7%94%B5%E5%AD%90%E6%96%87%E6%A1%A3/" class="title">使用Sphinx撰写电子文档</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        在日常工作中，写电子文档是个很普遍的事情。之前一直用Microsoft Word、Libreoffice Writer来写，但总感觉不方便，很多的精力都浪费在了调整格式上。而使用 Sphinx 来写电子文档，则可以把你从调整格式的泥潭中解放出来。Sphinx 是一款基于 Python的文档处理工具，Python官方的文档就是使用它来写的。Sphinx 使用reStructuredText 格式来定
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/elasticsearch/">elasticsearch</a></p>
+        <p class="date"><time datetime="2017-04-12T15:11:11.000Z" itemprop="datePublished">2017-04-12</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/12/elasticsearch%E9%9B%86%E7%BE%A4%E8%AE%BE%E7%BD%AE/" class="title">Elasticsearch集群设置</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Elasticsearch是一个优秀的全文检索和分析引擎，由Shay Banon发起的一个开源搜索服务器项目，2010年2月发布。具有分布式性质和实时功能。
+本文基于5.x版本，需要使用 Java 8 update 20或更新版。
+配置Elasticsearch使用很方便，默认开箱即用。不过做为一个集群，还是需要稍做一些配置。整个配置都位于 config 目录，可以看到两个文件：elasticse
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/elasticsearch/">elasticsearch</a></p>
+        <p class="date"><time datetime="2017-04-12T07:17:12.000Z" itemprop="datePublished">2017-04-12</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/12/%E4%BD%BF%E7%94%A8hanlp%E5%A2%9E%E5%BC%BAelasticsearch%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD/" class="title">使用HanLP增强Elasticsearch分词功能</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        hanlp-ext 插件源码地址：https://github.com/hualongdata/hanlp-ext
+Elasticsearch 默认对中文分词是按“字”进行分词的，这是肯定不能达到我们进行分词搜索的要求的。官方有一个 SmartCN 中文分词插件，另外还有一个 IK 分词插件使用也比较广。但这里，我们采用 HanLP 这款 自然语言处理工具 来进行中文分词。
+Elasticsear
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2017-04-10T11:53:50.000Z" itemprop="datePublished">2017-04-10</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" class="title">Akka HTTP 快速上手</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Akka Http 是Akka社区提供的一个 Http服务端/客户端通用工具包，支持 Http 1.0/1.1标准及WebSocket，现在 Http 2 的支持也在紧锣密鼓的实现中。
+这篇文章将介绍Akka HTTP Server，我们将介绍Akka Http的常用功能模块及使用方式。Akka Http提供了一套强大、易用、易扩展的route dsl来构建路由。Akka Http Client因
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/ambari-hdp/">ambari/hdp</a></p>
+        <p class="date"><time datetime="2017-04-06T01:12:59.000Z" itemprop="datePublished">2017-04-06</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/06/%E4%BD%BF%E7%94%A8ambari2-5%EF%BC%88hdp2-6%EF%BC%89%E6%90%AD%E5%BB%BA%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%8E%AF%E5%A2%83/" class="title">使用Ambari2.5（HDP2.6）搭建大数据环境</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        本文介绍在 CentOS 7 环境下使用 Ambari2.5 (HDP2.6) 搭建大数据环境。
+推荐使用如下脚本将 Ambari/HDP 相关软件包下到本地后配置 yum 源安装，在线安装速度太慢会经常遇到包找不到情况。
+12345wget -c http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.1.0/amb
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/bigdata/cassandra/">cassandra</a></p>
+        <p class="date"><time datetime="2017-04-01T04:29:41.000Z" itemprop="datePublished">2017-04-01</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/01/cassandra%E8%AE%BE%E7%BD%AE/" class="title">Cassandra设置</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        操作系统修改操作系统的TCP keepalive
+1sudo /sbin/sysctl -w net.ipv4.tcp_keepalive_time=60 net.ipv4.tcp_keepalive_intvl=60 net.ipv4.tcp_keepalive_probes=5
+集群机制一致性哈希
+
+Gossip协议：用于在环内节点之间传播Cassandra状态信息
+Snitch：支持多个数据
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+  
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

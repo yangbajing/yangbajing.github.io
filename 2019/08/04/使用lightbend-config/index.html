@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>使用Lightbend Config | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Lightbend config 提供了一种叫 HOCON 的标记语言来进行配置管理，它是JVM上的配置管理工具，可用来替代Java自带的Properties；而相对于使用JSON来管理配置，它具有注释、变量、可组合等更丰富的特性。本文分享些日常开发工作中使用Lightbend config的经验和技巧。 Lightbend config以前叫Typesafe config，Github地址为：h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Lightbend Config">
+<meta property="og:url" content="http://www.yangbajing.me/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Lightbend config 提供了一种叫 HOCON 的标记语言来进行配置管理，它是JVM上的配置管理工具，可用来替代Java自带的Properties；而相对于使用JSON来管理配置，它具有注释、变量、可组合等更丰富的特性。本文分享些日常开发工作中使用Lightbend config的经验和技巧。 Lightbend config以前叫Typesafe config，Github地址为：h">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-04T12:40:30.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="config">
+<meta property="article:tag" content="配置">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-使用lightbend-config" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      使用Lightbend Config
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/" class="article-date">
+  <time datetime="2019-08-04T12:40:30.000Z" itemprop="datePublished">2019-08-04</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-使用lightbend-config" data-title="使用Lightbend Config" data-url="http://www.yangbajing.me/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Lightbend config 提供了一种叫 HOCON 的标记语言来进行配置管理，它是JVM上的配置管理工具，可用来替代Java自带的Properties；而相对于使用JSON来管理配置，它具有注释、变量、可组合等更丰富的特性。本文分享些日常开发工作中使用Lightbend config的经验和技巧。</p>
+<p><em>Lightbend config以前叫Typesafe config，Github地址为：<a href="https://github.com/lightbend/config" target="_blank" rel="external">https://github.com/lightbend/config</a> 。</em></p>
+<h2 id="HOCON-特性"><a href="#HOCON-特性" class="headerlink" title="HOCON 特性"></a>HOCON 特性</h2><ol>
+<li>Comments, with # or //</li>
+<li>Allow omitting the {} around a root object</li>
+<li>Allow = as a synonym for :</li>
+<li>Allow omitting the = or : before a { so foo { a : 42 }</li>
+<li>Allow omitting commas as long as there’s a newline</li>
+<li>Allow trailing commas after last element in objects and arrays</li>
+<li>Allow unquoted strings for keys and values</li>
+<li>Unquoted keys can use dot-notation for nested objects, foo.bar=42 means foo { bar : 42 }</li>
+<li>Duplicate keys are allowed; later values override earlier, except for object-valued keys where the two objects are merged recursively</li>
+<li>include feature merges root object in another file into current object, so foo { include “bar.json” } merges keys in bar.json into the object foo</li>
+<li>include with no file extension includes any of .conf, .json, .properties</li>
+<li>you can include files, URLs, or classpath resources; use include url(“<a href="http://example.com&quot;" target="_blank" rel="external">http://example.com&quot;</a>) or file() or classpath() syntax to force the type, or use just include “whatever” to have the library do what you probably mean (Note: url()/file()/classpath() syntax is not supported in Play/Akka 2.0, only in later releases.)</li>
+<li>substitutions foo : ${a.b} sets key foo to the same value as the b field in the a object</li>
+<li>substitutions concatenate into unquoted strings, foo : the quick ${colors.fox} jumped</li>
+<li>substitutions fall back to environment variables if they don’t resolve in the config itself, so ${HOME} would work as you expect. Also, most configs have system properties merged in so you could use ${user.home}.</li>
+<li>substitutions normally cause an error if unresolved, but there is a syntax ${?a.b} to permit them to be missing.</li>
+<li>+= syntax to append elements to arrays, path += “/bin”</li>
+<li>multi-line strings with triple quotes as in Python or Scala</li>
+</ol>
+<h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><p>Ligthbend config非常简单，使用之前需要引入相关依赖：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libraryDependencies += <span class="string">"com.typesafe"</span> % <span class="string">"config"</span> % <span class="string">"1.3.4"</span></span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.typesafe<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>config<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><h3 id="从URL地址或注册中心获取配置"><a href="#从URL地址或注册中心获取配置" class="headerlink" title="从URL地址或注册中心获取配置"></a>从URL地址或注册中心获取配置</h3><p>使用Java命令行配置<code>-Dconfig.url</code>就可以从网络地址上直接获得配置。比如通过如下从Nacos中获取配置可如</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/" data-id="ckmlxnrby0069s7ugugd4jz40" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/config/" rel="tag">config</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%85%8D%E7%BD%AE/" rel="tag">配置</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/09/21/akka%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E8%B7%B5-%E5%88%9D%E6%8E%A2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Akka微服务实践-初探
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/07/17/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BD%BF%E7%94%A8akka-stream%E4%BC%98%E5%8C%96%E5%BC%82%E6%AD%A5%E4%BB%A3%E7%A0%81/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Scala实战：使用Akka Stream优化异步代码</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

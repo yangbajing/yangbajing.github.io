@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Linux下对大文件（日志）进行分割 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="logrotate是Linux系统自带的一个做文件（日志）分割的任务，可以很灵活的对文件做分割任务。由crontab定时执行。 一个典型的logrotate配置如下： 123456789101112yangjing:~$ more &#x2F;etc&#x2F;logrotate.d&#x2F;nginx &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;*.log &amp;#123;    notifempty    daily">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下对大文件（日志）进行分割">
+<meta property="og:url" content="http://www.yangbajing.me/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="logrotate是Linux系统自带的一个做文件（日志）分割的任务，可以很灵活的对文件做分割任务。由crontab定时执行。 一个典型的logrotate配置如下： 123456789101112yangjing:~$ more &#x2F;etc&#x2F;logrotate.d&#x2F;nginx &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;*.log &amp;#123;    notifempty    daily">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-06T06:03:29.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="log">
+<meta property="article:tag" content="logrotate">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header">未分类</h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-linux下对大文件（日志）进行分割" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Linux下对大文件（日志）进行分割
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/" class="article-date">
+  <time datetime="2016-01-06T06:03:29.000Z" itemprop="datePublished">2016-01-06</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-linux下对大文件（日志）进行分割" data-title="Linux下对大文件（日志）进行分割" data-url="http://www.yangbajing.me/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>logrotate是Linux系统自带的一个做文件（日志）分割的任务，可以很灵活的对文件做分割任务。由crontab定时执行。</p>
+<p>一个典型的<code>logrotate</code>配置如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">yangjing:~$ more /etc/logrotate.d/nginx </span><br><span class="line">/usr/local/nginx/logs/*.log &#123;</span><br><span class="line">    notifempty</span><br><span class="line">    daily</span><br><span class="line">    dateext</span><br><span class="line">    compress</span><br><span class="line">    rotate 60</span><br><span class="line">    sharedscripts</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/kill -USR1 `/bin/cat /usr/local/nginx/logs/nginx.pid`</span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多个日志文件以空格分开，也可以使用通配符进行配置。参数说明：</p>
+<ul>
+<li>notifempty: 若日志为空，则不做分割</li>
+<li>daily: 每天生成一个日志分割文件</li>
+<li>dateext: 分割的日志文件加上日期扩展</li>
+<li>compress: 对分割出的日志文件做压缩</li>
+<li>rotate: 分割出的日志文件最多保留几份</li>
+<li>sharedscripts: 在所有日志文件都轮转（分割）完后统一执行一次脚本</li>
+</ul>
+<p><strong>logrotate执行的时间？</strong></p>
+<p>logrotate服务是由CRON执行的，所以它的执行时间是由CRON控制，我们可以修改 <code>/etc/crontab</code> 文件来控制logrotate服务执行时间。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">yangjing@sc-007:~/studies/playlist$ more /etc/crontab </span><br><span class="line"><span class="meta">#</span> /etc/crontab: system-wide crontab</span><br><span class="line"><span class="meta">#</span> Unlike any other crontab you don't have to run the `crontab'</span><br><span class="line"><span class="meta">#</span> command to install the new version when you edit this file</span><br><span class="line"><span class="meta">#</span> and files in /etc/cron.d. These files also have username fields,</span><br><span class="line"><span class="meta">#</span> that none of the other crontabs do.</span><br><span class="line"></span><br><span class="line">SHELL=/bin/sh</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> m h dom mon dow user	command</span><br><span class="line">17 *	* * *	root    cd / &amp;&amp; run-parts --report /etc/cron.hourly</span><br><span class="line">25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.daily )</span><br><span class="line">47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.weekly )</span><br><span class="line">52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )</span><br></pre></td></tr></table></figure>
+<p>我们可以把 <code>cron.xxxx</code> 命令对应的时间修改为每天的23时59分，修改后的CRON脚本执行命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">59 *	* * *	root    cd / &amp;&amp; run-parts --report /etc/cron.hourly</span><br><span class="line">59 23	* * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.daily )</span><br><span class="line">59 23	* * 7	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.weekly )</span><br><span class="line">59 23	1 * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/" data-id="ckmlxnra50033s7ugf414plna" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/log/" rel="tag">log</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/logrotate/" rel="tag">logrotate</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Nginx（Tengine）使用
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/01/02/2015%E6%80%BB%E7%BB%93%E6%9A%A82016%E5%B1%95%E6%9C%9B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">2015总结暨2016展望</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

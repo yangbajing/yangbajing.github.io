@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>JSON 之 Jackson | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Jackson 是 Java 生态下的一款 JSON （返）序列化工具，具有高效、强大、安全（没有 Fastjson 那么多的安全漏洞）等特性。同时应用广泛，Spring Boot&#x2F;Cloud、Akka、Spark 等众多框架都将其作为默认 JSON 处理工具。 依赖要使用 Jackson，需要在项目中添加如下依赖（注：使用 Spring Boot 时不需要手动添加，Spring 框架已经默认包含">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON 之 Jackson">
+<meta property="og:url" content="http://www.yangbajing.me/2020/07/04/json-%E4%B9%8B-jackson/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Jackson 是 Java 生态下的一款 JSON （返）序列化工具，具有高效、强大、安全（没有 Fastjson 那么多的安全漏洞）等特性。同时应用广泛，Spring Boot&#x2F;Cloud、Akka、Spark 等众多框架都将其作为默认 JSON 处理工具。 依赖要使用 Jackson，需要在项目中添加如下依赖（注：使用 Spring Boot 时不需要手动添加，Spring 框架已经默认包含">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-04T04:59:19.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="spring-boot">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="jackson">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="json">
+<meta property="article:tag" content="jackson-module-scala">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/java/">java</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-json-之-jackson" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      JSON 之 Jackson
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/07/04/json-%E4%B9%8B-jackson/" class="article-date">
+  <time datetime="2020-07-04T04:59:19.000Z" itemprop="datePublished">2020-07-04</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-json-之-jackson" data-title="JSON 之 Jackson" data-url="http://www.yangbajing.me/2020/07/04/json-%E4%B9%8B-jackson/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong>Jackson</strong> 是 Java 生态下的一款 JSON （返）序列化工具，具有高效、强大、安全（<em>没有 <strong>Fastjson</strong> 那么多的安全漏洞</em>）等特性。同时应用广泛，Spring Boot/Cloud、Akka、Spark 等众多框架都将其作为默认 JSON 处理工具。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><p>要使用 Jackson，需要在项目中添加如下依赖（注：使用 Spring Boot 时不需要手动添加，Spring 框架已经默认包含）：</p>
+<p><strong>Maven</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.datatype<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-datatype-jsr310<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.11.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.datatype<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-datatype-jdk8<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.11.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>Sbt</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">libraryDependencies ++= Seq(</span><br><span class="line">  &quot;com.fasterxml.jackson.datatype&quot; % &quot;jackson-datatype-jsr310&quot; % &quot;2.11.1&quot;,</span><br><span class="line">  &quot;com.fasterxml.jackson.datatype&quot; % &quot;jackson-datatype-jdk8&quot; % &quot;2.11.1&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>jsr310：Java 8 新加日期、时间类型支持（<code>java.time.*</code>）支持</li>
+<li>jdk8：Java 8 新加数据类型支持（<code>Optional</code>等）</li>
+</ul>
+<h2 id="简明使用"><a href="#简明使用" class="headerlink" title="简明使用"></a>简明使用</h2><h3 id="获取-Jackson"><a href="#获取-Jackson" class="headerlink" title="获取 Jackson"></a>获取 Jackson</h3><p>Jackson 在使用之前需要实例化一个 <code>ObjectMapper</code> 对像（它不直接提供全局的默认静态方法）。通常我们会将 <code>objectMapper</code> 定义成一个静态成员，或通过 DI 框架注入使用。</p>
+<p><strong>Java</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper().findAndRegisterModules()</span><br></pre></td></tr></table></figure></p>
+<p><strong>Spring</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> ObjectMapper objectMapper;</span><br></pre></td></tr></table></figure></p>
+<p><em>注：Spring 默认不会自动加载 classpath 路径的所有 Jackson Module。需要在 <code>objectMapper</code> 上调用 <code>registerModule</code> 方法手动注册。</em></p>
+<p><strong>Scala</strong><br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> objectMapper = <span class="keyword">new</span> <span class="type">ObjectMapper</span>().findAndRegisterModules()</span><br></pre></td></tr></table></figure></p>
+<h3 id="建议的-Jackson-配置"><a href="#建议的-Jackson-配置" class="headerlink" title="建议的 Jackson 配置"></a>建议的 Jackson 配置</h3><p><strong>编码配置</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper()</span><br><span class="line">        <span class="comment">// 自动加载 classpath 中所有 Jackson Module</span></span><br><span class="line">        .findAndRegisterModules()</span><br><span class="line">        <span class="comment">// 时区序列化为 +08:00 形式</span></span><br><span class="line">        .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, <span class="keyword">false</span>)</span><br><span class="line">        <span class="comment">// 日期、时间序列化为字符串</span></span><br><span class="line">        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, <span class="keyword">false</span>)</span><br><span class="line">        <span class="comment">// 持续时间序列化为字符串</span></span><br><span class="line">        .configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, <span class="keyword">false</span>)</span><br><span class="line">        <span class="comment">// 当出现 Java 类中未知的属性时不报错，而是忽略此 JSON 字段</span></span><br><span class="line">        .configure(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS, <span class="keyword">false</span>)</span><br><span class="line">        <span class="comment">// 枚举类型调用 `toString` 方法进行序列化</span></span><br><span class="line">        .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, <span class="keyword">true</span>)</span><br><span class="line">        <span class="comment">// 设置 java.util.Date 类型序列化格式</span></span><br><span class="line">        .setDateFormat(<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>))</span><br><span class="line">        <span class="comment">// 设置 Jackson 使用的时区</span></span><br><span class="line">        .setTimeZone(SimpleTimeZone.getTimeZone(<span class="string">"GMT+8"</span>));</span><br></pre></td></tr></table></figure>
+<h3 id="创建-JSON-对像"><a href="#创建-JSON-对像" class="headerlink" title="创建 JSON 对像"></a>创建 JSON 对像</h3><p>Jackson 的 <code>ArrayNode</code> 和 <code>ObjectNode</code> 对象均不能直接创建，需要通过 <code>objectMapper</code> 来创建。同时，两个 <strong>Node</strong> 对像都 <code>JsonNode</code> 的子类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ArrayNode jsonArray = objectMapper.createArrayNode();</span><br><span class="line">jsonArray.add(&quot;Jackson&quot;).add(&quot;JSON&quot;);</span><br><span class="line">ObjectNode jsonObject = objectMapper.createObjectNode()</span><br><span class="line">        .put(&quot;title&quot;, &quot;Json 之 Jackson&quot;)</span><br><span class="line">        .put(&quot;readCount&quot;, 1024);</span><br></pre></td></tr></table></figure>
+<h3 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String jsonText = ....;</span><br><span class="line"></span><br><span class="line"><span class="comment">// json text -&gt; Jackson json node</span></span><br><span class="line">JsonNode javaTimeNode = objectMapper.readTree(jsonText);</span><br><span class="line"></span><br><span class="line"><span class="comment">// json text -&gt; java class</span></span><br><span class="line">JavaTime javaTime1 = objectMapper.readValue(jsonText, JavaTime<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Jackson json node -&gt; java class</span></span><br><span class="line">JavaTime javaTime2 = objectMapper.treeToValue(javaTimeNode, JavaTime<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ZonedDateTime zdt = ZonedDateTime.parse(<span class="string">"2020-07-02T14:31:28.822+08:00[Asia/Shanghai]"</span>);</span><br><span class="line">JavaTime javaTime = <span class="keyword">new</span> JavaTime()</span><br><span class="line">                .setLocalDateTime(zdt.toLocalDateTime())</span><br><span class="line">                .setZonedDateTime(zdt)</span><br><span class="line">                .setOffsetDateTime(zdt.toOffsetDateTime())</span><br><span class="line">                .setLocalDate(zdt.toLocalDate())</span><br><span class="line">                .setLocalTime(zdt.toLocalTime())</span><br><span class="line">                .setDuration(Duration.parse(<span class="string">"P1DT1H1M1.1S"</span>))</span><br><span class="line">                .setDate(Date.from(zdt.toInstant()))</span><br><span class="line">                .setTimestamp(Timestamp.from(zdt.toInstant()));</span><br><span class="line">out.println(objectMapper.writeValueAsString(javaTime));</span><br><span class="line">out.println(objectMapper.writeValueAsString(jsonObject));</span><br><span class="line">out.println(objectMapper.writeValueAsString(jsonArray));</span><br></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;localDateTime&quot;:&quot;2020-07-02T14:31:28.822&quot;,&quot;zonedDateTime&quot;:&quot;2020-07-02T14:31:28.822+08:00&quot;,&quot;offsetDateTime&quot;:&quot;2020-07-02T14:31:28.822+08:00&quot;,&quot;localDate&quot;:&quot;2020-07-02&quot;,&quot;localTime&quot;:&quot;14:31:28.822&quot;,&quot;duration&quot;:&quot;PT25H1M1.1S&quot;,&quot;date&quot;:&quot;2020-07-02 14:31:28&quot;,&quot;timestamp&quot;:&quot;2020-07-02 14:31:28&quot;&#125;</span><br><span class="line">&#123;&quot;title&quot;:&quot;Json 之 Jackson&quot;,&quot;readCount&quot;:1024&#125;</span><br><span class="line">[&quot;Jackson&quot;,&quot;JSON&quot;]</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java 类转换成 Jackson JsonNode</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JsonNode jsonNode = objectMapper.valueToTree(javaTime);</span><br></pre></td></tr></table></figure></p>
+<p><strong>美化输出</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(javaTime)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;localDateTime&quot; : &quot;2020-07-02T14:31:28.822&quot;,</span><br><span class="line">  &quot;zonedDateTime&quot; : &quot;2020-07-02T14:31:28.822+08:00&quot;,</span><br><span class="line">  &quot;offsetDateTime&quot; : &quot;2020-07-02T14:31:28.822+08:00&quot;,</span><br><span class="line">  &quot;localDate&quot; : &quot;2020-07-02&quot;,</span><br><span class="line">  &quot;localTime&quot; : &quot;14:31:28.822&quot;,</span><br><span class="line">  &quot;duration&quot; : &quot;PT25H1M1.1S&quot;,</span><br><span class="line">  &quot;date&quot; : &quot;2020-07-02 14:31:28&quot;,</span><br><span class="line">  &quot;timestamp&quot; : &quot;2020-07-02 14:31:28&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="序列化时忽略某些字段"><a href="#序列化时忽略某些字段" class="headerlink" title="序列化时忽略某些字段"></a>序列化时忽略某些字段</h3><p><strong>@JsonIgnore</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnore</span></span><br><span class="line"><span class="keyword">private</span> Long _version;</span><br></pre></td></tr></table></figure>
+<p><code>@JsonIgnore</code> 注解也可以添加在 <strong>getter</strong> 函数上。</p>
+<p><strong>@JsonIgnoreProperties</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnoreProperties</span>(&#123;<span class="string">"_version"</span>, <span class="string">"timestamp"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaTime</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="自定义序列化、反序列化器"><a href="#自定义序列化、反序列化器" class="headerlink" title="自定义序列化、反序列化器"></a>自定义序列化、反序列化器</h3><p>对于某些自定义类型或 Jackson 不支持的类型，可以实现自己的序列化、反序列化器。</p>
+<p><strong>POJO</strong></p>
+<p>在类型上使用 <code>@JsonSerialize</code> 和 <code>@JsonDeserialize</code> 注解来分别指定序列化和反序列化器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonSerialize</span>(using = PgJsonSerializer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    @<span class="title">JsonDeserialize</span>(<span class="title">using</span> </span>= PgJsonDeserializer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">private</span> <span class="title">io</span>.<span class="title">r2dbc</span>.<span class="title">postgresql</span>.<span class="title">codec</span>.<span class="title">Json</span> <span class="title">metadata</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先将 R2DBC PostgreSQL 的 JSON 转化为 JsonNode 对象，再调用 <code>gen.writeTree</code> 对其进行序列化。这样才能保证序列化出来的字段值是一个 JSON 对象或 JSON 数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.r2dbc.postgresql.codec.Json;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PgJsonSerializer</span> <span class="keyword">extends</span> <span class="title">StdSerializer</span>&lt;<span class="title">Json</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PgJsonSerializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Json<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">serialize</span><span class="params">(Json value, JsonGenerator gen, SerializerProvider provider)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        JsonParser parser = gen.getCodec().getFactory().createParser(value.asArray());</span><br><span class="line">        JsonNode node = gen.getCodec().readTree(parser);</span><br><span class="line">        gen.writeTree(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 <code>ObjectCodec#readTree</code> 将 <code>JsonParse</code> 读取为一个 <code>TreeNode</code> 对像，再将其序列化为 <strong>JSON 格式</strong>（JSON 字符串的字符数组形式）后传给 <code>Json.of</code> 函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.r2dbc.postgresql.codec.Json;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PgJsonDeserializer</span> <span class="keyword">extends</span> <span class="title">StdDeserializer</span>&lt;<span class="title">Json</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PgJsonDeserializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Json<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Json <span class="title">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line">        TreeNode node = p.getCodec().readTree(p);</span><br><span class="line">        ObjectMapper objectMapper = (ObjectMapper) p.getCodec();</span><br><span class="line">        <span class="keyword">byte</span>[] value = objectMapper.writeValueAsBytes(node);</span><br><span class="line">        <span class="keyword">return</span> Json.of(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Jackson-Module"><a href="#Jackson-Module" class="headerlink" title="Jackson Module"></a>Jackson Module</h3><p>当自定义（反）序列化变多时，在每个类上通过注解手工指定（反）序列化器就变得很繁琐。我们可以通过定义一个 Jackson Module 并使用 <code>.findAndRegisterModules()</code> 通过 Java 的 Service 机制自动注册到 <code>ObjectMapper</code>。通过 Module 机制注册了类型的序列化、反序列化器后，不在需要在属性或方法上定义 <code>@JsonSerialize</code> 和 <code>@JsonDeserialize</code> 注解。</p>
+<p><strong>1.</strong> 定义 <strong>Serializers</strong> 和 <strong>Deserializers</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleSerializers</span> <span class="keyword">extends</span> <span class="title">Serializers</span>.<span class="title">Base</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> JsonSerializer&lt;?&gt; findSerializer(</span><br><span class="line">      SerializationConfig config, JavaType type, BeanDescription beanDesc) &#123;</span><br><span class="line">    <span class="keyword">final</span> Class&lt;?&gt; raw = type.getRawClass();</span><br><span class="line">    <span class="keyword">if</span> (Json<span class="class">.<span class="keyword">class</span>.<span class="title">isAssignableFrom</span>(<span class="title">raw</span>)) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> PgJsonSerializer();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.findSerializer(config, type, beanDesc);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleDeserializers</span> <span class="keyword">extends</span> <span class="title">Deserializers</span>.<span class="title">Base</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> JsonDeserializer&lt;?&gt; findBeanDeserializer(</span><br><span class="line">      JavaType type, DeserializationConfig config, BeanDescription beanDesc)</span><br><span class="line">      <span class="keyword">throws</span> JsonMappingException &#123;</span><br><span class="line">    <span class="keyword">if</span> (type.hasRawClass(Optional<span class="class">.<span class="keyword">class</span>)) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> PgJsonDeserializer();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.findBeanDeserializer(type, config, beanDesc);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2.</strong> 实现 <strong>Module</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleModule</span> <span class="keyword">extends</span> <span class="title">com</span>.<span class="title">fasterxml</span>.<span class="title">jackson</span>.<span class="title">databind</span>.<span class="title">Module</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setupModule</span><span class="params">(SetupContext context)</span> </span>&#123;</span><br><span class="line">        context.addSerializers(<span class="keyword">new</span> ExampleSerializers());</span><br><span class="line">        context.addDeserializers(<span class="keyword">new</span> ExampleDeserializers());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getModuleName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"ExampleModule"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Version <span class="title">version</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Version.unknownVersion();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.</strong> 定义 <code>META-INF.services</code> 文件（可选）</p>
+<p>通过 Java ServiceLoader 机制，Jackson 可以自动注册配置的 <strong>Module</strong>。在 <code>com.fasterxml.jackson.databind.Module</code> 配置文件里指定需要自动注册 Module 的全路径，多个 Module 可以写在多行。注意：<strong>services</strong> 配置文件必须为 <code>com.fasterxml.jackson.databind.Module</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">src/main/resources/</span><br><span class="line">├── META-INF</span><br><span class="line">│   └── services</span><br><span class="line">│       └── com.fasterxml.jackson.databind.Module</span><br></pre></td></tr></table></figure>
+<p>若没有配置 <strong>services</strong> 文件，则在调用 <code>objectMapper.findAndRegisterModules()</code> 时不能自动加载，需要通过 <code>objectMapper.registerModule</code> 方法手动注册，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objectMapper.registerModule(<span class="keyword">new</span> ExampleModule());</span><br></pre></td></tr></table></figure>
+<h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p><strong>Spring Boot 配置文件</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">jackson:</span></span><br><span class="line">    <span class="attr">date-format:</span> <span class="string">yyyy-MM-dd</span> <span class="string">HH:mm:ss</span></span><br><span class="line">    <span class="attr">time-zone:</span> <span class="string">GMT+8</span></span><br><span class="line">    <span class="attr">locale:</span> <span class="string">zh_CN</span></span><br><span class="line">    <span class="attr">serialization:</span></span><br><span class="line">      <span class="attr">WRITE_DATES_WITH_ZONE_ID:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">WRITE_DURATIONS_AS_TIMESTAMPS:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">WRITE_DATES_AS_TIMESTAMPS:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">WRITE_ENUMS_USING_TO_STRING:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p><strong>WebFlux 加载 jackson-module-scala</strong></p>
+<p>添加依赖：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.module<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-module-scala_2.12<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.11.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>在 <code>configureHttpMessageCodecs</code> 中配置 <code>JsonDecoder</code> 和 <code>JsonEncoder</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableWebFlux</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CoreWebConfiguration</span> <span class="keyword">implements</span> <span class="title">WebFluxConfigurer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureHttpMessageCodecs</span><span class="params">(ServerCodecConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        ServerCodecConfigurer.ServerDefaultCodecs defaultCodecs = configurer.defaultCodecs();</span><br><span class="line">        defaultCodecs.enableLoggingRequestDetails(<span class="keyword">true</span>);</span><br><span class="line">        objectMapper.registerModule(<span class="keyword">new</span> DefaultScalaModule());</span><br><span class="line">        defaultCodecs.jackson2JsonDecoder(<span class="keyword">new</span> Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON, MediaType.APPLICATION_STREAM_JSON));</span><br><span class="line">        defaultCodecs.jackson2JsonEncoder(<span class="keyword">new</span> Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON, MediaType.APPLICATION_STREAM_JSON));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>为 Java 世界里众多 JSON 库选择烦恼？Jackson、Gson、Fastjson……不要犹豫，使用 Jackson！除了在 Spring 生态里开箱既用，在 Java 世界里也是最流行的。Jackson 除了支持 Scala 数据类型，还支持 Kotlin，对于 JVM 多语言开发，还有更好的选择吗？</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/07/04/json-%E4%B9%8B-jackson/" data-id="ckmlxnri600lts7ugekdxwsf2" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/07/04/json-%E4%B9%8B-jackson/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jackson/" rel="tag">jackson</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jackson-module-scala/" rel="tag">jackson-module-scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/json/" rel="tag">json</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/" rel="tag">spring-boot</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/08/java-%E6%9E%9A%E4%B8%BE%EF%BC%9A%E6%9C%89%E6%95%88%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Java 枚举：有效应用
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/06/27/jdbc-%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5%EF%BC%9Amybatis%E3%80%81postgresql/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">JDBC 批量插入：MyBatis、PostgreSQL</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/07/04/json-%E4%B9%8B-jackson/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

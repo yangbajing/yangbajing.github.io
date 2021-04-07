@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Mongodb 3.x 用户认证 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Mongodb 3.x 的用户认证和 2.x 方式不一样，创建用户的语法已由 addUser 成成 createUser 了。 创建账号首先不使用 --auth 参数启动Mongodb， 1&#x2F;opt&#x2F;local&#x2F;mongodb&#x2F;mongodb-3.0&#x2F;bin&#x2F;mongod -f &#x2F;opt&#x2F;local&#x2F;mongodb&#x2F;etc&#x2F;mongod.conf 此时登陆Mongodb并执行 show dbs 命">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mongodb 3.x 用户认证">
+<meta property="og:url" content="http://www.yangbajing.me/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Mongodb 3.x 的用户认证和 2.x 方式不一样，创建用户的语法已由 addUser 成成 createUser 了。 创建账号首先不使用 --auth 参数启动Mongodb， 1&#x2F;opt&#x2F;local&#x2F;mongodb&#x2F;mongodb-3.0&#x2F;bin&#x2F;mongod -f &#x2F;opt&#x2F;local&#x2F;mongodb&#x2F;etc&#x2F;mongod.conf 此时登陆Mongodb并执行 show dbs 命">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-11T08:52:07.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="mongodb">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-mongodb-3-x-用户认证" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Mongodb 3.x 用户认证
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" class="article-date">
+  <time datetime="2016-01-11T08:52:07.000Z" itemprop="datePublished">2016-01-11</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-mongodb-3-x-用户认证" data-title="Mongodb 3.x 用户认证" data-url="http://www.yangbajing.me/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Mongodb 3.x 的用户认证和 2.x 方式不一样，创建用户的语法已由 <code>addUser</code> 成成 <code>createUser</code> 了。</p>
+<h2 id="创建账号"><a href="#创建账号" class="headerlink" title="创建账号"></a>创建账号</h2><p>首先不使用 <code>--auth</code> 参数启动Mongodb，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/local/mongodb/mongodb-3.0/bin/mongod -f /opt/local/mongodb/etc/mongod.conf</span><br></pre></td></tr></table></figure>
+<p>此时登陆Mongodb并执行 <code>show dbs</code> 命令，只会看到一个 <code>local</code> 数据库，而文档里那个 <code>admin</code> 是不存在。使用 <code>mongo</code> 登陆，并创建用户。<br>Mongodb推荐创建一个只能管理用户的用户来做角色权限分配工作：<a href="https://docs.mongodb.org/manual/reference/built-in-roles/#userAdminAnyDatabase" target="_blank" rel="external"><strong>userAdminAnyDatabase</strong></a>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">use admin</span><br><span class="line">db.createUser(&#123;</span><br><span class="line">  user: &quot;sc-admin&quot;,</span><br><span class="line">  pwd: &quot;xxxxxxxx&quot;,</span><br><span class="line">  roles: [&#123;</span><br><span class="line">    role: &quot;userAdminAnyDatabase&quot;,</span><br><span class="line">    db: &quot;admin&quot;</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>roles</code> 中的 <code>db</code> 参数是必选的，不然会报错：*</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.createUser(&#123;user:&quot;admin&quot;,pwd:&quot;xxxxxxxx&quot;,roles:[&#123;role:&quot;userAdminAnyDatabase&quot;&#125;]&#125;)</span><br><span class="line">2016-01-11T17:02:46.417+0800 E QUERY    Error: couldn&apos;t add user: Missing expected field &quot;db&quot;</span><br><span class="line">    at Error (&lt;anonymous&gt;)</span><br><span class="line">    at DB.createUser (src/mongo/shell/db.js:1101:11)</span><br><span class="line">    at (shell):1:4 at src/mongo/shell/db.js:1101</span><br></pre></td></tr></table></figure>
+<h2 id="启动Mongodb服务"><a href="#启动Mongodb服务" class="headerlink" title="启动Mongodb服务"></a>启动Mongodb服务</h2><p>设置完成后停止Mongodb服务，使用 <code>kill [pid]</code> 或 <code>kill -2 [pid]</code>。</p>
+<h2 id="连接Mongodb"><a href="#连接Mongodb" class="headerlink" title="连接Mongodb"></a>连接Mongodb</h2><p>使用 <code>--auth</code> 参数或在配置文件设置：<code>security.authorization: enabled</code> 启用用户权限认证功能。重启 Mongodb 服务，并打开 mongo shell：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">use admin</span><br><span class="line">db.auth(&quot;sc-admin&quot;, &quot;xxxxxxxx&quot;)</span><br></pre></td></tr></table></figure>
+<p><code>db.auth</code> 返回 1 代表认证成功。</p>
+<p>或者使用命令行参数：<code>mongo -u sc-admin -p xxxxxxxx --authenticationDatabase admin</code>。</p>
+<p>此时执行 <code>show collections</code> 命令，Mongodb 会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&gt; show collections</span><br><span class="line">2016-01-11T17:13:37.275+0800 E QUERY    Error: listCollections failed: &#123;</span><br><span class="line">	&quot;ok&quot; : 0,</span><br><span class="line">	&quot;errmsg&quot; : &quot;not authorized on admin to execute command &#123; listCollections: 1.0 &#125;&quot;,</span><br><span class="line">	&quot;code&quot; : 13</span><br><span class="line">&#125;</span><br><span class="line">    at Error (&lt;anonymous&gt;)</span><br><span class="line">    at DB._getCollectionInfosCommand (src/mongo/shell/db.js:646:15)</span><br><span class="line">    at DB.getCollectionInfos (src/mongo/shell/db.js:658:20)</span><br><span class="line">    at DB.getCollectionNames (src/mongo/shell/db.js:669:17)</span><br><span class="line">    at shellHelper.show (src/mongo/shell/utils.js:625:12)</span><br><span class="line">    at shellHelper (src/mongo/shell/utils.js:524:36)</span><br><span class="line">    at (shellhelp2):1:1 at src/mongo/shell/db.js:646</span><br></pre></td></tr></table></figure>
+<p>这是因为 <strong>sc-admin</strong> 账号只有用户管理权限，并未其分配数据库相关读、写权限。</p>
+<h2 id="为数据库创建用户"><a href="#为数据库创建用户" class="headerlink" title="为数据库创建用户"></a>为数据库创建用户</h2><p><strong>创建普通用户</strong></p>
+<p>接着为各数据库创建相关用户，推荐每个用户都跟着库走。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; use test</span><br><span class="line">&gt; db.createUser(&#123;</span><br><span class="line">  user: &quot;test&quot;,</span><br><span class="line">  pwd: &quot;testtest&quot;,</span><br><span class="line">  roles: [&#123;</span><br><span class="line">    &#123; role: &quot;readWrite&quot;: db: &quot;test&quot; &#125;,</span><br><span class="line">    &#123; role: &quot;read&quot;, db: &quot;local&quot; &#125;</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>可以看到为 <strong>test</strong> 用户分配了 <strong>test</strong> 数据库的读写权限、<strong>local</strong>数据库的只读权限。</p>
+<p>查看刚刚创建的用户：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&gt; show users</span><br><span class="line">&#123;</span><br><span class="line">	&quot;_id&quot; : &quot;test.test&quot;,</span><br><span class="line">	&quot;user&quot; : &quot;test&quot;,</span><br><span class="line">	&quot;db&quot; : &quot;test&quot;,</span><br><span class="line">	&quot;roles&quot; : [</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;role&quot; : &quot;readWrite&quot;,</span><br><span class="line">			&quot;db&quot; : &quot;test&quot;</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;role&quot; : &quot;read&quot;,</span><br><span class="line">			&quot;db&quot; : &quot;local&quot;</span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以查看整个Mongodb数据库的全部用户：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; use admin</span><br><span class="line">&gt; db.system.users.find()</span><br><span class="line">&#123; &quot;_id&quot; : &quot;admin.sc-admin&quot;, &quot;user&quot; : &quot;sc-admin&quot;, &quot;db&quot; : &quot;admin&quot;, &quot;credentials&quot; : &#123; &quot;SCRAM-SHA-1&quot; : &#123; &quot;iterationCount&quot; : 10000, &quot;salt&quot; : &quot;Toe8Z9AhYBmI+fHFhOHA1Q==&quot;, &quot;storedKey&quot; : &quot;8y0LenFMPX0b7FYFDN38odJYW4M=&quot;, &quot;serverKey&quot; : &quot;qVcYyJL13Tg2UdzsIIlyl3jbc+s=&quot; &#125; &#125;, &quot;roles&quot; : [ &#123; &quot;role&quot; : &quot;userAdminAnyDatabase&quot;, &quot;db&quot; : &quot;admin&quot; &#125; ] &#125;</span><br><span class="line">&#123; &quot;_id&quot; : &quot;test.test&quot;, &quot;user&quot; : &quot;test&quot;, &quot;db&quot; : &quot;test&quot;, &quot;credentials&quot; : &#123; &quot;SCRAM-SHA-1&quot; : &#123; &quot;iterationCount&quot; : 10000, &quot;salt&quot; : &quot;cUw0r5tEihHgxWTcCEV8LA==&quot;, &quot;storedKey&quot; : &quot;vPZpRaY0P4x0733tQnVllI6og5U=&quot;, &quot;serverKey&quot; : &quot;eKQ2sdQTtas8HfgCMKhhdf9ndRs=&quot; &#125; &#125;, &quot;roles&quot; : [ &#123; &quot;role&quot; : &quot;readWrite&quot;, &quot;db&quot; : &quot;test&quot; &#125;, &#123; &quot;role&quot; : &quot;read&quot;, &quot;db&quot; : &quot;local&quot; &#125; ] &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用普通用户操作</strong></p>
+<p>现在使用 <strong>test</strong> 用户登录做此操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ mongo 192.168.31.101/test -u test -p testtest --authenticationDatabase test</span><br><span class="line">MongoDB shell version: 3.0.7</span><br><span class="line">connecting to: 192.168.31.101/test</span><br><span class="line">&gt; show collections</span><br><span class="line">people</span><br><span class="line">&gt; use local</span><br><span class="line">switched to db local</span><br><span class="line">&gt; show collections</span><br><span class="line">startup_log</span><br><span class="line">&gt; db.test_coll.insert(&#123;&quot;test&quot;:&quot;test&quot;&#125;)</span><br><span class="line">WriteResult(&#123;</span><br><span class="line">	&quot;writeError&quot; : &#123;</span><br><span class="line">		&quot;code&quot; : 13,</span><br><span class="line">		&quot;errmsg&quot; : &quot;not authorized on local to execute command &#123; insert: \&quot;test_coll\&quot;, documents: [ &#123; _id: ObjectId(&apos;569374f512032e2e67470c98&apos;), test: \&quot;test\&quot; &#125; ], ordered: true &#125;&quot;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br><span class="line">&gt; use test</span><br><span class="line">switched to db test</span><br><span class="line">&gt; db.test_coll.insert(&#123;&quot;test&quot;:&quot;test&quot;&#125;)</span><br><span class="line">WriteResult(&#123; &quot;nInserted&quot; : 1 &#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>enable authorization: <a href="https://docs.mongodb.org/manual/tutorial/enable-authentication/" target="_blank" rel="external">https://docs.mongodb.org/manual/tutorial/enable-authentication/</a></li>
+<li>security.authorization: <a href="https://docs.mongodb.org/manual/reference/configuration-options/#security.authorization" target="_blank" rel="external">https://docs.mongodb.org/manual/reference/configuration-options/#security.authorization</a></li>
+<li>built-in-roles: <a href="https://docs.mongodb.org/manual/reference/built-in-roles/" target="_blank" rel="external">https://docs.mongodb.org/manual/reference/built-in-roles/</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" data-id="ckmlxnras0042s7ugpo10l3tm" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/" rel="tag">mongodb</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/12/linux%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Linux系统运维常用工具
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Nginx（Tengine）使用</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

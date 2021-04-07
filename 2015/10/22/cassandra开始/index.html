@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Canssandra开始 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Install Cassandra1234567sudo mkdir -p &#x2F;usr&#x2F;app&#x2F;cassandrasudo chown -R $(whoami) &#x2F;usr&#x2F;appcd &#x2F;usr&#x2F;app&#x2F;cassandrawget http:&#x2F;&#x2F;apache.fayea.com&#x2F;cassandra&#x2F;2.1.11&#x2F;apache-cassandra-2.1.11-bin.tar.gztar zxf apa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Canssandra开始">
+<meta property="og:url" content="http://www.yangbajing.me/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Install Cassandra1234567sudo mkdir -p &#x2F;usr&#x2F;app&#x2F;cassandrasudo chown -R $(whoami) &#x2F;usr&#x2F;appcd &#x2F;usr&#x2F;app&#x2F;cassandrawget http:&#x2F;&#x2F;apache.fayea.com&#x2F;cassandra&#x2F;2.1.11&#x2F;apache-cassandra-2.1.11-bin.tar.gztar zxf apa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-22T13:50:49.000Z">
+<meta property="article:modified_time" content="2015-10-26T13:30:32.000Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="cassandra">
+<meta property="article:tag" content="集群">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/cassandra/">cassandra</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-cassandra开始" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Canssandra开始
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/" class="article-date">
+  <time datetime="2015-10-22T13:50:49.000Z" itemprop="datePublished">2015-10-22</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-cassandra开始" data-title="Canssandra开始" data-url="http://www.yangbajing.me/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="Install-Cassandra"><a href="#Install-Cassandra" class="headerlink" title="Install Cassandra"></a>Install Cassandra</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /usr/app/cassandra</span><br><span class="line">sudo chown -R $(whoami) /usr/app</span><br><span class="line">cd /usr/app/cassandra</span><br><span class="line">wget http://apache.fayea.com/cassandra/2.1.11/apache-cassandra-2.1.11-bin.tar.gz</span><br><span class="line">tar zxf apache-cassandra-2.1.11-bin.tar.gz</span><br><span class="line">mv apache-cassandra-2.1.11 cassandra-2.1</span><br><span class="line">mkdir data commitlog log saved_caches</span><br></pre></td></tr></table></figure>
+<p>启动<code>bin/cassandra -f</code>即可，<code>-f</code>参数的意思是让cassandra服务在前台启动，这样可以各种上日志输出就将直接打印到终端上。</p>
+<h2 id="Cassandra集群搭建"><a href="#Cassandra集群搭建" class="headerlink" title="Cassandra集群搭建"></a>Cassandra集群搭建</h2><p>我们构建一个有3个节点的cassandra集群，IP分别为：<code>192.168.31.101</code>、<code>192.168.31.102</code>、<code>192.168.31.103</code>。</p>
+<p>编辑Cassandra配置文件：<code>conf/cassandra.yaml</code>：</p>
+<p><strong>endpoint_snitch</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">endpoint_snitch: GossipingPropertyFileSnitch</span><br></pre></td></tr></table></figure>
+<p>配置Cassandra集群支持机架感知，推荐产品使用。</p>
+<p><strong>listen_address</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen_address: 192.168.31.101</span><br></pre></td></tr></table></figure>
+<p><strong>rpc_address</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpc_address:</span><br></pre></td></tr></table></figure>
+<p>（注意：<code>rpc_address:</code>后面的空格也要删除掉）</p>
+<p><strong>seeds</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- seeds: &quot;192.168.31.101,192.168.31.102,192.168.31.103&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>Store data</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data_file_directories:</span><br><span class="line">     - /usr/app/cassandra/data</span><br></pre></td></tr></table></figure>
+<p><strong>Commit log</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commitlog_directory: /usr/app/cassandra/commitlog</span><br></pre></td></tr></table></figure>
+<p><strong>Saved caches</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saved_caches_directory: /usr/app/cassandra/saved_caches</span><br></pre></td></tr></table></figure>
+<p>先配置好一台，再把相同的配置文件和目录复制到其它节点上。在修改相应IP地址即可。之后挨个启动集群，可以看到下面这样的节点连结信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">INFO  12:33:35 Handshaking version with /192.168.31.102</span><br><span class="line">INFO  12:33:36 No gossip backlog; proceeding</span><br><span class="line">INFO  12:33:36 Node /192.168.31.102 is now part of the cluster</span><br><span class="line">INFO  12:33:36 Netty using native Epoll event loop</span><br><span class="line">INFO  12:33:36 InetAddress /192.168.31.102 is now UP</span><br><span class="line">INFO  12:33:36 Updating topology for /192.168.31.102</span><br></pre></td></tr></table></figure>
+<h2 id="CQLSH"><a href="#CQLSH" class="headerlink" title="CQLSH"></a>CQLSH</h2><h4 id="创建keyspace"><a href="#创建keyspace" class="headerlink" title="创建keyspace"></a>创建keyspace</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE KEYSPACE watch_log WITH replication = &#123;&apos;class&apos;: &apos;NetworkTopologyStrategy&apos;, &apos;dc1&apos;: 2 &#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="cqlsh支持查询中文"><a href="#cqlsh支持查询中文" class="headerlink" title="cqlsh支持查询中文"></a>cqlsh支持查询中文</h2><p>默认的<code>cqlsh</code>是可以正常显示中文的，但当你的查询语句里有中文时，就会报错：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cqlsh:mykeyspace&gt; select * from users where fname = '羊';</span><br><span class="line">'ascii' codec can't decode byte 0xe7 in position 35: ordinal not in range(128)</span><br></pre></td></tr></table></figure>
+<p>因为<code>cqlsh</code>是用<code>Python</code>编写的，所以定位是<code>Python</code>对中文支持的问题。这个问题也很好解决，加入以下两行代码即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reload(sys)</span><br><span class="line">sys.setdefaultencoding(<span class="string">"utf-8"</span>)</span><br></pre></td></tr></table></figure>
+<p>加入后代码显示如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> glob <span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">from</span> StringIO <span class="keyword">import</span> StringIO</span><br><span class="line"><span class="keyword">from</span> uuid <span class="keyword">import</span> UUID</span><br><span class="line"></span><br><span class="line">reload(sys)</span><br><span class="line">sys.setdefaultencoding(<span class="string">"utf-8"</span>)</span><br><span class="line"></span><br><span class="line">description = <span class="string">"CQL Shell for Apache Cassandra"</span></span><br><span class="line">version = <span class="string">"5.0.1"</span></span><br></pre></td></tr></table></figure>
+<h2 id="一些重要的Cassandra配置"><a href="#一些重要的Cassandra配置" class="headerlink" title="一些重要的Cassandra配置"></a>一些重要的Cassandra配置</h2><ul>
+<li>cluster_name: 限制只能加入相同名字的集群</li>
+<li>num_tokens: </li>
+</ul>
+<h2 id="系统优化"><a href="#系统优化" class="headerlink" title="系统优化"></a>系统优化</h2><p>DataStax 推荐的<code>ulimit</code>设置如下（编辑<code>/etc/security/limits.conf</code>文件，添加）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scdata memlock unlimited</span><br><span class="line">scdata nofile 100000</span><br><span class="line">scdata nproc 23768</span><br><span class="line">scdata - as unlimited</span><br></pre></td></tr></table></figure>
+<p>使用以下命令使设置马上生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo sysctl -p</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/" data-id="ckmlxnr9j0029s7uggd5bqbsp" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cassandra/" rel="tag">cassandra</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E7%BE%A4/" rel="tag">集群</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/02/elasticsearch%E5%88%9D%E6%AD%A5%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Elasticsearch初步使用
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/09/23/Spark%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Spark小试牛刀</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/10/22/cassandra%E5%BC%80%E5%A7%8B/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

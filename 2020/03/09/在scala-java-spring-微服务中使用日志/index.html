@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>在 Scala/Java/Spring 微服务中使用日志 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="应用开发、运行时，日志作为调试、留痕的重要工具非常重要。对此，Akka Fusion 库为日志处理提供了开箱即用的支持：  预置的日志 encoder 配置 通过 filebeat 输出日志到 Elasticsearch 良好的自定义支持  使用 fusion-log 库，需要添加以下依赖。 12resolvers +&#x3D; Resolver.bintrayRepo(&quot;helloscala&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 Scala&#x2F;Java&#x2F;Spring 微服务中使用日志">
+<meta property="og:url" content="http://www.yangbajing.me/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="应用开发、运行时，日志作为调试、留痕的重要工具非常重要。对此，Akka Fusion 库为日志处理提供了开箱即用的支持：  预置的日志 encoder 配置 通过 filebeat 输出日志到 Elasticsearch 良好的自定义支持  使用 fusion-log 库，需要添加以下依赖。 12resolvers +&#x3D; Resolver.bintrayRepo(&quot;helloscala&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-09T03:45:13.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala-logging">
+<meta property="article:tag" content="akka-log">
+<meta property="article:tag" content="slf4j">
+<meta property="article:tag" content="spring-log">
+<meta property="article:tag" content="fusion-log">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-在scala-java-spring-微服务中使用日志" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      在 Scala/Java/Spring 微服务中使用日志
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/" class="article-date">
+  <time datetime="2020-03-09T03:45:13.000Z" itemprop="datePublished">2020-03-09</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-在scala-java-spring-微服务中使用日志" data-title="在 Scala/Java/Spring 微服务中使用日志" data-url="http://www.yangbajing.me/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>应用开发、运行时，日志作为调试、留痕的重要工具非常重要。对此，Akka Fusion 库为日志处理提供了开箱即用的支持：</p>
+<ul>
+<li>预置的日志 encoder 配置</li>
+<li>通过 filebeat 输出日志到 Elasticsearch</li>
+<li>良好的自定义支持</li>
+</ul>
+<p>使用 fusion-log 库，需要添加以下依赖。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">resolvers += Resolver.bintrayRepo(&quot;helloscala&quot;, &quot;maven&quot;)</span><br><span class="line">libraryDependencies += &quot;com.helloscala.fusion&quot; %% &quot;fusion-log&quot; % &quot;2.0.6&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="输出日志到终端"><a href="#输出日志到终端" class="headerlink" title="输出日志到终端"></a>输出日志到终端</h2><p>logback.xml 日志文件内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span> <span class="attr">scan</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/defaults.xml"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/stdout-appender.xml"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"ch.qos"</span> <span class="attr">level</span>=<span class="string">"WARN"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"com.zaxxer"</span> <span class="attr">level</span>=<span class="string">"WARN"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"fusion"</span> <span class="attr">level</span>=<span class="string">"DEBUG"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"helloscala"</span> <span class="attr">level</span>=<span class="string">"DEBUG"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"INFO"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"STDOUT"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="输出日志到文件"><a href="#输出日志到文件" class="headerlink" title="输出日志到文件"></a>输出日志到文件</h2><p>logback.xml 日志文件内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span> <span class="attr">scan</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"fusion.log.logback.file"</span> <span class="attr">value</span>=<span class="string">"fusion-example"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"fusion.log.logback.dir"</span> <span class="attr">value</span>=<span class="string">"$&#123;user.home&#125;/logs"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/defaults.xml"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/file-appender.xml"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/stdout-appender.xml"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"ch.qos"</span> <span class="attr">level</span>=<span class="string">"WARN"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"com.zaxxer"</span> <span class="attr">level</span>=<span class="string">"WARN"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"fusion"</span> <span class="attr">level</span>=<span class="string">"DEBUG"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"helloscala"</span> <span class="attr">level</span>=<span class="string">"DEBUG"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"INFO"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- &lt;appender-ref ref="STDOUT"/&gt; --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"FILE"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fusion.log.logback.dir</code></td>
+<td>指定输出日志文件名</td>
+</tr>
+<tr>
+<td><code>fusion.log.logback.file</code></td>
+<td>指定输出日志保存目录</td>
+</tr>
+</tbody>
+</table>
+<p>默认提供的 <strong>FILE</strong> logback 日志 <code>Appender</code> 为了方便 filebeat 读取并存储日志到 Elasticsearch，使用 <strong>JSON</strong> 格式输出日志。<code>file-appender.xml</code> 配置及说明请见后文。</p>
+<h2 id="在-Scala-Java-应用中使用"><a href="#在-Scala-Java-应用中使用" class="headerlink" title="在 Scala/Java 应用中使用"></a>在 Scala/Java 应用中使用</h2><p>应用日志使用 logback 输出，可由程序启动命令参数指定日志配置文件路径。如：<code>-Dlogback.configurationFile=${__APP_PATH__}/logback.xml</code>。</p>
+<p><strong>scala-logging</strong></p>
+<p>在 Scala 应用中，可以使用 StrictLogging 或 LazyLogging 来引入 Logger 变量，这个特性由 <a href="https://github.com/lightbend/scala-logging" target="_blank" rel="external">https://github.com/lightbend/scala-logging</a> 库提供。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> <span class="keyword">extends</span> <span class="title">StrictLogging</span> </span>&#123;</span><br><span class="line">  logger.debug(<span class="string">s"Some <span class="subst">$expensive</span> message!"</span>)</span><br><span class="line">  </span><br><span class="line">  logger.whenDebugEnabled &#123;</span><br><span class="line">    println(<span class="string">"This would only execute when the debug level is enabled."</span>)</span><br><span class="line">    (<span class="number">1</span> to <span class="number">10</span>).foreach(x =&gt; println(<span class="string">"Scala logging is great!"</span>))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在代码里简单的 <code>extends/with</code> <code>StrictLogging</code> 这个 trait，就可以直接使用 <code>logger</code> 变量来调用它上面的各种日志方法。另外，也不在需要在日志消息里面使用 <code>{}</code> 来作为占位符输出变量，可直接使用 Scala 的字符串插值特性。<code>scala-logging</code> 基于 Scala macros 提供了编译时扩展：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logger.debug(<span class="string">s"Some <span class="subst">$expensive</span> message!"</span>)</span><br></pre></td></tr></table></figure>
+<p>将在编译时被替换为：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (logger.isDebugEnabled) logger.debug(<span class="string">s"Some <span class="subst">$expensive</span> message!"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="在-Akka-应用中使用"><a href="#在-Akka-应用中使用" class="headerlink" title="在 Akka 应用中使用"></a>在 Akka 应用中使用</h2><p>Akka 有自己的日志级别配置项。所以，最好将 Akka 的日志级别配置与 slf4j 的日志级别保持一致，可以在 HOCON 里面通过以下配置设置 Akka 的日志级别：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">akka.loglevel = <span class="string">"DEBUG"</span></span><br></pre></td></tr></table></figure>
+<p>在 actor 中，可以通过 <code>ActorContext[T]</code> 上提供的 <code>log</code> 方法来使用 Akka 日志。</p>
+<p>当 <code>akka-actor-typed</code> 和 <code>akka-slf4j</code> 存在于类依赖路径上时，Akka 的事件日志处理 actor 将向 <strong>SLF4J</strong> 发送事件，并自动启用 <code>akka.event.slf4j.Slf4jLogger</code> 和 <code>akka.event.slf4j.Slf4jLoggingFilter</code> 类，而无需要任何配置。若需要手动配置 Akka 使用 <strong>SLF4J</strong> 输出日志，请确保如下配置，否则将使用默认日志实现并输出日志内容到终端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">akka &#123;</span><br><span class="line">  loglevel = &quot;DEBUG&quot;</span><br><span class="line">  loggers = [&quot;akka.event.slf4j.Slf4jLogger&quot;]</span><br><span class="line">  logging-filter = &quot;akka.event.slf4j.Slf4jLoggingFilter&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em>Tip</em></strong></p>
+<p><em>使用 actor 的过程中，死信消息会在 <strong>INFO</strong> 级别输出，通常情况下这都是正常的业务状态，可以通过配置抑制这类日志消息在输出几次后被关闭的输出以免干扰我们正常的日志内容。另外，在 <code>ActorSystem</code> 被关闭（<code>terminate</code>）时，actor 邮箱里被挂起的消息将被发送的死信邮箱，我们可以通过配置禁止在 <code>terminate</code> 期间输出死信日志。</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">akka &#123;</span><br><span class="line">  log-dead-letters = 10</span><br><span class="line">  log-dead-letters-during-shutdown = on</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="在-Spring-Spring-Cloud-中使用"><a href="#在-Spring-Spring-Cloud-中使用" class="headerlink" title="在 Spring/ Spring Cloud 中使用"></a>在 Spring/ Spring Cloud 中使用</h2><p>Spring 应用中需要删除<code>logback-spring.xml</code>文件而使用<code>logback.xml</code>（如果存在）。</p>
+<p>Spring 应用需要禁用 <code>LoggingSystem</code>，使用此命令行参数可禁用它：<code>-Dorg.springframework.boot.logging.LoggingSystem=none</code>。<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-custom-log-configuration" target="_blank" rel="external">点此访问自定义 Spring 日志的更多介绍</a>。</p>
+<p>Fusion Log 为日志提供了兼容 Spring Cloud 的参数以在日志输出中输出 Spring应用服务名、启动环境（模式）、IP地址、网络端口等信息。详细映射参数见： <a href="#defaults-xml">#default-xml</a></p>
+<h2 id="自定义-encoder"><a href="#自定义-encoder" class="headerlink" title="自定义 encoder"></a>自定义 encoder</h2><p>对于默认的 <code>STDOUT</code> 和 <code>FILE</code> 日志格式不满意的，可以自定义自己的日志编码格式。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span> <span class="attr">scan</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/defaults.xml"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">"fusion/log/logback/stdout-appender.xml"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"STDOUT_CUSTOM"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.ConsoleAppender"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>-%d %-5level %fusionEnv %fusionServiceName %fusionServerHost %fusionServerPort [%thread] %logger&#123;36&#125; %line - %msg%n%exception<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"DEBUG"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"console_custom"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="预置配置"><a href="#预置配置" class="headerlink" title="预置配置"></a>预置配置</h2><h3 id="defaults-xml"><a href="#defaults-xml" class="headerlink" title="defaults.xml"></a>defaults.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">included</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionServerHost"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogHostConverter"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionServerIp"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogHostConverter"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionServerPort"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogPortConverter"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionServerHostName"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogHostNameConverter"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionServiceName"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogServiceNameConverter"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"fusionEnv"</span> <span class="attr">converterClass</span>=<span class="string">"fusion.log.logback.LogEnvConverter"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">included</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Fusion Log 预定义了几个转换规则参数，可以在 Appender 的编码模式（encoder pattern）里通过 <code>%</code> 参数引用。这几个转换规则参数都将从Java应用Properties变量里查找所需的值。</p>
+<ol>
+<li><code>fusionServerHostName</code>：应用服务所在主机名，用以下方式读取：<code>InetAddress.getLocalHost.getCanonicalHostName</code></li>
+<li><code>fusionServerIp</code>、<code>fusionServerHost</code>：应用服务绑定 IP 地址，查找顺序：<ul>
+<li><code>-Dfusion.http.default.server.host</code></li>
+<li><code>-Dhttp.host</code></li>
+<li><code>-Dserver.host</code></li>
+</ul>
+</li>
+<li><code>fusionServerPort</code>：应用服务绑定网络端口，查找顺序：<ul>
+<li><code>-Dfusion.http.default.server.port</code></li>
+<li><code>-Dhttp.port</code></li>
+<li><code>-Dserver.port</code></li>
+</ul>
+</li>
+<li><code>fusionServerName</code>：应用服务名字，查找顺序：<ul>
+<li><code>-Dfusion.name</code></li>
+<li><code>-Dspring.application.name</code></li>
+<li><code>-Dfusion.service.name</code></li>
+</ul>
+</li>
+<li><code>fusionEnv</code>：应用服务启动环境（模式），如：<code>prod</code>、<code>test</code>、<code>dev</code>等运行环境，查找顺序：<ul>
+<li><code>-Dfusion.profiles.active</code></li>
+<li><code>-Dspring.profiles.active</code></li>
+<li><code>-Drun.env</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="stdout-appender-xml"><a href="#stdout-appender-xml" class="headerlink" title="stdout-appender.xml"></a>stdout-appender.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">included</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"STDOUT"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.ConsoleAppender"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$&#123;fusion.log.logback.console-pattern:-%date&#123;ISO8601&#125; %-5level %thread %logger %X&#123;akkaSource&#125; %line - %msg%n%exception&#125;<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--    &lt;appender name="ASYNC_STDOUT" class="ch.qos.logback.classic.AsyncAppender"&gt;--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        &lt;queueSize&gt;1024&lt;/queueSize&gt;--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        &lt;neverBlock&gt;true&lt;/neverBlock&gt;--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        &lt;appender-ref ref="STDOUT" /&gt;--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--    &lt;/appender&gt;--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">included</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="file-appender-xml"><a href="#file-appender-xml" class="headerlink" title="file-appender.xml"></a>file-appender.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">included</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">File</span>&gt;</span>$&#123;fusion.log.logback.dir:-$&#123;user.dir&#125;/logs&#125;/$&#123;fusion.log.logback.file:-$&#123;spring.application.name:-fusion&#125;&#125;.log<span class="tag">&lt;/<span class="name">File</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">FileNamePattern</span>&gt;</span>$&#123;fusion.log.logback.dir:-$&#123;user.dir&#125;/logs&#125;/$&#123;fusion.log.logback.file:-$&#123;spring.application.name:-fusion&#125;&#125;.%d&#123;yyyy-MM-dd&#125;.gz<span class="tag">&lt;/<span class="name">FileNamePattern</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--只保留最近7天的日志 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">maxHistory</span>&gt;</span>7<span class="tag">&lt;/<span class="name">maxHistory</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--用来指定日志文件的上限大小，如果到了这个值，就会删除旧的日志 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">totalSizeCap</span>&gt;</span>8GB<span class="tag">&lt;/<span class="name">totalSizeCap</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">encoder</span> <span class="attr">class</span>=<span class="string">"net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">providers</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">mdc</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">timestamp</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">pattern</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">pattern</span>&gt;</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        "level": "%level",</span><br><span class="line">                        "serviceName": "%fusionServiceName",</span><br><span class="line">                        "env": "%fusionEnv",</span><br><span class="line">                        "thread": "%thread",</span><br><span class="line">                        "logger": "%logger",</span><br><span class="line">                        "akkaSource": "%X&#123;akkaSource&#125;",</span><br><span class="line">                        "message": "%level [%thread] %logger %line -\n%message",</span><br><span class="line">                        "server": &#123;</span><br><span class="line">                            "host": "%fusionServerHost",</span><br><span class="line">                            "port": "#asLong&#123;%fusionServerPort&#125;"</span><br><span class="line">                        &#125;,</span><br><span class="line">                        "exception": "%exception"</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">callerData</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- Printing StackTrace has an import on performance. --&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--&lt;stackTrace/&gt;--&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">providers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">included</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><em>通过 <code>LoggingEventCompositeJsonEncoder</code> 提供了 JSON 格式日志输出支持，它是 logstash 提供的一个 logback encoder 和 appender 库，在此可以查询更多详细：<a href="https://github.com/logstash/logstash-logback-encoder" target="_blank" rel="external">https://github.com/logstash/logstash-logback-encoder</a> 。</em></p>
+<h2 id="通过-Filebeat-输出日志到-Elastic-stack"><a href="#通过-Filebeat-输出日志到-Elastic-stack" class="headerlink" title="通过 Filebeat 输出日志到 Elastic-stack"></a>通过 Filebeat 输出日志到 Elastic-stack</h2><h3 id="filebeat-配置"><a href="#filebeat-配置" class="headerlink" title="filebeat 配置"></a>filebeat 配置</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">filebeat.inputs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">log</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">json:</span></span><br><span class="line">      <span class="attr">keys_under_root:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">overwrite_keys:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/yangjing/logs/*.log</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">exclude_files:</span> <span class="string">['.gz$']</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================= Filebeat modules ===============================</span></span><br><span class="line"></span><br><span class="line"><span class="attr">filebeat.config.modules:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">$&#123;path.config&#125;/modules.d/*.yml</span></span><br><span class="line">  <span class="attr">reload.enabled:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#==================== Elasticsearch template setting ==========================</span></span><br><span class="line"><span class="attr">setup.kibana:</span></span><br><span class="line">  <span class="attr">host:</span> <span class="string">"localhost:5601"</span></span><br><span class="line">  <span class="comment">#space.id:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#-------------------------- Elasticsearch output ------------------------------</span></span><br><span class="line"><span class="attr">output.elasticsearch:</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">["localhost:9200"]</span></span><br><span class="line">  <span class="comment"># Optional protocol and basic auth credentials.</span></span><br><span class="line">  <span class="comment">#protocol: "https"</span></span><br><span class="line">  <span class="comment">#username: "elastic"</span></span><br><span class="line">  <span class="comment">#password: "changeme"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================ Processors =====================================</span></span><br><span class="line"><span class="comment"># Configure processors to enhance or manipulate events generated by the beat.</span></span><br><span class="line"><span class="attr">processors:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">add_host_metadata:</span> <span class="string">~</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">add_cloud_metadata:</span> <span class="string">~</span></span><br></pre></td></tr></table></figure>
+<p><em>注意是以下三行配置，使filebeat支持json格式日志文件</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">json:</span><br><span class="line">  keys_under_root: true</span><br><span class="line">  overwrite_keys: true</span><br></pre></td></tr></table></figure>
+<h3 id="通过-Docker-启动-elastic-stack"><a href="#通过-Docker-启动-elastic-stack" class="headerlink" title="通过 Docker 启动 elastic-stack"></a>通过 Docker 启动 elastic-stack</h3><p>这里选择使用 filebeat 直接把日志数据输出到 Elasticsearch，不使用 Logstack 做中转。</p>
+<p>通过 docker-compose，可以很方便的启动 elastic-stack：<code>docker-compose up -d</code></p>
+<p><strong>docker-compose.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">fusion-elasticsearch:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fusion-elasticsearch</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.6.1</span></span><br><span class="line">    <span class="comment">#restart: on-failure</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9200</span><span class="string">:9200</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9300</span><span class="string">:9300</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">discovery.type=single-node</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">cluster.name=fusion-docker-es-cluster</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">memlock:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">fusionlognet</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">fusion-kibana:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fusion-kibana</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/kibana/kibana:7.6.1</span></span><br><span class="line">    <span class="comment">#restart: on-failure</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">5601</span><span class="string">:5601</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">SERVER_NAME:</span> <span class="string">fusion-kibana</span></span><br><span class="line">      <span class="attr">ELASTICSEARCH_HOSTS:</span> <span class="string">http://fusion-elasticsearch:9200</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">fusionlognet</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">fusionlognet:</span></span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文内容来自 <strong>Akka Fusion</strong> 的 <code>fusio-log</code> 库，Akka Fusion 是作者在日常 Scala 应用开发中经验总结和积累的实用工具库。可以轻松创建独立的，生产级的基于Akka的应用程序。我们集成了Akka生态系统里常用及流行的组件，因此您可以快速搭建开始你的应用。大多数Akka Fusion应用程序只需要很少的配置。Akka Fusion 访问地址：<a href="https://github.com/akka-fusion/akka-fusion" target="_blank" rel="external">https://github.com/akka-fusion/akka-fusion</a> 。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/" data-id="ckmlxnrhu00lms7ug2ycc1bzt" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-log/" rel="tag">akka-log</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fusion-log/" rel="tag">fusion-log</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala-logging/" rel="tag">scala-logging</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/slf4j/" rel="tag">slf4j</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-log/" rel="tag">spring-log</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/03/13/%E8%AF%91-akka-grpc-0-8-0-released/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          译：Akka gRPC 0.8.0 Released
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">怎样优雅的关闭 ActorSystem</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

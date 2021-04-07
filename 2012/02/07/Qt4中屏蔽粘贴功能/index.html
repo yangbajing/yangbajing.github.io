@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Qt4中屏蔽粘贴功能 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在Qt4中实现屏蔽粘贴功能有好几种方法，其中最简单的一种就是把控件属性设为叫读 setReadOnly(true)，但是这样就不能在控件中输入了。我现在想实现的目标是允许用户手动输入文本，但是不允许用户粘贴文本到控件中。 以QLineEdit为例，默认情况下Qt4提供了3种文本粘贴方式：  Ctrl+V 鼠标中键 鼠标右键弹出“上下文菜单”，从中选择粘贴功能  其中屏蔽第3种方式最简单，设置控件的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt4中屏蔽粘贴功能">
+<meta property="og:url" content="http://www.yangbajing.me/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="在Qt4中实现屏蔽粘贴功能有好几种方法，其中最简单的一种就是把控件属性设为叫读 setReadOnly(true)，但是这样就不能在控件中输入了。我现在想实现的目标是允许用户手动输入文本，但是不允许用户粘贴文本到控件中。 以QLineEdit为例，默认情况下Qt4提供了3种文本粘贴方式：  Ctrl+V 鼠标中键 鼠标右键弹出“上下文菜单”，从中选择粘贴功能  其中屏蔽第3种方式最简单，设置控件的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2012-02-06T16:27:00.000Z">
+<meta property="article:modified_time" content="2015-04-10T05:46:09.000Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="c">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="qt">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/c-c/">c/c++</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-Qt4中屏蔽粘贴功能" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Qt4中屏蔽粘贴功能
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/" class="article-date">
+  <time datetime="2012-02-06T16:27:00.000Z" itemprop="datePublished">2012-02-07</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-Qt4中屏蔽粘贴功能" data-title="Qt4中屏蔽粘贴功能" data-url="http://www.yangbajing.me/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>在Qt4中实现屏蔽粘贴功能有好几种方法，其中最简单的一种就是把控件属性设为叫读 setReadOnly(true)，但是这样就不能在控件中输入了。我现在想实现的目标是允许用户手动输入文本，但是不允许用户粘贴文本到控件中。</p>
+<p>以QLineEdit为例，默认情况下Qt4提供了3种文本粘贴方式：</p>
+<ol>
+<li>Ctrl+V</li>
+<li>鼠标中键</li>
+<li>鼠标右键弹出“上下文菜单”，从中选择粘贴功能</li>
+</ol>
+<p>其中屏蔽第3种方式最简单，设置控件的上下文菜单策略为Qt::NoContextMenu即可</p>
+<pre><code>ui-&gt;lineEdit-&gt;setContextMenuPolicy(Qt::NoContextMenu);
+</code></pre><p>但是这个方式有个问题，设置这个选项后就没有上下文菜单了，包括复制、剪切等都没有，但是我只是想屏蔽“粘贴”功能，其它右键菜单的功能还是应该保留的。<br>其实Qt专门为上下文弹出菜单提供了一个事件处理函数，我们可以继承一个QLineEdit，重写它的contextMenuEvent(QContextMenuEvent *event)函数，来实现屏蔽“粘贴”功能，代码如下：</p>
+<pre><code>void LineEdit::contextMenuEvent(QContextMenuEvent *event)  
+{  
+    QString temp = qApp-&gt;clipboard()-&gt;text();  
+    qApp-&gt;clipboard()-&gt;setText(QString());  
+
+    if (QMenu *menu = createStandardContextMenu()) {  
+        menu-&gt;setAttribute(Qt::WA_DeleteOnClose);  
+        menu-&gt;popup(event-&gt;globalPos());  
+    }  
+    qApp-&gt;clipboard()-&gt;setText(temp);  
+}  
+</code></pre><p>这样，在右键弹出的上下文菜单中，先为系统剪切板里的数据作一个备份后清空它，在这个函数的最后再恢复数据。这样，无论系统剪贴板里是否有数据，粘贴功能都是不可用的。其实我们可以模仿默认的createStandardContextMenu()函数来生成自己的右键上下文菜单。</p>
+<p>屏蔽Ctrl+V和鼠标中键最好使用事件过滤器来实现，使用事件过滤器的好处是可以为多个控件使用同一个过滤规则，减少编码工作。先直接贴代码吧：<br>主界面中的事件过滤函数：</p>
+<pre><code>bool Widget::eventFilter(QObject *target, QEvent *event)  
+{  
+    if (target == lineEdit) {  
+        if (event-&gt;type() == QEvent::KeyPress) {  
+            QKeyEvent *keyEvent = static_cast&lt;QKeyEvent *&gt;(event);  
+            if (keyEvent-&gt;matches(QKeySequence::Paste)) {  
+</code></pre><p>//              if (keyEvent-&gt;modifiers() == Qt::ControlModifier<br>//                  &amp;&amp; keyEvent-&gt;key() == Qt::Key_V) {<br>                    qDebug() &lt;&lt; “Ctrl + V”;<br>                    return true;<br>                }<br>            }<br>            if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>                QMouseEvent <em>mouseEvent = static_cast&lt;QMouseEvent </em>&gt;(event);<br>                if (mouseEvent-&gt;button() == Qt::MidButton) {<br>                    qDebug() &lt;&lt; “Mouse MidButton Release”;<br>                    return true;<br>                }<br>            }<br>        }<br>        return QWidget::eventFilter(target, event);<br>    }</p>
+<p>屏蔽Ctrl+V有两种方式，使用Qt4内置的QKeySequence和自己判断Qt::ControlModifier和V键按下事件，推荐使用QKeySequence::Paste，因为用户可能会更改系统默认的“粘贴”快捷键。比如在Linux系统下，如果不使用QKeySequence而是自己判断Ctrl+V的话还需要判断Shift+Insert（Qt::ShiftModifier和Qt::Key_Insert）两个键。<br>经过测试鼠标中健的粘贴功能是在鼠标释放时实现的，所有只要在捕获到鼠标中键的MouseButtonRelease事件直接返回true就可以屏蔽掉默认的粘贴功能了。<br>在主界面Widget的构造函数中为ui-&gt;lineEdit加入事件过滤器：</p>
+<pre><code>lineEdit-&gt;installEventFilter(this); 
+</code></pre><p>结尾：相关的QTextEdit等输入控件都可以使用相似的方法来实现屏蔽粘贴功能。 </p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/" data-id="ckmlxnr8n000ws7ug95qufodg" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/" rel="tag">c</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/" rel="tag">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/qt/" rel="tag">qt</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/01/01/%E5%9C%A8liftweb%20%E4%B8%AD%E6%89%A9%E5%B1%95%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%BC%BC%20jQuery%E7%9A%84%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          在liftweb中扩展一个类似jQuery的方法
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2012/02/04/%E3%80%8AUnix%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E7%AC%AC3%E7%89%88%EF%BC%89%E3%80%8B%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">《Unix网络编程（第3版）》代码编译的一些问题</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2012/02/07/Qt4%E4%B8%AD%E5%B1%8F%E8%94%BD%E7%B2%98%E8%B4%B4%E5%8A%9F%E8%83%BD/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

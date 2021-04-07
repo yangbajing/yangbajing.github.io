@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Tag: akka | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:type" content="website">
+<meta property="og:title" content="羊八井花园">
+<meta property="og:url" content="http://www.yangbajing.me/tags/akka/page/2/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="杨景">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><i class="icon fa fa-tag"></i>标签：<em>akka</em></h1>
+            </div>
+            <div class="main-body-content">
+              
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/scala%E5%AE%9E%E6%88%98/">scala实战</a></p>
+        <p class="date"><time datetime="2019-07-17T13:17:34.000Z" itemprop="datePublished">2019-07-17</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/07/17/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BD%BF%E7%94%A8akka-stream%E4%BC%98%E5%8C%96%E5%BC%82%E6%AD%A5%E4%BB%A3%E7%A0%81/" class="title">Scala实战：使用Akka Stream优化异步代码</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Scala扫盲行动
+背景今天同事在开发一个消息推送功能，业务还是比较简单的：
+
+通过地区查找这个区域内的所有组织
+通过组织ID获取每个组织的所有用户
+通过用户ID获得所有绑定了设备IMEI号
+通过IMEI号向设备上推送消息
+
+0 业务代码123456789101112131415implicit val system = ActorSystem()implicit val mat    = Act
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-06-18T13:40:14.000Z" itemprop="datePublished">2019-06-18</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/06/18/akka%E5%90%AF%E7%94%A8ssl%E5%92%8Chttp-2/" class="title">Akka启用ssl和HTTP 2</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Akka原生支持SSL、HTTPS、HTTP 2，本文记录下各SSL的使用配置。
+X.509证书
+公钥证书是解决身份问题的一种方法。若仅加密是可以建立一个安全的连接，但不能保证你正在与你认为正在与之通信的服务器通信。如果没有某种方法来验证远程服务器的身份，攻击者仍然可以将自己作为远程服务器，然后将安全连接转发到伪造的远程服务器。公钥证书就是用来解决这个问题的。
+考虑公共密钥证书的最佳方法是使用护照
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-06-18T03:36:10.000Z" itemprop="datePublished">2019-06-18</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/" class="title">WS SSL快速起步 - lightbend SSL Config</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        原文：Quick Start to WS SSL
+本文适用于需要通过 HTTPS 连接到远程 Web 服务而不想阅读整个手册的用户。如果需要设置 Web 服务或配置客户端身份认证，请阅读 Generating X.509 Certificates 。
+通过 HTTPS 连接到远程服务器如果远程服务器正在使用一个由已知证书颁发机构签发的证书，那么WS应该在不进行任何额外配置的情况下即可正常工作。这里
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-06-01T10:08:20.000Z" itemprop="datePublished">2019-06-01</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" class="title">Akka实战：再谈断点上传</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        去年的文章：《Akka实战：HTTP大文件断点上传、下载，秒传》 通过示例介绍了在Akka HTTP里怎样实现断点上传功能。通过一段时间的应用，发现了些问题，这篇文章再深入介绍下。在 https://github.com/yangbajing/scala-applications/tree/master/file-upload能找到完整的源码。
+Nginx代理Nginx代理时默认会在Nginx端收
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-02-23T12:42:46.000Z" itemprop="datePublished">2019-02-23</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/02/23/alpakka-kafka%EF%BC%8C%E5%8F%8D%E5%BA%94%E5%BC%8Fkafka%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="title">Alpakka Kafka，反应式Kafka客户端</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Alpakka Kafka 是一个要用于 Java 和 Scala 语言的开源的流感知和反应式集成数据线项目。它建立在 Akka Stream之上，提供了 DSL 来支持反应式和流式编程，内置回压功能。Akka Streams 是 Reactive Streams 和JDK 9+ java.util.concurrent.Flow 的兼容实现，可无缝地与其进行互操作。
+要使用 Alpakka Ka
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2018-12-29T03:24:16.000Z" itemprop="datePublished">2018-12-29</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2018/12/29/akka%E5%AE%9E%E6%88%98%EF%BC%9Ahttp%E5%A4%A7%E6%96%87%E4%BB%B6%E6%96%AD%E7%82%B9%E4%B8%8A%E4%BC%A0%E3%80%81%E4%B8%8B%E8%BD%BD%EF%BC%8C%E7%A7%92%E4%BC%A0/" class="title">Akka实战：HTTP大文件断点上传、下载，秒传</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        访问：https://github.com/yangbajing/scala-applications/tree/master/file-upload 获取本文所述完整源码，包括Akka HTTP后端和HTML5实现的前端。
+在很多应用里面都会有类似大文件上传的需求，但很多时候我们程序员都会以不支持或不好实现将其推脱掉^_^。
+这次因为公司项目需要，另一个组的同事使用Spring实现了一版。他们是
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/">作品</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/scala-web-development/">scala-web-development</a></p>
+        <p class="date"><time datetime="2018-08-24T05:24:51.000Z" itemprop="datePublished">2018-08-24</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2018/08/24/%E3%80%8Ascala-web%E5%BC%80%E5%8F%91%E3%80%8B/" class="title">《Scala Web开发》</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        电子书：Scala Web开发
+码云镜像：Scala Web开发
+
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2018-08-05T06:08:46.000Z" itemprop="datePublished">2018-08-05</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2018/08/05/%E6%B5%8B%E8%AF%95%EF%BC%9Aakka-http%E8%B7%AF%E7%94%B1/" class="title">测试：Akka HTTP路由</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        上一篇文章简单介绍了 ScalaTest，这篇将从一个实例入手介绍在项目中怎样应用 ScalaTest 来应用测试驱动的开发。
+Akka HTTP这里我们将使用 Akka HTTP来开发一个很简单的业务应用：组织管理。它只有一个数据模型，Org。组织支持树型结构，所有每个 org 里面都可以有一个可选 parent 属性来指向父组织，若没有则代表此 org 是个一级组织。Org 的数据模型如下：
+
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2017-04-10T11:53:50.000Z" itemprop="datePublished">2017-04-10</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" class="title">Akka HTTP 快速上手</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Akka Http 是Akka社区提供的一个 Http服务端/客户端通用工具包，支持 Http 1.0/1.1标准及WebSocket，现在 Http 2 的支持也在紧锣密鼓的实现中。
+这篇文章将介绍Akka HTTP Server，我们将介绍Akka Http的常用功能模块及使用方式。Akka Http提供了一套强大、易用、易扩展的route dsl来构建路由。Akka Http Client因
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2015-12-01T04:32:05.000Z" itemprop="datePublished">2015-12-01</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2015/12/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%96%B0%E9%97%BB%E7%88%AC%E8%99%AB/" class="title">Akka实战：开发一个多线程新闻爬虫</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        代码：https://github.com/yangbajing/crawler-service
+使用Scala开发一个多线程爬虫，利用Akka库来管理多个爬虫任务的分散和聚合操作。同时使用scheduleOnce来设置爬取任务在指定时间内完成。详细需求如下：
+
+可同时从多个新闻源（搜索引擎）检索新闻
+已爬取过的新闻存库，第二次访问时直接从库里读取
+提供duration参数，调用方可设置调用超时。
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2015-11-26T16:05:33.000Z" itemprop="datePublished">2015-11-27</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2015/11/27/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E6%9E%84%E5%BB%BArest%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="title">Akka实战：构建REST风格的微服务</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        使用Akka-Http构建REST风格的微服务，服务API应尽量遵循REST语义，数据使用JSON格式交互。在有错误发生时应返回：{&quot;errcode&quot;:409,&quot;errmsg&quot;:&quot;aa is invalid，the ID is expected to be bb&quot;}类似的JSON错误消息。
+代码：
+
+https://github.com/
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2015-11-25T11:41:46.000Z" itemprop="datePublished">2015-11-25</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/" class="title">Akka实战：分散、聚合模式</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        分散、聚合模式：简单说就是一个任务需要拆分成多个小任务，每个小任务执行完后再把结果聚合在一起返回。
+代码 https://github.com/yangbajing/akka-action
+
+实例背景本实例来自一个真实的线上产品，现将其需求简化如下：
+
+传入一个关键词：key，根据key从网上抓取相关新闻
+可选传入一个超时参数：duration，设置任务到期时必须反回数据（返回实际已抓取数据）
+若
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2015-08-11T10:11:27.000Z" itemprop="datePublished">2015-08-11</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="title">使用Akka Http，ActiveMQ搭建一个邮件发送服务器</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        代码地址：https://github.com/yangbajing/scala-applications/tree/master/email-server
+应用功能是实现一个基于队列的邮件发送服务，每个邮件发送者（使用smtp协议）作为一个sender。多个sender可以在同一个组(group)中，每个组中的sender将串行发送邮件。
+邮件内容可以通过REST API提交，以可以使用JMS发
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+  
+    <nav id="page-nav">
+      <span class="pages">第 2 页，共 2 页</span>
+      <a class="extend prev" rel="prev" href="/tags/akka/">&amp;laquo;</a><a class="page-number" href="/tags/akka/">1</a><span class="page-number current">2</span>
+    </nav>
+  
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

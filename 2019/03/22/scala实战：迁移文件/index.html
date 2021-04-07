@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战：迁移文件 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Scala作为script使用也是非常的方便。 原文地址：https:&#x2F;&#x2F;www.yangbajing.me&#x2F;2019&#x2F;03&#x2F;22&#x2F;scala实战：迁移文件&#x2F; 前因最近因为线上文件越来越多，导致磁盘不够用。需要将磁盘上数据迁移到一块新的磁盘上（不用问为啥没用云存储，因为用了的话就不会有这篇文章了）。迁移数据时遇到几个问题：  迁移过程中服务不能中断 因为磁盘文件较大，文件移动耗费时间较长……等co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战：迁移文件">
+<meta property="og:url" content="http://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Scala作为script使用也是非常的方便。 原文地址：https:&#x2F;&#x2F;www.yangbajing.me&#x2F;2019&#x2F;03&#x2F;22&#x2F;scala实战：迁移文件&#x2F; 前因最近因为线上文件越来越多，导致磁盘不够用。需要将磁盘上数据迁移到一块新的磁盘上（不用问为啥没用云存储，因为用了的话就不会有这篇文章了）。迁移数据时遇到几个问题：  迁移过程中服务不能中断 因为磁盘文件较大，文件移动耗费时间较长……等co">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-22T13:24:50.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="script">
+<meta property="article:tag" content="scala-script">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala实战：迁移文件" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战：迁移文件
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/" class="article-date">
+  <time datetime="2019-03-22T13:24:50.000Z" itemprop="datePublished">2019-03-22</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala实战：迁移文件" data-title="Scala实战：迁移文件" data-url="http://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong><em>Scala作为script使用也是非常的方便。</em></strong></p>
+<p><em>原文地址：<a href="https://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/">https://www.yangbajing.me/2019/03/22/scala实战：迁移文件/</a></em></p>
+<h2 id="前因"><a href="#前因" class="headerlink" title="前因"></a>前因</h2><p>最近因为线上文件越来越多，导致磁盘不够用。需要将磁盘上数据迁移到一块新的磁盘上（不用问为啥没用云存储，因为用了的话就不会有这篇文章了）。迁移数据时遇到几个问题：</p>
+<ol>
+<li>迁移过程中服务不能中断</li>
+<li>因为磁盘文件较大，文件移动耗费时间较长……等copy完的话再重新挂载磁盘会造成移动时间这段时间内新上传文件丢失</li>
+</ol>
+<p>终上，我想到一个一个子目录的进行迁移，在迁移完后再将新目录做一个符号连接回原地址。这样在完成整体迁移之前若有新文件上传，文件将通过符号连接最终存储到新的磁盘上。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>所用Scala script代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.file.&#123;<span class="type">Files</span>, <span class="type">Path</span>, <span class="type">Paths</span>&#125;</span><br><span class="line"><span class="keyword">import</span> java.time.&#123;<span class="type">Duration</span>, <span class="type">Instant</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.sys.process._</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (args.length != <span class="number">2</span>) &#123;</span><br><span class="line">  println(<span class="string">""</span><span class="string">"请输入参数：scala MoveDir.scala &lt;src_dir&gt; &lt;dest_dir&gt;"</span><span class="string">""</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从命令行参数中函数“解构”直接获得源目录和目的目录</span></span><br><span class="line"><span class="keyword">val</span> <span class="type">Array</span>(srcDir, distDir) = args</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> <span class="type">IGNORE_NAMES</span> = <span class="type">Set</span>(<span class="string">"s1"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ignoreDirectories</span></span>(dir: <span class="type">Path</span>) = &#123;</span><br><span class="line">  <span class="keyword">val</span> name = dir.getName(dir.getNameCount - <span class="number">1</span>).toString</span><br><span class="line">  <span class="type">IGNORE_NAMES</span>(name) || name.length != <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Files</span></span><br><span class="line">  .list(<span class="type">Paths</span>.get(srcDir))</span><br><span class="line">  .forEach &#123; <span class="comment">// 模式匹配</span></span><br><span class="line">    <span class="keyword">case</span> dir: <span class="type">Path</span> <span class="keyword">if</span> !<span class="type">Files</span>.isDirectory(dir) || <span class="type">Files</span>.isSymbolicLink(dir) =&gt;</span><br><span class="line">      println(<span class="string">s"<span class="subst">$dir</span> 不是目录或为符号链接"</span>)</span><br><span class="line">    <span class="keyword">case</span> dir: <span class="type">Path</span> <span class="keyword">if</span> ignoreDirectories(dir) =&gt;</span><br><span class="line">      println(<span class="string">s"强制忽略目录：<span class="subst">$dir</span>"</span>)</span><br><span class="line">    <span class="keyword">case</span> dir: <span class="type">Path</span> =&gt;</span><br><span class="line">      <span class="keyword">val</span> name = dir.getName(dir.getNameCount - <span class="number">1</span>).toString</span><br><span class="line">      <span class="keyword">val</span> target = <span class="string">s"<span class="subst">$distDir</span>/<span class="subst">$name</span>"</span></span><br><span class="line">      <span class="keyword">val</span> start = <span class="type">Instant</span>.now()</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 通过 .!! 隐式方法直接执行系统命令</span></span><br><span class="line">        <span class="string">s"mv <span class="subst">$dir</span> <span class="subst">$target</span>"</span>.!!</span><br><span class="line">        <span class="string">s"ln -sf <span class="subst">$target</span> <span class="subst">$srcDir</span>/<span class="subst">$name</span>"</span>.!!</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">val</span> cost = <span class="type">Duration</span>.between(start, <span class="type">Instant</span>.now())</span><br><span class="line">        println(<span class="string">s"移动目录成功，耗时<span class="subst">$cost</span>；<span class="subst">$dir</span> --&gt; <span class="subst">$target</span>"</span>)</span><br><span class="line">      &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> e: <span class="type">Throwable</span> =&gt;</span><br><span class="line">          <span class="keyword">val</span> cost = <span class="type">Duration</span>.between(start, <span class="type">Instant</span>.now())</span><br><span class="line">          <span class="type">System</span>.err.println(<span class="string">s"移动目录失败，耗时<span class="subst">$cost</span>；<span class="subst">$dir</span> --&gt; <span class="subst">$target</span>。<span class="subst">$&#123;e.toString&#125;</span>"</span>)</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>脚本执行后的部分输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ scala MoveDir.scala /home/upload /data</span><br><span class="line">移动目录成功，耗时PT0.012S；/home/upload/d4 --&gt; /data/d4</span><br><span class="line">移动目录成功，耗时PT0.002S；/home/upload/ba --&gt; /data/ba</span><br><span class="line">移动目录成功，耗时PT0.002S；/home/upload/fd --&gt; /data/fd</span><br><span class="line">移动目录成功，耗时PT0.002S；/home/upload/7e --&gt; /data/7e</span><br><span class="line">移动目录成功，耗时PT0.002S；/home/upload/b7 --&gt; /data/b7</span><br><span class="line">移动目录成功，耗时PT0.003S；/home/upload/76 --&gt; /data/76</span><br><span class="line">移动目录成功，耗时PT0.002S；/home/upload/43 --&gt; /data/43</span><br><span class="line">强制忽略目录：/home/upload/hongka-tmp</span><br><span class="line">移动目录成功，耗时PT0.001S；/home/upload/df --&gt; /data/df</span><br><span class="line">/home/upload/logo.jpg 不是目录或为符号链接</span><br><span class="line">移动目录成功，耗时PT0.001S；/home/upload/85 --&gt; /data/85</span><br><span class="line">移动目录成功，耗时PT0.001S；/home/upload/f0 --&gt; /data/f0</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Scala是一门强大的、融合了函数式与面向对象范式的编程语言。同时，Scala也是一门精致的语言，除了通常那些 <strong>重量</strong> 级应用外，日常工作中的脚本也可以使用。接下来，也许你可以尝试下 lihaoyi 的 <a href="http://ammonite.io/" target="_blank" rel="external">http://ammonite.io/</a>。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/" data-id="ckmlxnrbd0057s7ugkm8s9inx" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala-script/" rel="tag">scala-script</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/script/" rel="tag">script</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Spring应用enum处理
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/03/20/devops%E5%AE%9E%E8%B7%B5%EF%BC%9Agitlab%E3%80%81jenkins/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">DevOps实践：Gitlab、Jenkins</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/03/22/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

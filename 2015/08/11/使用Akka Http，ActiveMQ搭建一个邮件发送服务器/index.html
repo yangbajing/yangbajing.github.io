@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>使用Akka Http，ActiveMQ搭建一个邮件发送服务器 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="代码地址：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;scala-applications&#x2F;tree&#x2F;master&#x2F;email-server 应用功能是实现一个基于队列的邮件发送服务，每个邮件发送者（使用smtp协议）作为一个sender。多个sender可以在同一个组(group)中，每个组中的sender将串行发送邮件。 邮件内容可以通过REST API提交，以可以使用JMS发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Akka Http，ActiveMQ搭建一个邮件发送服务器">
+<meta property="og:url" content="http://www.yangbajing.me/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="代码地址：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;scala-applications&#x2F;tree&#x2F;master&#x2F;email-server 应用功能是实现一个基于队列的邮件发送服务，每个邮件发送者（使用smtp协议）作为一个sender。多个sender可以在同一个组(group)中，每个组中的sender将串行发送邮件。 邮件内容可以通过REST API提交，以可以使用JMS发">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-08-11T10:11:27.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="activemq">
+<meta property="article:tag" content="email">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-使用Akka Http，ActiveMQ搭建一个邮件发送服务器" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      使用Akka Http，ActiveMQ搭建一个邮件发送服务器
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="article-date">
+  <time datetime="2015-08-11T10:11:27.000Z" itemprop="datePublished">2015-08-11</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-使用Akka Http，ActiveMQ搭建一个邮件发送服务器" data-title="使用Akka Http，ActiveMQ搭建一个邮件发送服务器" data-url="http://www.yangbajing.me/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>代码地址：<a href="https://github.com/yangbajing/scala-applications/tree/master/email-server" target="_blank" rel="external">https://github.com/yangbajing/scala-applications/tree/master/email-server</a></p>
+<p>应用功能是实现一个基于队列的邮件发送服务，每个邮件发送者（使用smtp协议）作为一个<code>sender</code>。多个<code>sender</code>可以在同一个组<code>(group)</code>中，每个组中的<code>sender</code>将串行发送邮件。</p>
+<p>邮件内容可以通过<code>REST API</code>提交，以可以使用<code>JMS</code>发布到<code>ActiveMQ</code>中，邮件服务器将从中读取邮件内容。</p>
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><p><strong>配置：</strong></p>
+<p>推荐在启动时使用<code>-Dapplication.file=/usr/app/etc/emailserver/application.conf</code>指定配置文件</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">emailserver &#123;</span><br><span class="line">  server &#123;</span><br><span class="line">    interface = "0.0.0.0"</span><br><span class="line">    port = 9999</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  emails &#123;</span><br><span class="line">    email1 &#123;</span><br><span class="line">      userName = "email1@email.com"</span><br><span class="line">      password = ""</span><br><span class="line">      smtp = ""</span><br><span class="line">      smtpPort = 0</span><br><span class="line">      ssl = true</span><br><span class="line"></span><br><span class="line">      # 同一个组内的邮件会串行发送，此key可忽略</span><br><span class="line">      group = "1"</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    email2 &#123;</span><br><span class="line">      userName = "email2@email.com"</span><br><span class="line">      password = ""</span><br><span class="line">      smtp = ""</span><br><span class="line">      smtpPort = 0</span><br><span class="line">      ssl = true</span><br><span class="line">      group = "2"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  activemq &#123;</span><br><span class="line">    url = "tcp://127.0.0.1:61616"</span><br><span class="line">    emailQueueName = "EmailQueue"</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>emails</code>定义邮件发送者（可用于<code>stmp</code>服务进行邮件发送的邮箱信息）。可以定义多个邮件发送者，但每个邮件发送者的<code>key</code>不能相同。比如：<code>email1</code>和<code>email2</code></p>
+<p><code>activemq</code>定义了<code>ActiveMQ</code>服务的连接参数。</p>
+<p><strong>编译与运行：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 编译</span><br><span class="line">./sbt assembly</span><br><span class="line"></span><br><span class="line"># 运行</span><br><span class="line">java -Dapplication.file=/usr/app/etc/emailserver/application.conf -jar target/scala-2.11/email-server.jar</span><br></pre></td></tr></table></figure>
+<p><strong>测试REST服务：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 查询存在的邮箱发送者：</span><br><span class="line">curl http://localhost:9999/email/users</span><br><span class="line"></span><br><span class="line"># 发送测试邮件</span><br><span class="line">curl -v -XPOST -H &quot;Content-Type: application/json&quot; \</span><br><span class="line">  -d &apos;&#123;&quot;sender&quot;:&quot;Info@email.cn&quot;, &quot;subject&quot;:&quot;测试邮件&quot;,&quot;to&quot;:[&quot;user1@email.cn&quot;, &quot;user2@email.cn&quot;],&quot;content&quot;:&quot;测试邮件内容咯~&quot;&#125;&apos; \</span><br><span class="line">  http://localhost:9999/email/send</span><br></pre></td></tr></table></figure>
+<p><strong>使用JMS发送邮件：</strong></p>
+<p><em>安装activemq</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Downloads：http://mirrors.hust.edu.cn/apache/activemq/5.11.1/apache-activemq-5.11.1-bin.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxf ~/Downloads/apache-activemq-5.11.1-bin.tar.gz</span><br><span class="line">cd apache-activemq-5.11.1/</span><br><span class="line">./bin/activemq-admin start</span><br></pre></td></tr></table></figure>
+<p><code>activemq</code>管理控制台地址：<a href="http://localhost:8161/admin/" target="_blank" rel="external">http://localhost:8161/admin/</a>，账号：<code>admin</code>，密码：<code>admin</code>。</p>
+<p>JMS TCP地址：<code>tcp://localhost:61616</code></p>
+<p><em>生产测试邮件</em></p>
+<p>修改<a href="https://github.com/yangbajing/scala-applications/blob/master/email-server/src/main/scala/me/yangbajing/emailserver/demo/EmailProducers.scala" target="_blank" rel="external"><code>EmailProducers.scala</code></a>的<code>activeMqUrl</code>及<code>mapMessage</code>参数，运行<code>EmailProducers</code>生产一个邮件发送请求。</p>
+<h2 id="Akka-Http"><a href="#Akka-Http" class="headerlink" title="Akka Http"></a>Akka Http</h2><p><code>Akka Http</code>是一个完整的<code>server</code>和<code>client</code>端HTTP开发栈，基于<code>akka-actor</code>他<code>akka-stream</code>。它不是一个<code>WEB</code>框架，而是提供了可以构建<code>Http</code>服务的工具包。</p>
+<p><code>Akka Http</code>有一套很直观的<code>DSL</code>来定义路由，自然的形成了一个树型的路由结构。如<a href="https://github.com/yangbajing/scala-applications/blob/master/email-server/src/main/scala/me/yangbajing/emailserver/route/Routes.scala" target="_blank" rel="external">Routes</a>：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">pathPrefix(<span class="string">"email"</span>) &#123;</span><br><span class="line">  path(<span class="string">"send"</span>) &#123;</span><br><span class="line">    post &#123;</span><br><span class="line">      entity(as[<span class="type">JsValue</span>].map(_.as[<span class="type">SendEmail</span>])) &#123; sendEmail =&gt;</span><br><span class="line">        onComplete(emailService.sendEmail(sendEmail)) &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Success</span>(value) =&gt;</span><br><span class="line">            value <span class="keyword">match</span> &#123;</span><br><span class="line">              <span class="keyword">case</span> <span class="type">Right</span>(msg) =&gt; complete(msg)</span><br><span class="line">              <span class="keyword">case</span> <span class="type">Left</span>(msg) =&gt; complete(<span class="type">StatusCodes</span>.<span class="type">Forbidden</span>, msg)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">          <span class="keyword">case</span> <span class="type">Failure</span>(e) =&gt; complete(<span class="type">StatusCodes</span>.<span class="type">InternalServerError</span>, <span class="string">"SendEmail an error occurred: "</span> + e.getMessage)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; ~</span><br><span class="line">    path(<span class="string">"users"</span>) &#123;</span><br><span class="line">      get &#123;</span><br><span class="line">        onComplete(emailService.getEmailSenders) &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Success</span>(emailSenders) =&gt; complete(<span class="type">Json</span>.toJson(emailSenders))</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Failure</span>(e) =&gt; complete(<span class="type">StatusCodes</span>.<span class="type">InternalServerError</span>, <span class="string">"An error occurred: "</span> + e.getMessage)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>path</code> -&gt; <code>post</code> -&gt; <code>entity</code> -&gt; <code>complete</code> 式的函数嵌套，很直观的定义出了声明式的树型<code>REST URI</code>结构，层次分明、逻辑清晰。<code>entity</code>函数用于解析<code>Http Body</code>，将其映射成希望的数据类型，可自定义映射方法。</p>
+<p><code>onComplete</code>函数用在返回类型是一个<code>Future[T]</code>时，提供了快捷的方式把一个<code>Future[T]</code>类型的响应转换到<code>complete</code>。</p>
+<h2 id="邮件发送"><a href="#邮件发送" class="headerlink" title="邮件发送"></a>邮件发送</h2><p>邮件的发送采用了串行发送的方式，这个模式刚好契合<code>Actor</code>默认邮箱的<code>FIFO</code>处理形式。把收到的邮件发送请求告诉一个<code>actor</code>，<code>actor</code>再从邮箱里取出，并组装成<code>XXXXEmail</code>（邮件发送使用了<a href="http://commons.apache.org/proper/commons-email/" target="_blank" rel="external">commons-email</a>）后发送出去。</p>
+<p>首先，程序将收到的邮件发送请求交给<a href="https://github.com/yangbajing/scala-applications/blob/master/email-server/src/main/scala/me/yangbajing/emailserver/service/actors/EmailMaster.scala" target="_blank" rel="external"><code>EmailMaster</code></a>，<code>EmailMaster</code>再根据邮件发送者（连接SMTP的邮箱用户名）来决定将这个发送请求交给哪一个具体的<a href="https://github.com/yangbajing/scala-applications/blob/master/email-server/src/main/scala/me/yangbajing/emailserver/service/actors/EmailGroupActor.scala" target="_blank" rel="external"><code>EmailGroupActor</code></a>。</p>
+<p>这里，程序对邮件发送者（简称：<code>sender</code>）做了一个分组。因为对于使用相同<code>smtp</code>邮件发送服务提供的<code>sender</code>，程序中最后对此类的<code>sender</code>做串行发送。而对于不同<code>smtp</code>邮件发送服务提供的<code>sender</code>，我们可以并发的发送邮件。这个可以通过在定义配置文件的时候指定特定<code>sender</code>属于的邮件发送组。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">emails &#123;</span><br><span class="line">  email1 &#123;</span><br><span class="line">    userName = &quot;email1@email.com&quot;</span><br><span class="line">    password = &quot;&quot;</span><br><span class="line">    smtp = &quot;&quot;</span><br><span class="line">    smtpPort = 0</span><br><span class="line">    ssl = true</span><br><span class="line"></span><br><span class="line">    # 同一个组内的邮件会串行发送，此key可忽略</span><br><span class="line">    group = &quot;1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="连接ActiveMQ"><a href="#连接ActiveMQ" class="headerlink" title="连接ActiveMQ"></a>连接<code>ActiveMQ</code></h2><p>连接<code>ActiveMQ</code>使用了<code>JMS</code>协议，这是一个<code>Java EE</code>标准实现的消息队列。代码在：<a href="https://github.com/yangbajing/scala-applications/blob/master/email-server/src/main/scala/me/yangbajing/emailserver/service/MQConsumerService.scala" target="_blank" rel="external">MQConsumerService</a>。</p>
+<p>在<code>JMS</code>里，邮件使用<code>MapMessage</code>消息发送，程序使用<code>case match</code>来匹配期望的消息格式。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> listener = <span class="keyword">new</span> <span class="type">MessageListener</span> &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onMessage</span></span>(message: <span class="type">Message</span>): <span class="type">Unit</span> = message <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> msg: <span class="type">MapMessage</span> =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> subject = msg.getString(<span class="string">"subject"</span>)</span><br><span class="line">      <span class="keyword">val</span> sender = msg.getString(<span class="string">"sender"</span>)</span><br><span class="line">      <span class="keyword">val</span> content = msg.getString(<span class="string">"content"</span>)</span><br><span class="line">      <span class="keyword">val</span> to = msg.getString(<span class="string">"to"</span>).split(<span class="string">";"</span>)</span><br><span class="line">      <span class="keyword">val</span> mimeType = <span class="type">Option</span>(msg.getString(<span class="string">"mimeType"</span>)).map(<span class="type">MimeType</span>.withName).getOrElse(<span class="type">MimeType</span>.<span class="type">Text</span>)</span><br><span class="line">      <span class="keyword">val</span> sendEmail = <span class="type">SendEmail</span>(sender, subject, to, content, <span class="type">None</span>, mimeType)</span><br><span class="line">      emailService.sendEmail(sendEmail).onComplete(result =&gt; logger.debug(result.toString))</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文简单的演示了<code>Akka Http</code>构建一个<code>REST</code>服务，并支持连接<code>JMS Server</code>来获取发送邮件消息。</p>
+<p>演示了文件邮件和<code>HTML</code>格式邮件的发送。</p>
+<h2 id="接下来"><a href="#接下来" class="headerlink" title="接下来"></a>接下来</h2><p>接下来可以添加对邮件附件的支持，这个功能可以留给读者去实现。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/" data-id="ckmlxnr9g0023s7ug1jifd201" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/" rel="tag">activemq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/email/" rel="tag">email</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Scala实战-通过微信聊天窗口实现应答式点餐 0
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/07/31/%E4%BD%BF%E7%94%A8Gatling%E8%BF%9B%E8%A1%8C%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">使用Gatling进行性能测试</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战：并发-Future和Promise | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="并发编程是很困难的，特别是在你没有很好的设计与抽像你的功能层次时。传统的并发解决方案是采用多线程和共享变量，这使得随着代码的增加你很难找到错误根源。 Scala中采用了更好的方案，它不是只基于更低层次的线程的。Scala为用户提供了更高级的抽象：Futures和Promises（Akka还提供了基于actor模式的编程范式，是一种更高层次的并发编程抽象。本文主要讲解Futures和Promises">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战：并发-Future和Promise">
+<meta property="og:url" content="http://www.yangbajing.me/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="并发编程是很困难的，特别是在你没有很好的设计与抽像你的功能层次时。传统的并发解决方案是采用多线程和共享变量，这使得随着代码的增加你很难找到错误根源。 Scala中采用了更好的方案，它不是只基于更低层次的线程的。Scala为用户提供了更高级的抽象：Futures和Promises（Akka还提供了基于actor模式的编程范式，是一种更高层次的并发编程抽象。本文主要讲解Futures和Promises">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-28T07:23:32.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="scala实战">
+<meta property="article:tag" content="future">
+<meta property="article:tag" content="promise">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/scala%E5%AE%9E%E6%88%98/">scala实战</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala实战：并发-future和promise" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战：并发-Future和Promise
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/" class="article-date">
+  <time datetime="2015-11-28T07:23:32.000Z" itemprop="datePublished">2015-11-28</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala实战：并发-future和promise" data-title="Scala实战：并发-Future和Promise" data-url="http://www.yangbajing.me/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>并发编程是很困难的，特别是在你没有很好的设计与抽像你的功能层次时。传统的并发解决方案是采用多线程和共享变量，这使得随着代码的增加你很难找到错误根源。</p>
+<p>Scala中采用了更好的方案，它不是只基于更低层次的线程的。Scala为用户提供了更高级的抽象：<code>Futures</code>和<code>Promises</code>（<a href="https://akka.io" target="_blank" rel="external">Akka</a>还提供了基于<code>actor</code>模式的编程范式，是一种更高层次的并发编程抽象。本文主要讲解<code>Futures</code>和<code>Promises</code>，这里提供一些进一步学习的参考）。</p>
+<h2 id="Future"><a href="#Future" class="headerlink" title="Future"></a>Future</h2><p><code>Future</code>是持有某个值的对象，它完成一些计算并允许在“将来”的某一个时刻获取结果。它也可以是其它计算结果的结果（简单点说就是多个<code>Future</code>可以嵌套）。创建一个<code>Future</code>最简单的方式就调用它的<code>apply</code>方法，它将直接开始一个异步计算，并返回一个<code>Future</code>对象，它将包含计算结果。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line"><span class="keyword">import</span> scala.concurrent.<span class="type">Future</span></span><br><span class="line"><span class="keyword">import</span> scala.util.&#123;<span class="type">Success</span>, <span class="type">Failure</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">computation</span></span>(): <span class="type">Int</span> = &#123; <span class="number">25</span> + <span class="number">50</span> &#125;</span><br><span class="line"><span class="keyword">val</span> theFuture = <span class="type">Future</span> &#123; computation() &#125;</span><br></pre></td></tr></table></figure>
+<p>第一行导入了<code>ExecutionContext.Implicits.global</code>作为当前环境的一个默认执行上下文。现在先暂时不管它的具体含意，只要知道它会提供一个线程池，所有任务最终都会被提交给它来异步执行就可以了。在这个示例中先定义<code>computation</code>函数，并在<code>Future { ... }</code>代码块中调用。程序会使用上下文中的找到的线程池（由<code>ExecutionContext.Implicits.global</code>导入）并马上开始异步执行。</p>
+<h2 id="访问Future的结果"><a href="#访问Future的结果" class="headerlink" title="访问Future的结果"></a>访问Future的结果</h2><p>前面说了，<code>Future</code>返回值有两种类型：<code>Success</code>和<code>Failure</code>。而<code>Future</code>在执行后提供了3个回调函数来让你访问结果，它们分别是：</p>
+<ul>
+<li>def onSuccess<a href="pf: PartialFunction[T, U]" target="_blank" rel="external">U</a>: 传入一个偏函数，可以使用模式匹配来处理你想要的结果</li>
+<li>def onFailure<a href="pf: PartialFunction[Throwable, U]" target="_blank" rel="external">U</a>: 传入一个偏函数，可以使用模式匹配来处理你想要的异常</li>
+<li>def onComplete<a href="f: Try[T] =&gt; U" target="_blank" rel="external">U</a>: 传一个接受<code>Try[T]</code>（<a href="http://www.yangbajing.me/2013/02/16/Option-Either-Try/">http://www.yangbajing.me/2013/02/16/Option-Either-Try/</a>）类型的函数。</li>
+</ul>
+<p>上面3个回调函数都要求返回一个类型为<code>U</code>的返回值，这也得益于Scala的类型自动推导功能，你可以减少很多的样版代码。</p>
+<p>当Future完成后，我们注册的回调函数将收到值。一个常用的注册回调函数是<code>onComplete</code>，它期待传入一个偏函数，并处理<code>Success[T]</code>和<code>Failure[E]</code>两种情况。（编函数将另文介绍）</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">theFuture.onComplate &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Success</span>(result) =&gt; println(result)</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Fialure</span>(t) =&gt; println(<span class="string">s"Error: %&#123;t.getMessage&#125;"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在Scala中写多线程代码是非常轻松惬意的。但是，你以为使用<code>Future</code>只是简化了<code>new Thead</code>或<code>new Runnable</code>的代码量而以，那就大错特错了。Scala的Future不只这些功能……</p>
+<h2 id="合并多个Future的结果"><a href="#合并多个Future的结果" class="headerlink" title="合并多个Future的结果"></a>合并多个Future的结果</h2><p>实际工作中，我们经常遇到需要向多个来源同时异步请求数据的时候。这时我们就需要等所以来源数据都返回后将结果集处理后再返回。使用<code>Future.sequence</code>方法，接收一个包含<code>Future</code>的列表来将一系列Future的结果汇总到一个<code>List</code>单一结果里输出。完整代码在：<a href="http://git.oschina.net/yangbajing/codes/08pacy2lubgqnkmv1xojd" target="_blank" rel="external">http://git.oschina.net/yangbajing/codes/08pacy2lubgqnkmv1xojd</a></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> f1 = <span class="type">Future</span> &#123;</span><br><span class="line">  <span class="type">TimeUnit</span>.<span class="type">SECONDS</span>.sleep(<span class="number">1</span>)</span><br><span class="line">  <span class="string">"f1"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> f2 = <span class="type">Future</span> &#123;</span><br><span class="line">  <span class="type">TimeUnit</span>.<span class="type">SECONDS</span>.sleep(<span class="number">2</span>)</span><br><span class="line">  <span class="string">"f2"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> f3 = <span class="type">Future</span> &#123;</span><br><span class="line">  <span class="type">TimeUnit</span>.<span class="type">SECONDS</span>.sleep(<span class="number">3</span>)</span><br><span class="line">  <span class="number">2342</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> f4 = <span class="type">Future</span>.sequence(<span class="type">Seq</span>(f1, f2, f3))</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> results: <span class="type">List</span>[<span class="type">Any</span>] = <span class="type">Await</span>.result(f4, <span class="number">4.</span>seconds)</span><br><span class="line"></span><br><span class="line">println(results) <span class="comment">// 输出：List(f1, f2, 2342)</span></span><br></pre></td></tr></table></figure>
+<p>代码<code>f1</code>、<code>f2</code>、<code>f3</code>字义了3个异步操作并马上执行。<code>f4</code>将3个异步操作的结果合并到一个List里返回，同时<code>f4</code>也是一个异步操作。除了采用<code>Future.sequence</code>提供的方便函数，我们还可以使用<strong>for comprehension</strong>特性来更灵活的合并多个<code>Future</code>的结果。</p>
+<p>我们把<code>f4</code>的操作改成使用<strong>for推导式</strong>形式：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> f4: <span class="type">Future</span>[(<span class="type">String</span>, <span class="type">String</span>, <span class="type">Int</span>)] =</span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    r2 &lt;- f2</span><br><span class="line">    r3 &lt;- f3</span><br><span class="line">    r1 &lt;- f1</span><br><span class="line">  &#125; <span class="keyword">yield</span> (r1.take(<span class="number">1</span>), r2.drop(<span class="number">1</span>), r3 + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> (f1Str, f2Str, f3Int) = <span class="type">Await</span>.result(f4, <span class="number">4.</span>seconds)</span><br><span class="line"></span><br><span class="line">println(<span class="string">s"f1: <span class="subst">$f1Str</span>, f2: <span class="subst">$f2Str</span>, f3: <span class="subst">$f3Int</span>"</span>) <span class="comment">// 输出：f1: f, f2: 2, f3: 2342</span></span><br></pre></td></tr></table></figure>
+<p>可以看到<strong>for推导式</strong>也可以使用在<code>Future</code>上，<code>r2 &lt;- f2</code>代码的含意是在<code>f2</code>这个<code>Future</code>执行完后将结果赋值给变量<code>r2</code>。与<code>Future.sequence</code>将多个线程的返回值合并到一个List不同。使用<strong>for推导式</strong>，在<code>yield</code>语句部分你可以对每个线程的运算结果做更自由的处理，并返回自己想要的类型（这得益于Scala强大的类型推导功能，不需要你显示的声明变量值类型）。</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>前文代码，当<code>Future</code>代码块内有异常抛出时使用<strong>Future.sequence</strong>和<strong>for comprehension</strong>也会抛出异常，你将不能正确的获得结果。这时，可以使用<strong>Future</strong>提供的<code>recover</code>方法处理异常，并把异常恢复成一个正确值返回。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recover</span></span>[<span class="type">U</span> &gt;: <span class="type">T</span>](pf: <span class="type">PartialFunction</span>[<span class="type">Throwable</span>, <span class="type">U</span>])</span><br></pre></td></tr></table></figure>
+<p><code>recover</code>常用使用方式如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Future</span> (<span class="number">6</span> / <span class="number">0</span>) recover &#123; <span class="keyword">case</span> e: <span class="type">ArithmeticException</span> =&gt; <span class="number">0</span> &#125; <span class="comment">// result: 0</span></span><br><span class="line"><span class="type">Future</span> (<span class="number">6</span> / <span class="number">0</span>) recover &#123; <span class="keyword">case</span> e: <span class="type">NotFoundException</span>   =&gt; <span class="number">0</span> &#125; <span class="comment">// result: exception</span></span><br><span class="line"><span class="type">Future</span> (<span class="number">6</span> / <span class="number">2</span>) recover &#123; <span class="keyword">case</span> e: <span class="type">ArithmeticException</span> =&gt; <span class="number">0</span> &#125; <span class="comment">// result: 3</span></span><br></pre></td></tr></table></figure>
+<p>接下来看看怎样使用<code>recover</code>来将处理异常并可使返回值可正确应用于<strong>Future.sequence</strong>和<strong>for comprehension</strong>中。以之前的<code>f2</code>举例，修改代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> f2 = <span class="type">Future</span> &#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">RuntimeException</span>(<span class="string">"throw exception"</span>)</span><br><span class="line">&#125;.recover &#123;</span><br><span class="line">  <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt;</span><br><span class="line">    <span class="string">"handled exception"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>采用上面的步骤将异常转换成一个值返回，<code>f2</code>就可以正确的应用到合并代码里了。</p>
+<h2 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h2><p><strong>Promise</strong>是一个承若，它是一个可修改的对象。一个<strong>Promise</strong>可以在未来成功的完成一个任务（使用<code>p.success</code>来完成），也可能用来完成一个失败（通过返回一个异常，使用<code>p.failure</code>）。失败了的<strong>Promise</strong>，可以通过<code>f.recover</code>来处理故障。考虑一个把<code>com.google.common.util.concurrent.FutureCallback&lt;V&gt;</code>封装成Scala的<code>Future</code>的例子，看看<code>Promise</code>是怎样使用的。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> promise = <span class="type">Promise</span>[<span class="type">R</span>]()</span><br><span class="line"><span class="type">Futures</span>.addCallback(</span><br><span class="line">  resultSetFuture,</span><br><span class="line">  <span class="keyword">new</span> <span class="type">FutureCallback</span>[<span class="type">ResultSet</span>] &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onFailure</span></span>(t: <span class="type">Throwable</span>): <span class="type">Unit</span> = promise.failure(t)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onSuccess</span></span>(rs: <span class="type">ResultSet</span>): <span class="type">Unit</span> = promise.complete(<span class="type">Try</span>(func(rs)))</span><br><span class="line">  &#125;,</span><br><span class="line">  ec)</span><br><span class="line">promise.future</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Scala使用<code>Future</code>和<code>Promise</code>对并发编程提供了快捷的支持，同时对多个<code>Future</code>结果的合并和<code>Future</code>的异常恢复也提供了优雅的解决方案。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/" data-id="ckmlxnr9z002vs7ug835fin8l" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/future/" rel="tag">future</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/promise/" rel="tag">promise</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala%E5%AE%9E%E6%88%98/" rel="tag">scala实战</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/28/%E5%86%99%E7%BB%99python%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84scala%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          写给Python程序员的Scala入门教程
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/11/27/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E6%9E%84%E5%BB%BArest%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Akka实战：构建REST风格的微服务</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/11/28/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B9%B6%E5%8F%91-future%E5%92%8Cpromise/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

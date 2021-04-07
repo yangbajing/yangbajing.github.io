@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Cassandra升级更新 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天需要把集群安装的 cassandra 2.2.4 升级到 cassandra 2.2.5 ，这里记录下升级步骤。 （升级脚本见：https:&#x2F;&#x2F;gist.github.com&#x2F;yangbajing&#x2F;12461fcab190689f2499） 升级的主意事项和限制条件需求条件  Cassandra 2.0.x and 2.1.x: 需要 JRE 7 或更高版本（推荐JDK） Cassandra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cassandra升级更新">
+<meta property="og:url" content="http://www.yangbajing.me/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="今天需要把集群安装的 cassandra 2.2.4 升级到 cassandra 2.2.5 ，这里记录下升级步骤。 （升级脚本见：https:&#x2F;&#x2F;gist.github.com&#x2F;yangbajing&#x2F;12461fcab190689f2499） 升级的主意事项和限制条件需求条件  Cassandra 2.0.x and 2.1.x: 需要 JRE 7 或更高版本（推荐JDK） Cassandra">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-07T03:52:36.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="cassandra">
+<meta property="article:tag" content="upgrading">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/cassandra/">cassandra</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-cassandra升级更新" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Cassandra升级更新
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/" class="article-date">
+  <time datetime="2016-03-07T03:52:36.000Z" itemprop="datePublished">2016-03-07</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-cassandra升级更新" data-title="Cassandra升级更新" data-url="http://www.yangbajing.me/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>今天需要把集群安装的 cassandra 2.2.4 升级到 cassandra 2.2.5 ，这里记录下升级步骤。</p>
+<p><em>（升级脚本见：<a href="https://gist.github.com/yangbajing/12461fcab190689f2499" target="_blank" rel="external">https://gist.github.com/yangbajing/12461fcab190689f2499</a>）</em></p>
+<h2 id="升级的主意事项和限制条件"><a href="#升级的主意事项和限制条件" class="headerlink" title="升级的主意事项和限制条件"></a>升级的主意事项和限制条件</h2><p><strong>需求条件</strong></p>
+<ul>
+<li>Cassandra 2.0.x and 2.1.x: 需要 JRE 7 或更高版本（推荐JDK）</li>
+<li>Cassandra 2.2.x, 3.0.x, and 3.x: 需要 JRE 8 或更高版本（推荐JDK）</li>
+<li>移出所有 dead 节点：<a href="https://docs.datastax.com/en/cassandra/2.1/cassandra/tools/toolsRemoveNode.html" target="_blank" rel="external"><code>nodetool removenode</code></a></li>
+</ul>
+<p><strong>升级限制</strong></p>
+<p>在执行升级步骤时有一些常用限制需要在整个集群遵循：</p>
+<ul>
+<li>不要启用新特性（Do not enable new features.）</li>
+<li>不要运行<code>nodetool repair</code>命令（Do not run nodetool repair.）</li>
+<li>不要运行DDL和TRUNCATE这类CQL查询语句（Do not issue these types of CQL queries during a rolling restart: DDL and TRUNCATE.）</li>
+<li>在升级期间，不同版本的节点显示的schema可能会不一致（During upgrades, the nodes on different versions might show a schema disagreement.）</li>
+</ul>
+<h2 id="升级步骤"><a href="#升级步骤" class="headerlink" title="升级步骤"></a>升级步骤</h2><ol>
+<li>设置新版 cassandra 2.2.5：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxf /home/scdata/dsc-cassandra-2.2.5-bin.tar.gz -C /opt/local</span><br></pre></td></tr></table></figure>
+<p>如上，先解压新版cassandra到磁盘，再复制配置文件到cassandra 2.2.5目录中覆盖默认配置。可能需要复制的配置文件有：</p>
+<ul>
+<li>bin/cassandra.in.sh</li>
+<li>conf/cassandra-env.sh</li>
+<li>conf/cassandra.yaml</li>
+<li>conf/cassandra-rackdc.properties</li>
+<li>conf/cassandra-topology.properties</li>
+</ul>
+<ol start="2">
+<li>创建快照，防止升级失败。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nodetool snapshot KEYSPACE -t snapshot_`date &quot;+%Y-%m-%d&quot;`</span><br></pre></td></tr></table></figure>
+<p>把 KEYSPACE 换成实际的keyspace名。若使用了JNA，则快照是通过硬链接实现的，并不会增加磁盘空间。创建快照时间很快。</p>
+<ol start="3">
+<li>停节点</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nodetool drain   # 关闭写入，同时把数据写入文件</span><br><span class="line">nodetool stopdaemon    # 停掉本节点</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>启动新节点</li>
+</ol>
+<ol start="5">
+<li>可选的 SSTables 更新</li>
+</ol>
+<p>当升级cassandra是一个主要版本更新（如：1.2 to 2.0），或者是一个主要点的更新（如：2.0 to 2.1）时，需要在每个节点升级 SSTable。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nodetool upgradesstables</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>结果日志，查看升级过程中是否有：warnings、errors和exceptions</p>
+</li>
+<li><p>在每个节点上重复以上步骤</p>
+</li>
+</ol>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>官方升级详细文档见：<a href="https://docs.datastax.com/en/upgrade/doc/upgrade/cassandra/upgradeCassandraDetails.html" target="_blank" rel="external">upgradeCassandraDetails</a>。</p>
+<p>Cassandra的升级与维护应该是一个常态，推荐一年进行一次大版本的升级。这样可以避免版本跨度太大而引起的很多升级问题。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/" data-id="ckmlxnrad003cs7ugv6cfvh1x" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cassandra/" rel="tag">cassandra</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/upgrading/" rel="tag">upgrading</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Spark实战：工程实践
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Scala开发者的Spring-Boot快速上手指南 01</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

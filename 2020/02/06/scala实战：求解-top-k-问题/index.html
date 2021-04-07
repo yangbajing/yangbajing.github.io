@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战：求解 Top K 问题 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="问题描述服务器上有一个 movies.csv 文件，里面保存了每部电影的评分（为了简化和专注问题，CSV文件每一行只有两个字段：movieId和rating）。文件通过HTTP服务器发布。要求从文件内找出排名最高的10部电影。 解法1：全量排序求Top 10通过 wget、curl 等工具先将文件下载到本地，再读出文件内所有行并解析出 movieId和rating 字段，按 rating 字段排序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战：求解 Top K 问题">
+<meta property="og:url" content="http://www.yangbajing.me/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="问题描述服务器上有一个 movies.csv 文件，里面保存了每部电影的评分（为了简化和专注问题，CSV文件每一行只有两个字段：movieId和rating）。文件通过HTTP服务器发布。要求从文件内找出排名最高的10部电影。 解法1：全量排序求Top 10通过 wget、curl 等工具先将文件下载到本地，再读出文件内所有行并解析出 movieId和rating 字段，按 rating 字段排序">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-06T09:06:12.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-streams">
+<meta property="article:tag" content="top-k">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala实战：求解-top-k-问题" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战：求解 Top K 问题
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2020-02-06T09:06:12.000Z" itemprop="datePublished">2020-02-06</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala实战：求解-top-k-问题" data-title="Scala实战：求解 Top K 问题" data-url="http://www.yangbajing.me/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>服务器上有一个 movies.csv 文件，里面保存了每部电影的评分（为了简化和专注问题，CSV文件每一行只有两个字段：movieId和rating）。文件通过HTTP服务器发布。要求从文件内找出排名最高的10部电影。</p>
+<h2 id="解法1：全量排序求Top-10"><a href="#解法1：全量排序求Top-10" class="headerlink" title="解法1：全量排序求Top 10"></a>解法1：全量排序求Top 10</h2><p>通过 <code>wget</code>、<code>curl</code> 等工具先将文件下载到本地，再读出文件内所有行并解析出 <code>movieId</code>和<code>rating</code> 字段，按 <code>rating</code> 字段排序并求得分最高的 10 部电影。这种方法逻辑很简单，实现代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Movie</span>(<span class="params">id: <span class="type">String</span>, rating: <span class="type">Double</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">val</span> <span class="title">top10</span> </span>= scala.io.<span class="type">Source</span>.fromFile(<span class="string">"/tmp/movies.csv"</span>).getLines()</span><br><span class="line">  <span class="comment">//.drop(1) // if csv header exists.</span></span><br><span class="line">  .flatMap &#123; line =&gt; </span><br><span class="line">    line.split(',') <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Array</span>(movieId, rating) =&gt; <span class="type">Try</span>(<span class="type">Movie</span>(movieId, rating.toDouble)).toOption  </span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="type">None</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  .toVector</span><br><span class="line">  .sortWith(_.rating &gt; _.rating)</span><br><span class="line">  .take(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="解法2：遍历一次文件求出Top-10"><a href="#解法2：遍历一次文件求出Top-10" class="headerlink" title="解法2：遍历一次文件求出Top 10"></a>解法2：遍历一次文件求出Top 10</h2><p>因为我们只是找出得分最高的10部电影，可以预先定义一个有序 <code>top10</code> 集合，在遍历 <code>movies.csv</code> 的每一部电影时将其与 <code>top10</code> 集合里得分最低的一部电影比较。若得分大于集合里最低的那部电影，则将集合里得分最低的电影去掉，将将当前电影加入集合。这样，我们只需要遍历一次文件即可获得得分最高的10部电影。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Movie</span>(<span class="params">id: <span class="type">String</span>, rating: <span class="type">Double</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">var</span> <span class="title">top10</span> </span>= <span class="type">Vector</span>[<span class="type">Movie</span>]()</span><br><span class="line">scala.io.<span class="type">Source</span>.fromFile(<span class="string">"/tmp/movies.csv"</span>).getLines()</span><br><span class="line">  <span class="comment">//.drop(1) // if csv header exists.</span></span><br><span class="line">  .flatMap &#123; line =&gt; </span><br><span class="line">    line.split(',') <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Array</span>(movieId, rating) =&gt; <span class="type">Some</span>(<span class="type">Movie</span>(movieId, rating.toDouble))  </span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="type">None</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  .foreach &#123; movie =&gt;</span><br><span class="line">    top10 = <span class="keyword">if</span> (top10.size &lt; <span class="number">10</span>) (movie +: top10).sortWith(_.rating &lt; _.rating)</span><br><span class="line">      <span class="keyword">else</span> <span class="keyword">if</span> (top10.head.rating &gt; movie.rating) top10</span><br><span class="line">      <span class="keyword">else</span> (movie +: top10.tail).sortWith(_.rating &lt; _.rating)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="解法3：使用Akka-Streams异步求出Top-K个得分最高的电影"><a href="#解法3：使用Akka-Streams异步求出Top-K个得分最高的电影" class="headerlink" title="解法3：使用Akka Streams异步求出Top K个得分最高的电影"></a>解法3：使用Akka Streams异步求出Top K个得分最高的电影</h2><p><code>FileIO</code> 是Akka Streams自带的一个文件读、写工具类，可以从一个文件生成 <code>Source[ByteString, Future[IOResult]]</code> 或将 <code>Source[ByteString, Future[IOResult]]</code> 写入文件。<code>Framing.delimiter</code> 可以从Akka Streams 的 <code>ByteString</code> 流以指定分隔符（<code>\n</code>）按行提取内容，并将每一行数据发送到流程的下一步骤。</p>
+<hr>
+<p><strong><em>注意</em></strong></p>
+<p>这里 <code>Framing.delimiter</code> 的第3个参数 <code>allowTruncation</code> 需要设置为 <strong>true</strong> ，否则文件在不以 <code>\n</code> 结尾的情况下将抛出以下异常：<code>akka.stream.scaladsl.Framing$FramingException: Stream finished but there was a truncated final frame in the buffer</code> 。</p>
+<hr>
+<p>如果设置为 <strong>false</strong>，则当正在解码的最后一个帧不包含有效的分隔符时，此流将失败，而不是返回截断的帧数据。*</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="type">Behaviors</span>.ignore, <span class="string">"topK"</span>)</span><br><span class="line"><span class="keyword">val</span> res = <span class="type">Paths</span>.get(<span class="type">Thread</span>.currentThread().getContextClassLoader.getResource(<span class="string">"movies.csv"</span>).toURI)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> topKF = <span class="type">FileIO</span></span><br><span class="line">  .fromPath(<span class="type">Paths</span>.get(res.toUri))</span><br><span class="line">  .via(<span class="type">CsvParsing</span>.lineScanner())</span><br><span class="line">  .drop(<span class="number">1</span>) <span class="comment">// Drop CSV Header</span></span><br><span class="line">  .mapConcat &#123;</span><br><span class="line">    <span class="keyword">case</span> name :: <span class="type">AsDouble</span>(rating) :: _ =&gt; <span class="type">Movie</span>(name.utf8String, rating) :: <span class="type">Nil</span></span><br><span class="line">    <span class="keyword">case</span> _                             =&gt; <span class="type">Nil</span></span><br><span class="line">  &#125;</span><br><span class="line">  .runWith(<span class="keyword">new</span> <span class="type">TopKSink</span>(<span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> topN = <span class="type">Await</span>.result(topKF, <span class="number">5.</span>minutes)</span><br><span class="line"></span><br><span class="line">topN.foreach(println)</span><br><span class="line">println(topN.size)</span><br><span class="line"></span><br><span class="line">system.terminate()</span><br></pre></td></tr></table></figure>
+<p>这里使用 alpakka-csv 来将 <code>ByteString</code> 数据流转换成 CSV 数据格式，可以在 <a href="https://doc.akka.io/docs/alpakka/current/data-transformations/csv.html" target="_blank" rel="external">https://doc.akka.io/docs/alpakka/current/data-transformations/csv.html</a> 找到这个库的详细使用说明。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">toMovie</span></span>(bs: <span class="type">ByteString</span>): <span class="type">Either</span>[<span class="type">Throwable</span>, <span class="type">Movie</span>] =</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> arr = bs.utf8String.split(',')</span><br><span class="line">    <span class="type">Right</span>(<span class="type">Movie</span>(arr(<span class="number">0</span>), arr(<span class="number">1</span>).toDouble))</span><br><span class="line">  &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> e: <span class="type">Throwable</span> =&gt; <span class="type">Left</span>(e)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="自定义Sink：TopKSink"><a href="#自定义Sink：TopKSink" class="headerlink" title="自定义Sink：TopKSink"></a>自定义Sink：<code>TopKSink</code></h3><p><code>.runWith(new TopKSink(10))</code> 调用自定义的 Akka Streams <code>Sink</code> 来获得得分最高的10部电影。让我们先来看看 <code>TopKSink</code> 的实现：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TopKSink</span>(<span class="params"><span class="type">TOP_K</span>: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">GraphStageWithMaterializedValue</span>[<span class="type">SinkShape</span>[<span class="type">Movie</span>], <span class="title">Future</span>[<span class="type">List</span>[<span class="type">Movie</span>]]] </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> in: <span class="type">Inlet</span>[<span class="type">Movie</span>] = <span class="type">Inlet</span>(<span class="string">"TopKSink.in"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">shape</span></span>: <span class="type">SinkShape</span>[<span class="type">Movie</span>] = <span class="type">SinkShape</span>(in)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">createLogicAndMaterializedValue</span></span>(</span><br><span class="line">      inheritedAttributes: <span class="type">Attributes</span>): (<span class="type">GraphStageLogic</span>, <span class="type">Future</span>[<span class="type">List</span>[<span class="type">Movie</span>]]) = &#123;</span><br><span class="line">    <span class="keyword">val</span> p: <span class="type">Promise</span>[<span class="type">List</span>[<span class="type">Movie</span>]] = <span class="type">Promise</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> logic = <span class="keyword">new</span> <span class="type">GraphStageLogic</span>(shape) <span class="keyword">with</span> <span class="type">InHandler</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> buf = <span class="type">List</span>[<span class="type">Movie</span>]()</span><br><span class="line">      <span class="keyword">var</span> bufSize = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">insertMovie</span></span>(list: <span class="type">List</span>[<span class="type">Movie</span>], movie: <span class="type">Movie</span>): <span class="type">List</span>[<span class="type">Movie</span>] = &#123;</span><br><span class="line">        list <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="type">Nil</span> =&gt; movie :: <span class="type">Nil</span></span><br><span class="line">          <span class="keyword">case</span> list =&gt;</span><br><span class="line">            <span class="keyword">var</span> buf = <span class="type">List</span>[<span class="type">Movie</span>]()</span><br><span class="line">            <span class="keyword">var</span> use = <span class="literal">false</span></span><br><span class="line">            <span class="keyword">for</span> (item &lt;- list.reverse) &#123;</span><br><span class="line">              <span class="keyword">if</span> (!use &amp;&amp; item.rating &lt; movie.rating) &#123;</span><br><span class="line">                buf ::= movie</span><br><span class="line">                use = <span class="literal">true</span></span><br><span class="line">              &#125;</span><br><span class="line">              buf ::= item</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!use) &#123;</span><br><span class="line">              buf ::= movie</span><br><span class="line">            &#125;</span><br><span class="line">            buf</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">preStart</span></span>(): <span class="type">Unit</span> = pull(in)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onPush</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">        <span class="keyword">val</span> movie = grab(in)</span><br><span class="line">        buf = <span class="keyword">if</span> (bufSize &lt; <span class="type">TOP_K</span>) &#123;</span><br><span class="line">          bufSize += <span class="number">1</span></span><br><span class="line">          insertMovie(buf, movie)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (buf.head.rating &lt; movie.rating) insertMovie(buf.slice(<span class="number">1</span>, <span class="type">TOP_K</span>), movie) <span class="keyword">else</span> buf</span><br><span class="line">        &#125;</span><br><span class="line">        pull(in)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onUpstreamFinish</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">        p.trySuccess(buf)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">onUpstreamFailure</span></span>(ex: <span class="type">Throwable</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">        p.tryFailure(ex)</span><br><span class="line">        failStage(ex)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">postStop</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">        <span class="keyword">if</span> (!p.isCompleted) p.failure(<span class="keyword">new</span> <span class="type">AbruptStageTerminationException</span>(<span class="keyword">this</span>))</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      setHandler(in, <span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    (logic, p.future)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="解法4：通过-Akka-HTTP-在下载文件的同时求出Top-K个得分最高的电影"><a href="#解法4：通过-Akka-HTTP-在下载文件的同时求出Top-K个得分最高的电影" class="headerlink" title="解法4：通过 Akka HTTP 在下载文件的同时求出Top K个得分最高的电影"></a>解法4：通过 Akka HTTP 在下载文件的同时求出Top K个得分最高的电影</h2><p>Akka HTTP提供了 HTTP Client/Server 实现，同时它也是基于 Akka Streams 实现的。上一步我们已经定义了 <code>TopKSink</code> 来消费流数据，而通过 Akka HTTP Client 获得的响应数据也是一个流（<code>Source[ByteString, Any]</code>）。我们可以将获取 <code>movies.csv</code> 文件的 HTTP 请求与取得分最高的K部电影两个任务结合到一起，<strong>实现内存固定、处理数据无限的 Top K 程序（假设网络稳定不会断开）</strong>。 </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="type">Behaviors</span>.ignore, <span class="string">"topK"</span>)</span><br><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> ec = system.executionContext</span><br><span class="line"><span class="keyword">val</span> <span class="type">TOP_K</span> = <span class="number">10</span></span><br><span class="line"><span class="keyword">val</span> <span class="type">URL</span> =</span><br><span class="line">  <span class="string">"https://gitee.com/yangbajing/akka-cookbook/raw/master/cookbook-streams/src/main/resources/movies.csv"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> topKF = <span class="type">Http</span>(system).singleRequest(<span class="type">HttpRequest</span>(uri = <span class="type">URL</span>)).flatMap &#123; response =&gt;</span><br><span class="line">  response.entity.dataBytes</span><br><span class="line">    .via(<span class="type">CsvParsing</span>.lineScanner())</span><br><span class="line">    .drop(<span class="number">1</span>) <span class="comment">// Drop CSV Header</span></span><br><span class="line">    .mapConcat &#123;</span><br><span class="line">      <span class="keyword">case</span> name :: <span class="type">AsDouble</span>(rating) :: _ =&gt; <span class="type">Movie</span>(name.utf8String, rating) :: <span class="type">Nil</span></span><br><span class="line">      <span class="keyword">case</span> _                             =&gt; <span class="type">Nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    .runWith(<span class="keyword">new</span> <span class="type">TopKSink</span>(<span class="type">TOP_K</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> topN = <span class="type">Await</span>.result(topKF, <span class="number">5.</span>minutes)</span><br><span class="line"></span><br><span class="line">topN.foreach(println)</span><br><span class="line">println(topN.size)</span><br><span class="line"></span><br><span class="line">system.terminate()</span><br></pre></td></tr></table></figure>
+<p>通过继承 <code>GraphStageWithMaterializedValue</code> 抽像类，可以定义一个返回特定结果的自定义 <code>Sink</code>，否则流处理结果默认为 <code>NotUsed</code>。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">createLogicAndMaterializedValue</span></span>(</span><br><span class="line">    inheritedAttributes: <span class="type">Attributes</span>): (<span class="type">GraphStageLogic</span>, <span class="type">Future</span>[<span class="type">List</span>[<span class="type">Movie</span>]])</span><br></pre></td></tr></table></figure>
+<p>函数 <code>createLogicAndMaterializedValue</code> 实现 <code>Sink</code> 处理逻辑并返回 <code>Sink</code> 阶段的处理逻辑 <code>GraphStageLogic</code> 和获得的 Top K 结果 <code>Future[List[Movie]]</code>，流执行后的结果（通过调用 <code>.runWith</code>）是一个异步结果（<code>Future</code>）。这样将不会阻塞调用线程。</p>
+<p><code>buf</code> 用于缓存 Top K 个得分最高的电影，使用 <code>List</code> 模拟了一个堆结构，Top K 里评分最低的电影在链表头且按评分升序排序。</p>
+<p><code>onPush</code> 函数上游有数据传入时调用 <code>grab</code> 函数获取一个元素（<code>movie</code>）。<code>bufSize</code> 保存了当前 <code>buf</code> 的数量，当 <code>bufSize &lt; TOP_K</code> 时，调用 <code>insertMovie</code> 函数将 <code>movie</code> 直接插入到匹配顺序的 <code>buf</code> 里并将 <code>bufSize</code> 加1。否则通过 <code>buf.head.rating &lt; movie.rating</code> 比较，若为 true 则将 <code>movie</code> 加入缓存，否则 <code>buf</code> 保持不变。</p>
+<p><code>insertMovie</code> 函数实现了将新电影插入 <code>buf</code> 的逻辑，并保持 <code>buf</code> 按评分升序排序。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文使用4种方式来求解 Top K 问题，从简单粗暴的全量读入内存并排序；到不使用排序通过一次遍历获得 Top K；再使用 Akka Streams 以流式方式异步获得；最后，通过结合 Akka HTTP 和 Akka Streams，可以HTTP请求的同时计算 Top K。</p>
+<p>有关 Akka HTTP 更多内容可阅读 <a href="https://www.yangbajing.me/scala-web-development/">《Scala Web 开发——基于Akka HTTP》</a> 。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/" data-id="ckmlxnrhr00ljs7ugfdjimnra" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-streams/" rel="tag">akka-streams</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/top-k/" rel="tag">top-k</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/02/14/ambari%E7%BC%96%E8%AF%91%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Ambari编译记录
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">OAuth 2 服务的 Akka 实现：access_token 管理</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

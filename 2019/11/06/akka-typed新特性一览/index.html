@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Akka Typed新特性一览 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Hello Scala!Akka Typed Actor从2.4开始直到2.5可以商用，进而Akka 2.6已经把Akka Typed Actor做为推荐的Actor使用模式。Typed Actor与原先的Untyped Actor最大的区别Actor有类型了，其签名也改成了akka.actor.typed.ActorRef[T]。通过一个简单的示例来看看在Akka Typed环境下怎样使用Act">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka Typed新特性一览">
+<meta property="og:url" content="http://www.yangbajing.me/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Hello Scala!Akka Typed Actor从2.4开始直到2.5可以商用，进而Akka 2.6已经把Akka Typed Actor做为推荐的Actor使用模式。Typed Actor与原先的Untyped Actor最大的区别Actor有类型了，其签名也改成了akka.actor.typed.ActorRef[T]。通过一个简单的示例来看看在Akka Typed环境下怎样使用Act">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-06T13:54:36.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-grpc">
+<meta property="article:tag" content="akka-typed">
+<meta property="article:tag" content="akka-2.6">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-akka-typed新特性一览" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Akka Typed新特性一览
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/" class="article-date">
+  <time datetime="2019-11-06T13:54:36.000Z" itemprop="datePublished">2019-11-06</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-akka-typed新特性一览" data-title="Akka Typed新特性一览" data-url="http://www.yangbajing.me/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="Hello-Scala"><a href="#Hello-Scala" class="headerlink" title="Hello Scala!"></a>Hello Scala!</h2><p>Akka Typed Actor从2.4开始直到2.5可以商用，进而Akka 2.6已经把Akka Typed Actor做为推荐的Actor使用模式。Typed Actor与原先的Untyped Actor最大的区别Actor有类型了，其签名也改成了<code>akka.actor.typed.ActorRef[T]</code>。通过一个简单的示例来看看在Akka Typed环境下怎样使用Actor。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="class"><span class="keyword">trait</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Hello</span>(<span class="params">message: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Reply</span>]</span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Tell</span>(<span class="params">message: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">sealed</span> <span class="title">trait</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">HelloReply</span>(<span class="params">message: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">def</span> <span class="title">apply</span>(<span class="params"></span>)</span>: <span class="type">Behavior</span>[<span class="type">Command</span>] = <span class="type">Behaviors</span>.setup &#123; context =&gt;</span><br><span class="line">  <span class="type">Behaviors</span>.receiveMessage &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Hello</span>(message, replyTo) =&gt;</span><br><span class="line">      replyTo ! <span class="type">HelloReply</span>(<span class="string">s"<span class="subst">$message</span>, scala!"</span>)</span><br><span class="line">      <span class="type">Behaviors</span>.same</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Tell</span>(message) =&gt;</span><br><span class="line">      context.log.debug(<span class="string">"收到消息：&#123;&#125;"</span>, message)</span><br><span class="line">      <span class="type">Behaviors</span>.same</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Akka Typed不再需要通过类的形式来实现<code>Actor</code>接口定义，而是函数的形式来定义actor。可以看到，定义的actor类型为<code>Behavior[T]</code>（<strong>形为</strong>），通过<code>Behaviors.receiveMessage[T](T =&gt; Behavior[T]): Receive[T]</code>函数来处理接收到的消息，而<code>Receive</code>继承了<code>Behavior</code> trait。通过函数签名可以看到，每次接收到消息并对其处理完成后，都必需要返回一个新的形为。</p>
+<p><code>apply(): Behavior[Command]</code>函数签名里的范性参数类型<code>Command</code>限制了这个actor将只接收<code>Command</code>或<code>Command</code>子类型的消息，编译器将在编译期对传给actor的消息做类型检查，相对于从前的untyped actor可以向actor传入任何类型的消息，这可以限制的减少程序中的bug。特别是在程序规模很大，当你定义了成百上千个消息时。</p>
+<p>也因为有类型的actor，在Akka Typed中没有了隐式发送的<code>sender: ActorRef</code>，必需在发送的消息里面包含回复字段，就如<code>Hello</code>消息定义里的<code>replyTo: ActorRef[Reply]</code>字段一样。actor在处理完<code>Hello</code>消息后可以通过它向发送者回复处理结果。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloScalaSpec</span> <span class="keyword">extends</span> <span class="title">ScalaTestWithActorTestKit</span> <span class="keyword">with</span> <span class="title">WordSpecLike</span> </span>&#123;</span><br><span class="line">  <span class="string">"HelloScala"</span> should &#123;</span><br><span class="line">    <span class="string">"tell"</span> in &#123;</span><br><span class="line">      <span class="keyword">val</span> actorRef = spawn(<span class="type">HelloScala</span>(), <span class="string">"tell"</span>)</span><br><span class="line">      actorRef ! <span class="type">Tell</span>(<span class="string">"Hello"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="string">"replyTo"</span> in &#123;</span><br><span class="line">      <span class="keyword">val</span> actorRef = spawn(<span class="type">HelloScala</span>(), <span class="string">"replyTo"</span>)</span><br><span class="line">      <span class="keyword">val</span> probe = createTestProbe[<span class="type">Reply</span>]()</span><br><span class="line">      actorRef ! <span class="type">Hello</span>(<span class="string">"hello"</span>, probe.ref)</span><br><span class="line"></span><br><span class="line">      probe.expectMessageType[<span class="type">HelloReply</span>] should be(<span class="type">HelloReply</span>(<span class="string">"hello, scala!"</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="string">"ask"</span> in &#123;</span><br><span class="line">      <span class="keyword">import</span> akka.actor.typed.scaladsl.<span class="type">AskPattern</span>._</span><br><span class="line">      <span class="keyword">val</span> actorRef = spawn(<span class="type">HelloScala</span>(), <span class="string">"ask"</span>)</span><br><span class="line">      <span class="keyword">val</span> reply = actorRef</span><br><span class="line">        .ask[<span class="type">Reply</span>](replyTo =&gt; <span class="type">Hello</span>(<span class="string">"Hello"</span>, replyTo))</span><br><span class="line">        .mapTo[<span class="type">HelloReply</span>]</span><br><span class="line">        .futureValue</span><br><span class="line">      reply.message should be(<span class="string">"Hello, scala!"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更复杂的一个示例"><a href="#更复杂的一个示例" class="headerlink" title="更复杂的一个示例"></a>更复杂的一个示例</h2><p>上一个示例简单的演示了Akka Typed Actor的功能和基本使用方式，接下来看一个更复杂的示例，将展示Akka Typed更多的特性及功能。</p>
+<p>首先是消息定义：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="class"><span class="keyword">trait</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"><span class="title">trait</span> <span class="title">ControlCommand</span> <span class="keyword">extends</span> <span class="title">Command</span> </span>&#123; <span class="keyword">val</span> clientId: <span class="type">String</span> &#125;</span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">ReplyCommand</span> <span class="keyword">extends</span> <span class="title">Command</span> </span>&#123; <span class="keyword">val</span> replyTo: <span class="type">ActorRef</span>[<span class="type">Reply</span>] &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Connect</span>(<span class="params">clientId: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Reply</span>]</span>) <span class="keyword">extends</span> <span class="title">ControlCommand</span> <span class="keyword">with</span> <span class="title">ReplyCommand</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Disconnect</span>(<span class="params">clientId: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Reply</span>]</span>) <span class="keyword">extends</span> <span class="title">ControlCommand</span> <span class="keyword">with</span> <span class="title">ReplyCommand</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">QueryResource</span>(<span class="params">clientId: <span class="type">String</span>, replyTo: <span class="type">ActorRef</span>[<span class="type">Reply</span>]</span>) <span class="keyword">extends</span> <span class="title">ReplyCommand</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">private</span>[typed] <span class="title">case</span> <span class="title">object</span> <span class="title">SessionTimeout</span> <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">private</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ServiceKeyRegistered</span>(<span class="params">registered: <span class="type">Receptionist</span>.<span class="type">Registered</span></span>) <span class="keyword">extends</span> <span class="title">Command</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">sealed</span> <span class="title">trait</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Connected</span>(<span class="params">status: <span class="type">Int</span>, clientId: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">Disconnected</span>(<span class="params">status: <span class="type">Int</span>, clientId: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ResourceQueried</span>(<span class="params">status: <span class="type">Int</span>, clientId: <span class="type">String</span>, resources: <span class="type">Seq</span>[<span class="type">String</span>]</span>) <span class="keyword">extends</span> <span class="title">Reply</span></span></span><br><span class="line"><span class="class"><span class="title">final</span> <span class="title">case</span> <span class="title">class</span> <span class="title">ReplyError</span>(<span class="params">status: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Reply</span></span></span><br></pre></td></tr></table></figure>
+<p>上面分别定义了actor可接收的请求消息：<code>Command</code>和返回结果消息：<code>Reply</code>。建议对于需要返回值的消息使用：<code>replyTo</code>来命名收受返回值的actor字段，这里也可以不定义<code>Reply</code> trait来做为统一的返回值类型，可以直接返回结果类型，如：<code>ActorRef[String</code>。</p>
+<p>这里将定义两个actor，一个做为父actor，一个做为子actor。父actor为：<code>ComplexActor</code>，管理连接客户端和转发消息到子actor，每次有新的客户端连接上来时做以客户端<code>clientId</code>做为名字创建一个子actor；子actor：<code>ComplexClient</code>，保持客户端连接会话，处理消息……</p>
+<p><strong>ComplexActor</strong><br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ComplexActor</span> <span class="title">private</span>(<span class="params">context: <span class="type">ActorContext</span>[<span class="type">ComplexActor</span>.<span class="type">Command</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">import</span> <span class="type">ComplexActor</span>._</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> connects = <span class="type">Map</span>.empty[<span class="type">String</span>, <span class="type">ActorRef</span>[<span class="type">Command</span>]]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">init</span></span>(): <span class="type">Behavior</span>[<span class="type">Command</span>] = <span class="type">Behaviors</span>.receiveMessage &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">ServiceKeyRegistered</span>(registered) <span class="keyword">if</span> registered.isForKey(serviceKey) =&gt;</span><br><span class="line">      context.log.info(<span class="string">"Actor be registered, serviceKey: &#123;&#125;"</span>, serviceKey)</span><br><span class="line">      receive()</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>(): <span class="type">Behavior</span>[<span class="type">Command</span>] =</span><br><span class="line">    <span class="type">Behaviors</span></span><br><span class="line">      .receiveMessage[<span class="type">Command</span>] &#123;</span><br><span class="line">        <span class="keyword">case</span> cmd @ <span class="type">Connect</span>(clientId, replyTo) =&gt;</span><br><span class="line">          <span class="keyword">if</span> (connects.contains(clientId)) &#123;</span><br><span class="line">            replyTo ! <span class="type">Connected</span>(<span class="type">IntStatus</span>.<span class="type">CONFLICT</span>, clientId)</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">val</span> child = context.spawn(</span><br><span class="line">              <span class="type">Behaviors</span></span><br><span class="line">                .supervise(<span class="type">ComplexClient</span>(clientId))</span><br><span class="line">                .onFailure(<span class="type">SupervisorStrategy</span>.restart),</span><br><span class="line">              clientId)</span><br><span class="line">            context.watch(child)</span><br><span class="line">            connects = connects.updated(clientId, child)</span><br><span class="line">            child ! cmd</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="type">Behaviors</span>.same</span><br><span class="line">        ....</span><br><span class="line">      &#125;</span><br><span class="line">      .receiveSignal &#123;</span><br><span class="line">        <span class="keyword">case</span> (_, <span class="type">Terminated</span>(child)) =&gt;</span><br><span class="line">          <span class="keyword">val</span> clientId = child.path.name</span><br><span class="line">          connects -= clientId</span><br><span class="line">          context.unwatch(child)</span><br><span class="line">          <span class="type">Behaviors</span>.same</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>ComplexActor</code>在收到<code>Connect</code>消息后将首先判断请求客户端ID（<code>clientId</code>）是否已经连接，若重复连接将直接返回409错误（<code>Connected(IntStatus.CONFLICT, _)</code>）。若是一个新连接将调用<code>context.spawn</code>函数在创建一个字actor：<code>ComplexClient</code>。<code>spawn</code>函数签名如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spawn</span></span>[<span class="type">U</span>](behavior: <span class="type">Behavior</span>[<span class="type">U</span>], name: <span class="type">String</span>, props: <span class="type">Props</span> = <span class="type">Props</span>.empty): <span class="type">ActorRef</span>[<span class="type">U</span>]</span><br></pre></td></tr></table></figure>
+<p><code>behavior</code>是要创建的actor，<code>name</code>为子actor的名字，需要保证在同一级内唯一（兄弟之间），<code>props</code>可对actor作一些自定义，如：线程执行器（<code>Dispatcher</code>）、邮箱等。</p>
+<p><code>receiveSignal</code>用于接收系统控制信号消息，经典actor的<code>preRestart</code>和<code>postStop</code>回调函数（将分别做为<code>PreRestart</code>和<code>PostStop</code>信号），以及<code>Terminated</code>消息都将做为信号发送到这里。</p>
+<p><strong>ComplexClient</strong><br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ComplexClient</span> <span class="title">private</span> (<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    clientId: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    context: <span class="type">ActorContext</span>[<span class="type">ComplexActor</span>.<span class="type">Command</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">import</span> <span class="type">ComplexActor</span>._</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">active</span></span>(): <span class="type">Behavior</span>[<span class="type">Command</span>] = <span class="type">Behaviors</span>.receiveMessagePartial &#123;</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SessionTimeout</span> =&gt;</span><br><span class="line">      context.log.warn(<span class="string">"Inactive timeout, stop!"</span>)</span><br><span class="line">      <span class="type">Behaviors</span>.stopped</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">init</span></span>(): <span class="type">Behavior</span>[<span class="type">Command</span>] = <span class="type">Behaviors</span>.receiveMessage &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Connect</span>(`clientId`, replyTo) =&gt;</span><br><span class="line">      replyTo ! <span class="type">Connected</span>(<span class="type">IntStatus</span>.<span class="type">OK</span>, clientId)</span><br><span class="line">      context.setReceiveTimeout(<span class="number">120.</span>seconds, <span class="type">SessionTimeout</span>)</span><br><span class="line">      active()</span><br><span class="line">    <span class="keyword">case</span> other =&gt;</span><br><span class="line">      context.log.warn(<span class="string">"Receive invalid command: &#123;&#125;"</span>, other)</span><br><span class="line">      <span class="type">Behaviors</span>.same</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>ComplexClient</code>定义了两个形为函数，<code>init()</code>和<code>active</code>。当客户端连接成功以后会返回<code>active()</code>函数作为actor新的形为来接收之后的消息。这种返回一个新的<code>Behavior</code>函数的形式替代了经典actor里的<code>become</code>、<code>unbecome</code>函数，它更直观，甚至还可以使用这种方式来实现<strong>状态机</strong>。</p>
+<p><code>context.setReceiveTimeout(120.seconds, SessionTimeout)</code>用来设置两次消息接收之间的超时时间，这里设备为120秒。可以通过方式来实现服务端会话（session）超时判断，当session超时时返回<code>Behaviors.stopped</code>消息来停止actor（自己）。这里需要注意的是<code>context.stop</code>只能用来停止直接子actor，停止actor自身返回<code>stopped</code>形为即可，这与经典actor有着明显的区别。</p>
+<h3 id="发现actor"><a href="#发现actor" class="headerlink" title="发现actor"></a>发现actor</h3><p>Akka Typed取消了<code>actorSelection</code>函数，不再允许通过actor path路径来查找ActorRef。取而代之的是使用<code>Receptionist</code>机制来注册服务（actor实例）。也就是说，在Akka Typed中，actor默认情况下是不能查找的，只能通过引用（<code>ActorRef[T]</code>）来使用，要么actor之间具有父子关系，要么通过消息传递<code>ActorRef[T]</code>……</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ComplexActor</span> </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> serviceKey = <span class="type">ServiceKey</span>[<span class="type">Command</span>](<span class="string">"complex"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>(): <span class="type">Behavior</span>[<span class="type">Command</span>] = <span class="type">Behaviors</span>.setup &#123; context =&gt;</span><br><span class="line">    <span class="keyword">val</span> registerAdapter = context.messageAdapter[<span class="type">Receptionist</span>.<span class="type">Registered</span>](value =&gt; <span class="type">ServiceKeyRegistered</span>(value))</span><br><span class="line">    context.system.receptionist ! <span class="type">Receptionist</span>.<span class="type">Register</span>(serviceKey, context.self, registerAdapter)</span><br><span class="line">    <span class="keyword">new</span> <span class="type">ComplexActor</span>(context).init()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码通过<code>Receptionist.Register</code>将actor（<code>context.self</code>引用）以<code>serviceKey</code>注册到Actor系统的<strong>receptionist</strong>表，之后就可以通过<code>serviceKey</code>来发现并获取此actor的引用。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> actorRef: <span class="type">ActorRef</span>[<span class="type">ComplexActor</span>.<span class="type">Command</span>] = system.receptionist</span><br><span class="line">  .ask[<span class="type">Receptionist</span>.<span class="type">Listing</span>](<span class="type">Receptionist</span>.<span class="type">Find</span>(<span class="type">ComplexActor</span>.serviceKey))</span><br><span class="line">  .map &#123; listing =&gt;</span><br><span class="line">    <span class="keyword">if</span> (listing.isForKey(serviceKey))</span><br><span class="line">      listing.serviceInstances(serviceKey).head</span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IllegalAccessException</span>(<span class="string">s"Actor reference not found: <span class="subst">$serviceKey</span>"</span>)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="消息适配器"><a href="#消息适配器" class="headerlink" title="消息适配器"></a>消息适配器</h3><p>有时候，需要将不匹配的消息发送给actor，比如：把receptionist服务注册结果 <code>Receptionist.Registered</code>发送给一个actor，我们可以通过将消息包装到一个实现了<code>Command</code> trait的case class来实现。如下面的代码示例：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> registerAdapter: <span class="type">ActorRef</span>[<span class="type">Receptionist</span>.<span class="type">Registered</span>] =</span><br><span class="line">  context.messageAdapter[<span class="type">Receptionist</span>.<span class="type">Registered</span>](value =&gt; <span class="type">ServiceKeyRegistered</span>(value))</span><br></pre></td></tr></table></figure>
+<p>在使用<code>Receptionist.Register</code>时将<code>registerAdapter</code>作为第3个参数传入，这样服务注册结果就将被包装成<code>ServiceKeyRegistered</code>消息传给actor。</p>
+<h3 id="在actor内部处理异步任务"><a href="#在actor内部处理异步任务" class="headerlink" title="在actor内部处理异步任务"></a>在actor内部处理异步任务</h3><p>actor内部消息都是串行执行的，在actor内执行异步操作时需要小心。不能在<code>Future</code>的回调函数里直接操作actor内部变量，因为它们很可能在两个不同的线程中。</p>
+<p>可以通过<code>context.pipeToSelf</code>将异步结果转换成一个消息传递给actor，这样异步结果将进入actor的邮箱列队，通过正确的消息处理机制来处理。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="type">QueryResource</span>(_, replyTo) =&gt;</span><br><span class="line">  context.pipeToSelf(findExternalResource())(value =&gt; <span class="type">InternalQueryResource</span>(value, replyTo))</span><br><span class="line">  <span class="type">Behaviors</span>.same</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="type">InternalQueryResource</span>(tryValue, replyTo) =&gt;</span><br><span class="line">  replyTo ! tryValue</span><br><span class="line">    .map(<span class="type">ResourceQueried</span>(<span class="type">IntStatus</span>.<span class="type">OK</span>, clientId, _))</span><br><span class="line">    .getOrElse(<span class="type">ResourceQueried</span>(<span class="type">IntStatus</span>.<span class="type">INTERNAL_ERROR</span>, clientId, <span class="type">Nil</span>))</span><br><span class="line">  <span class="type">Behaviors</span>.same</span><br></pre></td></tr></table></figure>
+<h2 id="在ActorSystem-外部创建actor"><a href="#在ActorSystem-外部创建actor" class="headerlink" title="在ActorSystem[_]外部创建actor"></a>在ActorSystem[_]外部创建actor</h2><p>Akka Typed开始，<code>ActorSystem[T]</code>也拥有一个泛型参数，在构造ActorSystem时需要传入一个默认<code>Behavior[T]</code>，并将其作为经典actor下的user守卫（也就类似拥有<code>akka://system-name/user</code>这个路径的actor），同时<code>ActorSystem[T]</code>的<code>actorOf</code>函数也被取消。Akka Typed推荐应用都从传给ActorSystem的默认<code>Behavior[T]</code>开始构建actor树。但有时，也许通过<code>ActorSystem[T]</code>的实例来创建actor是有意义的，可以通过将typed的<code>ActorSystem[T]</code>转换成经典的untyped <code>ActorSystem</code>来实现。代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> timeout = <span class="type">Timeout</span>(<span class="number">2.</span>seconds)</span><br><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> system: <span class="type">ActorSystem</span>[_] = _ <span class="comment">// ....</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> spawnActor: <span class="type">ActorRef</span>[<span class="type">SpawnProtocol</span>.<span class="type">Command</span>] = system.toClassic</span><br><span class="line">  .actorOf(</span><br><span class="line">    <span class="type">PropsAdapter</span>(<span class="type">Behaviors</span>.supervise(<span class="type">SpawnProtocol</span>())</span><br><span class="line">      .onFailure(<span class="type">SupervisorStrategy</span>.resume)), <span class="string">"spawn"</span>)</span><br><span class="line">  .toTyped[<span class="type">SpawnProtocol</span>.<span class="type">Command</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> helloScalaF: <span class="type">Future</span>[<span class="type">ActorRef</span>[<span class="type">HelloScala</span>.<span class="type">Command</span>]] = </span><br><span class="line">  spawnActor.ask[<span class="type">ActorRef</span>[<span class="type">HelloScala</span>.<span class="type">Command</span>]](replyTo =&gt;</span><br><span class="line">    <span class="type">SpawnProtocol</span>.<span class="type">Spawn</span>(<span class="type">HelloScala</span>(), <span class="string">"sample"</span>, <span class="type">Props</span>.empty, replyTo))</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> helloScala: <span class="type">ActorRef</span>[<span class="type">HelloScala</span>.<span class="type">Command</span>] = <span class="type">Await</span>.result(helloScalaF, <span class="number">2.</span>seconds)</span><br></pre></td></tr></table></figure>
+<p>也可以将<code>SpawnProtocol()</code>作为<code>ActorSystem[_]</code>的初始<code>Behavior[T]</code>来构造ActorSystem，这样就可以通过<code>system.ask[ActorRef[T]](SpawnProtocol.Spawn(....))</code>来创建在user守卫下的actor了。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文通过两个例子展示了Akka Typed的特性，它与经典actor的区别还是挺大的。从untyped和typed，actor拥有了类型，这对于大规模actor系统开发可以在编译期发现很多重复，它将强制你在设计actor时首先考虑消息的定义。定义的消息即是actor之间的数据交互协议，消息定义的过程也是业务模式和模块划分的过程。</p>
+<p><strong>完整示例代码</strong></p>
+<ul>
+<li><a href="https://github.com/yangbajing/scala-web-development/blob/master/book/src/test/scala/book/typed/HelloScala.scala" target="_blank" rel="external">https://github.com/yangbajing/scala-web-development/blob/master/book/src/test/scala/book/typed/HelloScala.scala</a></li>
+<li><a href="https://github.com/yangbajing/scala-web-development/blob/master/book/src/test/scala/book/typed/ComplexActor.scala" target="_blank" rel="external">https://github.com/yangbajing/scala-web-development/blob/master/book/src/test/scala/book/typed/ComplexActor.scala</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/" data-id="ckmlxnrhi00l8s7ugbow8a6do" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-2-6/" rel="tag">akka-2.6</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-grpc/" rel="tag">akka-grpc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-typed/" rel="tag">akka-typed</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/11/11/akka-typed-%E5%B8%B8%E7%94%A8%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Akka Typed 常用交互模式
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/09/21/akka%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E8%B7%B5-%E5%88%9D%E6%8E%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Akka微服务实践-初探</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

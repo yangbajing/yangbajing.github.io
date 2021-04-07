@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Flink Kafka 确定一次消费与写入 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Flink Kafka Exactly Once，确定一次消费&#x2F;写入。示例代码：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;learn-bigdata&#x2F;tree&#x2F;develop&#x2F;learn-flink&#x2F;src&#x2F;main&#x2F;scala&#x2F;connector&#x2F;kafka 。 ConsumerProducerProducer exactly once 需要启用 flink 的检查点，并在实例">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink Kafka 确定一次消费与写入">
+<meta property="og:url" content="http://www.yangbajing.me/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Flink Kafka Exactly Once，确定一次消费&#x2F;写入。示例代码：https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;learn-bigdata&#x2F;tree&#x2F;develop&#x2F;learn-flink&#x2F;src&#x2F;main&#x2F;scala&#x2F;connector&#x2F;kafka 。 ConsumerProducerProducer exactly once 需要启用 flink 的检查点，并在实例">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-04T08:04:33.000Z">
+<meta property="article:modified_time" content="2020-09-04T05:45:01.485Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="kafka">
+<meta property="article:tag" content="flink">
+<meta property="article:tag" content="exactly-once">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/flink/">flink</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-flink-kafka-确定一次消费与写入" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Flink Kafka 确定一次消费与写入
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/" class="article-date">
+  <time datetime="2020-06-04T08:04:33.000Z" itemprop="datePublished">2020-06-04</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-flink-kafka-确定一次消费与写入" data-title="Flink Kafka 确定一次消费与写入" data-url="http://www.yangbajing.me/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Flink Kafka Exactly Once，确定一次消费/写入。示例代码：<a href="https://github.com/yangbajing/learn-bigdata/tree/develop/learn-flink/src/main/scala/connector/kafka" target="_blank" rel="external">https://github.com/yangbajing/learn-bigdata/tree/develop/learn-flink/src/main/scala/connector/kafka</a> 。</p>
+<h2 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h2><h2 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h2><p>Producer exactly once 需要启用 flink 的检查点，并在实例化 <code>FlinkKafkaProducer</code> 时指定 <code>FlinkKafkaProducer.Semantic.EXACTLY_ONCE</code> ：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line">env.enableCheckpointing(<span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> properties = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">properties.setProperty(<span class="string">"bootstrap.servers"</span>, <span class="string">"localhost:9092"</span>)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">val</span> producer = <span class="keyword">new</span> <span class="type">FlinkKafkaProducer</span>[<span class="type">NameTimestamp</span>](</span><br><span class="line">  topic,</span><br><span class="line">  <span class="keyword">new</span> <span class="type">NameTimestampSerializationSchema</span>(topic),</span><br><span class="line">  properties,</span><br><span class="line">  <span class="type">Semantic</span>.<span class="type">EXACTLY_ONCE</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="Kafka-事物超时"><a href="#Kafka-事物超时" class="headerlink" title="Kafka 事物超时"></a>Kafka 事物超时</h3><ul>
+<li><code>transaction.timeout.ms</code>：客户端事物协调器超时时间。Flink默认设置为 1 小时。</li>
+<li><code>transaction.max.timeout.ms</code>：设置服务端 broker 支持的最大事物超时时间，默认值为 900000 毫秒（15分钟）。</li>
+</ul>
+<h4 id="Interrupted-while-joining-ioThread-java-lang-InterruptedException"><a href="#Interrupted-while-joining-ioThread-java-lang-InterruptedException" class="headerlink" title="Interrupted while joining ioThread java.lang.InterruptedException"></a>Interrupted while joining ioThread java.lang.InterruptedException</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">16:02:28,124 ERROR org.apache.kafka.clients.producer.KafkaProducer               - [Producer clientId=producer-57, transactionalId=Sink: name-sink-0a448493b4782967b150582570326227-75] Interrupted while joining ioThread java.lang.InterruptedException</span><br></pre></td></tr></table></figure>
+<p>该异常实现上很可能是：<code>Unexpected error in InitProducerIdResponse; The transaction timeout is larger than the maximum value allowed by the broker (as configured by transaction.max.timeout.ms).</code>，我们只需要调整 <code>transaction.timeout.ms</code> 或 <code>transaction.max.timeout.ms</code> 的值即可解决该问题。</p>
+<p>修改 <code>transaction.timeout.ms</code>：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">properties.setProperty(<span class="string">"transaction.timeout.ms"</span>, <span class="string">s"<span class="subst">$&#123;60 * 5 * 1000&#125;</span>"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="watermark-assigner-未触发"><a href="#watermark-assigner-未触发" class="headerlink" title="watermark assigner 未触发"></a>watermark assigner 未触发</h3><p><strong>请注意</strong>：如果 watermark assigner 依赖于从 Kafka 读取的消息来上涨其 watermark (通常就是这种情况)，那么所有主题和分区都需要有连续的消息流。否则，整个应用程序的 watermark 将无法上涨，所有基于时间的算子(例如时间窗口或带有计时器的函数)也无法运行。单个的 Kafka 分区也会导致这种反应。这是一个已在计划中的 Flink 改进，目的是为了防止这种情况发生（请见<a href="https://issues.apache.org/jira/browse/FLINK-5479" target="_blank" rel="external">FLINK-5479: Per-partition watermarks in FlinkKafkaConsumer should consider idle partitions</a>）。同时，可能的解决方法是将<em>心跳消息</em>发送到所有 consumer 的分区里，从而上涨空闲分区的 watermark。</p>
+<p><em>注：Flink 1.11.0 已提供了此问题的解决方案，通过设置合适 <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/event_timestamps_watermarks.html#dealing-with-idle-sources" target="_blank" rel="external">idleness timeouts</a> 来解决此问题（<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/event_timestamps_watermarks.html#dealing-with-idle-sources" target="_blank" rel="external">https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/event_timestamps_watermarks.html#dealing-with-idle-sources</a>）。</em></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/" data-id="ckmlxnrcw007vs7ugokdtv6jj" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/exactly-once/" rel="tag">exactly-once</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flink/" rel="tag">flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/" rel="tag">kafka</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/27/jdbc-%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5%EF%BC%9Amybatis%E3%80%81postgresql/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          JDBC 批量插入：MyBatis、PostgreSQL
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/05/12/%E5%8F%8D%E5%BA%94%E5%BC%8F%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%9Aspring-akka-docker/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">微服务开放环境：Spring &amp; Akka &amp; Docker</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/06/04/flink-kafka-%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%AC%A1%E6%B6%88%E8%B4%B9%E4%B8%8E%E5%86%99%E5%85%A5/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

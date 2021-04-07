@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala开发者的Spring-Boot快速上手指南 01 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="做为一个Scala爱好者，是很想基于 Lightbend 的一套架构进行软件开发的。Play，Akka，Scala，Spark……。不过理想很丰满，现实却很骨感。鉴于那批原教旨主义者，他们对 Spring 已经疯狂迷恋，我等讲道理、讲实际的人也只好将 Scala 与 Spring Boot 进行整合。这两兄弟是和睦的，是友好的，并不是有你无他，完全可以在能力和现实中实现一个美好的平衡。 （文章查考">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala开发者的Spring-Boot快速上手指南 01">
+<meta property="og:url" content="http://www.yangbajing.me/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="做为一个Scala爱好者，是很想基于 Lightbend 的一套架构进行软件开发的。Play，Akka，Scala，Spark……。不过理想很丰满，现实却很骨感。鉴于那批原教旨主义者，他们对 Spring 已经疯狂迷恋，我等讲道理、讲实际的人也只好将 Scala 与 Spring Boot 进行整合。这两兄弟是和睦的，是友好的，并不是有你无他，完全可以在能力和现实中实现一个美好的平衡。 （文章查考">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-03T13:02:53.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="spring-boot">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="maven">
+<meta property="article:tag" content="sbt">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-scala开发者的spring-boot快速上手指南_01" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala开发者的Spring-Boot快速上手指南 01
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/" class="article-date">
+  <time datetime="2016-03-03T13:02:53.000Z" itemprop="datePublished">2016-03-03</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-scala开发者的spring-boot快速上手指南_01" data-title="Scala开发者的Spring-Boot快速上手指南 01" data-url="http://www.yangbajing.me/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>做为一个Scala爱好者，是很想基于 <a href="http://www.lightbend.com/" target="_blank" rel="external">Lightbend</a> 的一套架构进行软件开发的。<a href="https://playframework.com/" target="_blank" rel="external">Play</a>，<a href="http://akka.io/" target="_blank" rel="external">Akka</a>，<a href="http://scala-lang.org/" target="_blank" rel="external">Scala</a>，<a href="http://spark.apache.org/" target="_blank" rel="external">Spark</a>……。不过理想很丰满，现实却很骨感。鉴于那批原教旨主义者，他们对 <a href="http://spring.io/" target="_blank" rel="external">Spring</a> 已经疯狂迷恋，我等讲道理、讲实际的人也只好将 Scala 与 Spring Boot 进行整合。这两兄弟是和睦的，是友好的，并不是有你无他，完全可以在能力和现实中实现一个美好的平衡。</p>
+<p>（文章查考了：<a href="http://afoo.me/posts/2015-07-21-scala-developers-springboot-guide.html" target="_blank" rel="external">Scala开发者的SpringBoot快速入门指南
+</a>，谢谢王福强老师的分享。）</p>
+<p>（本文示例在：<a href="https://github.com/yangbajing/spring-boot-scala/tree/v01" target="_blank" rel="external">https://github.com/yangbajing/spring-boot-scala/tree/v01</a>）</p>
+<p><strong>创建支持Scala的Spring Boot应用</strong></p>
+<p>Java社区一般使用 <a href="http://maven.apache.org/" target="_blank" rel="external">Maven</a>或<a href="http://gradle.org/" target="_blank" rel="external">Gradle</a> 管理项目构建，鉴于 Maven 的使用更多，本文将只讲解 Maven 下的配置，Gradle 的配置请读者自行参考网上实现。当然，作为一个 Scalar ，基于 <a href="http://www.scala-sbt.org/" target="_blank" rel="external">Sbt</a> 的配置是肯定会讲到的，在 Sbt 下还有一个神器：<a href="http://www.scala-sbt.org/sbt-native-packager/" target="_blank" rel="external">sbt-package-native</a> ，敬待下文详解。</p>
+<h2 id="Maven项目"><a href="#Maven项目" class="headerlink" title="Maven项目"></a>Maven项目</h2><p>首先来看看配置文件 pom.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>me.yangbajing.springscala<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springscala<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>springscala<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scala.version</span>&gt;</span>2.11.7<span class="tag">&lt;/<span class="name">scala.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.scala-lang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>scala-library<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;scala.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.scala-lang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>scala-compiler<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;scala.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>net.alchim31.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>scala-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">id</span>&gt;</span>compile-scala<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>add-source<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">id</span>&gt;</span>test-compile-scala<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>add-source<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>testCompile<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">recompileMode</span>&gt;</span>incremental<span class="tag">&lt;/<span class="name">recompileMode</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">compileOrder</span>&gt;</span>Mixed<span class="tag">&lt;/<span class="name">compileOrder</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">scalaVersion</span>&gt;</span>$&#123;scala.version&#125;<span class="tag">&lt;/<span class="name">scalaVersion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">args</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">arg</span>&gt;</span>-deprecation<span class="tag">&lt;/<span class="name">arg</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">args</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">jvmArgs</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">jvmArg</span>&gt;</span>-Xms64m<span class="tag">&lt;/<span class="name">jvmArg</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">jvmArg</span>&gt;</span>-Xmx1024m<span class="tag">&lt;/<span class="name">jvmArg</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">jvmArgs</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>对于 Spring 部分的配置，这里就不多说了。重点说下 Scala 方面的配置。</p>
+<p>首先你需要加入 Scala 的依赖库，这里加入了 <code>scala-library</code> 和 <code>scala-compiler</code> 两个包的依赖，这是在Java环境下编译 Scala 代码所必需的。</p>
+<p>其次就是要添加 <code>scala-maven-plugin</code> 插件，以让 Maven 支持对 Scala 的编译操作。这里需要注意的是 <code>recompileMode</code> 指令，推荐使用 <strong>incremental</strong> 配置。</p>
+<p>另一个需要注意的配置荐就是 <code>compileOrder</code> ，当项目同时使用了Java和Scala两种语言时它决定了两者的编译顺序。默认是 <strong>Mixed</strong> （混合顺序），其它还有两个选项是：<strong>JavaThenScala</strong> 和 <strong>ScalaThanJava</strong>。</p>
+<h2 id="编写Scala代码"><a href="#编写Scala代码" class="headerlink" title="编写Scala代码"></a>编写Scala代码</h2><p>现在我们可以使用 Scala 来编写 spring boot 应用了，先来写一个 POJO 类。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@BeanProperty</span></span><br><span class="line">  <span class="keyword">var</span> value: <span class="type">String</span> = _</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再来写一个 Controller ：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="type">Array</span>(<span class="string">"/api"</span>))</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ApiController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@RequestMapping</span>(value = <span class="type">Array</span>(<span class="string">"/hello"</span>), method = <span class="type">Array</span>(<span class="type">RequestMethod</span>.<span class="type">GET</span>))</span><br><span class="line">  <span class="meta">@ResponseBody</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hello</span></span>(): <span class="type">Message</span> = &#123;</span><br><span class="line">    <span class="type">TimeUnit</span>.<span class="type">SECONDS</span>.sleep(<span class="number">6</span>)</span><br><span class="line">    <span class="keyword">val</span> message = <span class="keyword">new</span> <span class="type">Message</span>()</span><br><span class="line">    message.value = <span class="string">"Hello, Scala for Spring!"</span></span><br><span class="line">    message</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是注解参数的传递方式，Scala 里没像 Java 一样会自动把字符串转换成注解里定义的数组参数，我们需要显示的定义一个数据传入。而且传入注解的参数值只能是一个常量，比如：<code>&quot;/api/user&quot;</code> ，不能像这样：<code>Constant.API_PATH + &quot;/user&quot;</code>。</p>
+<h2 id="运行项目"><a href="#运行项目" class="headerlink" title="运行项目"></a>运行项目</h2><p>打开终端，执行以下指令启动 spring boot 应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn spring-boot:run</span><br></pre></td></tr></table></figure>
+<p>再打开一个终端，测试 API 功能：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time curl -v http://localhost:8080/hello</span><br></pre></td></tr></table></figure>
+<h2 id="sbt项目"><a href="#sbt项目" class="headerlink" title="sbt项目"></a>sbt项目</h2><p>这里使用了 <code>.scala</code> 的方式来配置 <strong>sbt</strong> 项目。sbt 的配置文件在项目根目录下的 <code>project</code> 目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">project/</span><br><span class="line">├── Build.scala</span><br><span class="line">├── build.properties</span><br></pre></td></tr></table></figure>
+<p>在 <code>build.properties</code> 文件内指定了 sbt 的版本号，<code>Build.scala</code> 文件设置了详细的 Sbt 工程设置及编译选项等。我们先来看看配置文件内容：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sbt.<span class="type">Keys</span>._</span><br><span class="line"><span class="keyword">import</span> sbt._</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Build</span> <span class="keyword">extends</span> <span class="title">Build</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">lazy</span> <span class="keyword">val</span> settings = <span class="keyword">super</span>.settings :+ &#123;</span><br><span class="line">    shellPrompt := (s =&gt; <span class="type">Project</span>.extract(s).currentProject.id + <span class="string">" &gt; "</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">lazy</span> <span class="keyword">val</span> root = <span class="type">Project</span>(<span class="string">"springscala"</span>, file(<span class="string">"."</span>))</span><br><span class="line">    .settings(</span><br><span class="line">      description := <span class="string">"Spring boot scala"</span>,</span><br><span class="line">      version := <span class="string">"0.0.1"</span>,</span><br><span class="line">      homepage := <span class="type">Some</span>(<span class="keyword">new</span> <span class="type">URL</span>(<span class="string">"https://github.com/yangbajing/spring-boot-scala"</span>)),</span><br><span class="line">      organization := <span class="string">"me.yangbajing"</span>,</span><br><span class="line">      organizationHomepage := <span class="type">Some</span>(<span class="keyword">new</span> <span class="type">URL</span>(<span class="string">"http://www.yangbajing.me"</span>)),</span><br><span class="line">      startYear := <span class="type">Some</span>(<span class="number">2016</span>),</span><br><span class="line">      scalaVersion := <span class="string">"2.11.7"</span>,</span><br><span class="line">      scalacOptions ++= <span class="type">Seq</span>(</span><br><span class="line">        <span class="string">"-encoding"</span>, <span class="string">"utf8"</span>,</span><br><span class="line">        <span class="string">"-unchecked"</span>,</span><br><span class="line">        <span class="string">"-feature"</span>,</span><br><span class="line">        <span class="string">"-deprecation"</span></span><br><span class="line">      ),</span><br><span class="line">      javacOptions ++= <span class="type">Seq</span>(</span><br><span class="line">        <span class="string">"-source"</span>, <span class="string">"1.8"</span>,</span><br><span class="line">        <span class="string">"-target"</span>, <span class="string">"1.8"</span>,</span><br><span class="line">        <span class="string">"-encoding"</span>, <span class="string">"utf8"</span>,</span><br><span class="line">        <span class="string">"-Xlint:unchecked"</span>,</span><br><span class="line">        <span class="string">"-Xlint:deprecation"</span></span><br><span class="line">      ),</span><br><span class="line">      offline := <span class="literal">true</span>,</span><br><span class="line">      libraryDependencies ++= <span class="type">Seq</span>(</span><br><span class="line">        _springBootStarterWeb,</span><br><span class="line">        _springBootStarterTest))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">val</span> verSpringBoot = <span class="string">"1.3.3.RELEASE"</span></span><br><span class="line">  <span class="keyword">val</span> _springBootStarterWeb = <span class="string">"org.springframework.boot"</span> % <span class="string">"spring-boot-starter-web"</span> % verSpringBoot</span><br><span class="line">  <span class="keyword">val</span> _springBootStarterTest = <span class="string">"org.springframework.boot"</span> % <span class="string">"spring-boot-starter-test"</span> % verSpringBoot</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没错，sbt 的配置文件就是实打实的 Scala 代码。sbt 也有一套像 Gradle 一样的 DSL 来定义项目配置信息，是以后缀 <code>.sbt</code> 结尾的文件。不过个人还是认为直接使用 Scala 代码做配置更直观、清晰。</p>
+<p>具体配置含义，我这里就不细讲了。官方有很详细的教程和文档说明：<a href="http://www.scala-sbt.org/0.13/docs/zh-cn/index.html" target="_blank" rel="external">sbt Reference Manual </a>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Scala 从各方面来看，配置和代码，期简洁性都是优于Java。对于一个Scala爱好者，你的选择很多，比如：<a href="https://playframework.com/" target="_blank" rel="external">Play</a>。不过，很多时候你需要考虑到各方面的利益。公司、团队、意愿等各方面。现实中，Spring 在 Java 生态圈还是使用最多的技术，Spring 框架的使用本身是未限制 JVM 平台上的各种主义的，它也可以很好的支持：<a href="http://www.groovy-lang.org/" target="_blank" rel="external">Groovy</a>、<a href="https://kotlinlang.org/" target="_blank" rel="external">Kotlin</a> 甚至 <a href="http://clojure.org/" target="_blank" rel="external">Clojure</a>……</p>
+<p>本文简单讲解了怎样配置 pom.xml 以在 Spring boot 中支持 Scala，以及 sbt 工程又是怎样支持 Spring 的。这即是 Scala 开发者的 Spring boot 入门指南，亦可是 Java 程序员的 Scala 第一次尝试。希望能打开一座桥梁，让 Java 程序员开眼界，Scala 开发者务实。</p>
+<p>下一篇文章我想进一步介绍下使用 Scala 开发 Spring 应用的一些好处和惯用法，接下来的文章还会讲到怎样结合 Akka 基于 Spring 开发一个 WebSocket 应用。</p>
+<p><strong>本系列文章</strong></p>
+<ul>
+<li><a href="/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/">Scala开发者的Spring-Boot快速上手指南 01</a></li>
+<li><a href="/2016/08/25/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97-02%EF%BC%9Ascala%E6%83%AF%E7%94%A8%E6%B3%95/">Scala开发者的Spring-Boot快速上手指南 02：Scala惯用法</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/" data-id="ckmlxnrgs00kgs7ug8r8ttdjt" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/maven/" rel="tag">maven</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sbt/" rel="tag">sbt</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/" rel="tag">spring-boot</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/07/cassandra%E5%8D%87%E7%BA%A7%E6%9B%B4%E6%96%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Cassandra升级更新
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/02/27/%E5%AE%89%E8%A3%85spark1-5%E4%B8%8Ehadoop2-6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">安装Spark1.5.2与Hadoop2.6.2</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/03/03/scala%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84spring-boot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97_01/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

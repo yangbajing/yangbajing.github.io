@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>反应式的Spring | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Spring从5.0开始拥抱反应式（Reactive）开发，通过Reactor和WebFlux来支持反应式的开发模式。有关反应式更多的内容可以阅读　《反应式宣言》 。反应式系统具有以下物质：即时响应性（Responsive）、回弹性（Resilient）、弹性（Elastic）以及消息驱动（Message Driven）。 对于这样的系统，我们称之为反应式系统（Reactive System）。这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反应式的Spring">
+<meta property="og:url" content="http://www.yangbajing.me/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Spring从5.0开始拥抱反应式（Reactive）开发，通过Reactor和WebFlux来支持反应式的开发模式。有关反应式更多的内容可以阅读　《反应式宣言》 。反应式系统具有以下物质：即时响应性（Responsive）、回弹性（Resilient）、弹性（Elastic）以及消息驱动（Message Driven）。 对于这样的系统，我们称之为反应式系统（Reactive System）。这">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.yangbajing.me/img/diagram-boot-reactor.svg">
+<meta property="og:image" content="http://www.yangbajing.me/img/friendlyadoption-bg.jpg">
+<meta property="article:published_time" content="2019-04-21T15:13:53.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="reactive">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="webflux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.yangbajing.me/img/diagram-boot-reactor.svg">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/java/">java</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-反应式的spring" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      反应式的Spring
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/" class="article-date">
+  <time datetime="2019-04-21T15:13:53.000Z" itemprop="datePublished">2019-04-21</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-反应式的spring" data-title="反应式的Spring" data-url="http://www.yangbajing.me/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Spring从5.0开始拥抱反应式（Reactive）开发，通过Reactor和WebFlux来支持反应式的开发模式。有关反应式更多的内容可以阅读　<a href="https://www.reactivemanifesto.org/zh-CN" target="_blank" rel="external">《反应式宣言》</a> 。反应式系统具有以下物质：即时响应性（Responsive）、回弹性（Resilient）、弹性（Elastic）以及消息驱动（Message Driven）。 对于这样的系统，我们称之为反应式系统（Reactive System）。<em>这里，推荐一本反应式讲得很好的书籍：<a href="https://item.jd.com/12518824.html" target="_blank" rel="external">《反应式设计模式》</a>，可在 <a href="https://item.jd.com/12518824.html" target="_blank" rel="external">https://item.jd.com/12518824.html</a> 购买。</em></p>
+<p>Spring Boot 2.0在传统的Servlet Stack之外提供了Reactive Stack来支持反应式的编程。Spring官方对Reactive Stack的说明为：<strong>Spring WebFlux是一个从头开始构建的无阻塞Web框架，它利用多核技术和下一代处理器来处理大量的并发连接。</strong></p>
+<p><img src="/img/diagram-boot-reactor.svg" alt="Spring Boot 2.0"></p>
+<p>WebFlux实现了Reactive Streams（反应式流处理），由 <a href="https://projectreactor.io/" target="_blank" rel="external">Project Reactor</a> 提供支持。类似 <a href="https://doc.akka.io/docs/akka/current/stream/index.html" target="_blank" rel="external">Akka Stream</a> 、<a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a> 等其它实现了 Reactive Streams 规范的库，它提供了在JVM平台上构建非阻塞应用的强大工具。</p>
+<p><img src="/img/friendlyadoption-bg.jpg" alt="Reactive Streams Friendly Adoption"></p>
+<h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><p>本文不是<strong>反应式</strong>编程原理的介绍及说明文章，本文只是告诉你怎样在Spring生态中起步反应式编程。简单说就是怎样使用Spring 5新推出的WebFlux来进行应用开发。本文使用Maven做为示例的构建工具，需要引入<code>spring-boot-starter-webflux</code>来代替传统的基于Servlet模型的<code>spring-boot-starter-web</code>依赖。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><em>你可以在 <a href="https://github.com/yangbajing/spring-reactive-sample/blob/master/pom.xml" target="_blank" rel="external">https://github.com/yangbajing/spring-reactive-sample/blob/master/pom.xml</a> 找到完整的配置。</em></p>
+<p>Spring Boot 2默认未启用WebFlux特性，需要使用<code>@EnableWebFlux</code>注解来启用，通常可以在一个<code>@Configuration</code>上配置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableWebFlux</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApplicationConfiguration</span> <span class="keyword">implements</span> <span class="title">WebFluxConfigurer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureHttpMessageCodecs</span><span class="params">(ServerCodecConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        configurer.defaultCodecs().enableLoggingRequestDetails(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="请求与响应"><a href="#请求与响应" class="headerlink" title="请求与响应"></a>请求与响应</h2><p>对应请求、响应（Request/Response），WebFlux提供了两种实现方式：</p>
+<ol>
+<li>类似WebMVC的基于注解的控制器方式</li>
+<li>全新的函数式端点方式（类似Akka HTTP Routing那样通过函数来组合定义HTTP路由）</li>
+</ol>
+<p>本文将介绍基于注解的控制器方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(path = <span class="string">"world"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Hello <span class="title">world</span><span class="params">(String hello, String world)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Hello.builder().hello(hello).world(world).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基于注解的控制器方式和使用Spring MVC Web时的方式类似，从函数参数获取请求值，返回的结果将通过默认的HttpMessageConverter进行转换（序列化成JSON数据）。</p>
+<h2 id="Header与Cookie"><a href="#Header与Cookie" class="headerlink" title="Header与Cookie"></a>Header与Cookie</h2><p>WebFlux下，获取Header与Cookie需要使用<code>ServerHttpRequest</code>来获得，因为通常情况下使用WebFlux是基于Netty实现的，在这种情况下<code>ServletHttpRequest</code>是没有加载的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ApiResult <span class="title">findFromSession</span><span class="params">(ServerHttpRequest request)</span> </span>&#123;</span><br><span class="line">    HttpCookie tokenCookie = request.getCookies().getFirst(<span class="string">"token"</span>);</span><br><span class="line">    String tokenHeader = request.getHeaders().getFirst(<span class="string">"token"</span>);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="数据校验"><a href="#数据校验" class="headerlink" title="数据校验"></a>数据校验</h2><p>请求数据的校验需要把<code>@Valid</code>注解加到请求参数上，但与Spring 4及更早版本不同的地方是需要把请求参数使用<code>Mono&lt;T&gt;</code>包起来。Bean校验的错误将作为<code>Mono</code>的错误（<code>Error</code>）被发送。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(path = <span class="string">"signup"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;ApiResult&gt; <span class="title">signup</span><span class="params">(@Valid @RequestBody Mono&lt;SignupDTO&gt; mono)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mono</span><br><span class="line">            .map(signupDTO -&gt; ApiResult.ok(credentialService.signup(signupDTO)))</span><br><span class="line">            .onErrorResume(httpComponent::justApiResult);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;ApiResult&gt; <span class="title">justApiResult</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">    ApiResult result = ApiResult.error(StatusEnum.INTERNAL_SERVER_ERROR);</span><br><span class="line">    <span class="keyword">if</span> (t <span class="keyword">instanceof</span> WebExchangeBindException) &#123;</span><br><span class="line">        result.setStatus(StatusEnum.BAD_REQUEST);</span><br><span class="line">        WebExchangeBindException e = (WebExchangeBindException) t;</span><br><span class="line">        ObjectNode data = objectMapper.createObjectNode();</span><br><span class="line">        e.getFieldErrors().forEach(field -&gt; data.put(field.getField(), field.getDefaultMessage()));</span><br><span class="line">        result.setData(data);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        result.setMessage(t.getLocalizedMessage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Mono.just(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Reactive-Core"><a href="#Reactive-Core" class="headerlink" title="Reactive Core"></a>Reactive Core</h2><p>Spring WebFlux的反应式核心有以下基本支持：</p>
+<ol>
+<li>HttpHandler: HTTP服务处理，主要用于在不同的HTTP服务器上实现一个统一的请求/响应处理抽象；</li>
+<li>WebHandler API: 是提供Web应用程序中常用的一组更广泛的功能，如：具有属性的用户会话、请求属性、表单处理、文件上传/下载等；</li>
+<li>Filters: 过滤器，可控制处理流程；</li>
+<li>Exceptions: 全局异常处理；</li>
+<li>Codecs: HTTP请求/响应编码器，通过无阻塞I/O和反应流回压对更高级别的对象之间的字节进行序列化与反序列化；</li>
+<li>Logging: 日志。</li>
+</ol>
+<p><strong>自定义编码器</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureHttpMessageCodecs</span><span class="params">(ServerCodecConfigurer configurer)</span> </span>&#123;</span><br><span class="line">    ServerCodecConfigurer.ServerDefaultCodecs defaultCodecs = configurer.defaultCodecs();</span><br><span class="line">    defaultCodecs.jackson2JsonEncoder(<span class="keyword">new</span> Jackson2JsonEncoder(objectMapper));</span><br><span class="line">    defaultCodecs.jackson2JsonDecoder(<span class="keyword">new</span> Jackson2JsonDecoder(objectMapper));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Spring 5开始已经拥抱反应式编程，本文通过一些简单的示例来演示了Spring 5引入的WebFlux，也算缓缓打开了反应式（Reactive）编程的大门。</p>
+<p><strong><em>完整的代码在Github上可以访问：<a href="https://github.com/yangbajing/spring-reactive-sample" target="_blank" rel="external">https://github.com/yangbajing/spring-reactive-sample</a></em></strong></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/" data-id="ckmlxnrbg005es7ugdrhj0jp1" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reactive/" rel="tag">reactive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webflux/" rel="tag">webflux</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          使用WebFlux与Reactor-当流为 Empty 时的注意事项
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/04/17/spring%E5%BA%94%E7%94%A8enum%E5%A4%84%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Spring应用enum处理</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

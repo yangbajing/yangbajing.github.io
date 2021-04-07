@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Firewall快速使用 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="基本使用查询状态1sudo firewall-cmd --zone&#x3D;public --list-all 打开端口1sudo firewall-cmd --zone&#x3D;public --permanent --add-port&#x3D;3306&#x2F;tcp --permanent选项设置匹配永久生效，但需要调用--reload使firewall重新加载配置使其马上生效。 使规则生效1sudo firewall-c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Firewall快速使用">
+<meta property="og:url" content="http://www.yangbajing.me/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="基本使用查询状态1sudo firewall-cmd --zone&#x3D;public --list-all 打开端口1sudo firewall-cmd --zone&#x3D;public --permanent --add-port&#x3D;3306&#x2F;tcp --permanent选项设置匹配永久生效，但需要调用--reload使firewall重新加载配置使其马上生效。 使规则生效1sudo firewall-c">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-30T02:42:58.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="firewall">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-firewall快速使用" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Firewall快速使用
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2019-05-30T02:42:58.000Z" itemprop="datePublished">2019-05-30</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-firewall快速使用" data-title="Firewall快速使用" data-url="http://www.yangbajing.me/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><h4 id="查询状态"><a href="#查询状态" class="headerlink" title="查询状态"></a>查询状态</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --list-all</span><br></pre></td></tr></table></figure>
+<h4 id="打开端口"><a href="#打开端口" class="headerlink" title="打开端口"></a>打开端口</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --permanent --add-port=3306/tcp</span><br></pre></td></tr></table></figure>
+<p><code>--permanent</code>选项设置匹配永久生效，但需要调用<code>--reload</code>使<code>firewall</code>重新加载配置使其马上生效。</p>
+<h4 id="使规则生效"><a href="#使规则生效" class="headerlink" title="使规则生效"></a>使规则生效</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><h4 id="开启伪装IP"><a href="#开启伪装IP" class="headerlink" title="开启伪装IP"></a>开启伪装IP</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --permanent --add-masquerade</span><br></pre></td></tr></table></figure>
+<h4 id="配置端口转发"><a href="#配置端口转发" class="headerlink" title="配置端口转发"></a>配置端口转发</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --permanent --add-forward-port=port=15432:proto=tcp:toaddr=10.0.0.8:toport=5432</span><br></pre></td></tr></table></figure>
+<p><em>将本机端口15432转发到10.0.0.8:5432</em></p>
+<h4 id="删除端口转发"><a href="#删除端口转发" class="headerlink" title="删除端口转发"></a>删除端口转发</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --permanent --remove-forward-port=port=15432:proto=tcp:toaddr=10.0.0.8:toport=5432</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/" data-id="ckmlxnrbk005ms7ug7q9boymc" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/firewall/" rel="tag">firewall</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Akka实战：再谈断点上传
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">转发：一次操作系统报错OutOfMemory Error的处理记录</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/05/30/firewall%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

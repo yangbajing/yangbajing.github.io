@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>使用WebFlux与Reactor-当流为 Empty 时的注意事项 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="注意empty会造成之后的所有转换操作不执行当Mono&lt;T&gt;的计算结果为empty时，在它之后添加的多个转换操作都不会被触发执行。有一些方法可以解决这个问题：  使用Optional&lt;T&gt;来包裹可能为空的数据类型。  1Mono&lt;Optional&lt;User&gt;&gt; findById(String userId);  使用.switchIfEmpty或.d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用WebFlux与Reactor-当流为 Empty 时的注意事项">
+<meta property="og:url" content="http://www.yangbajing.me/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="注意empty会造成之后的所有转换操作不执行当Mono&lt;T&gt;的计算结果为empty时，在它之后添加的多个转换操作都不会被触发执行。有一些方法可以解决这个问题：  使用Optional&lt;T&gt;来包裹可能为空的数据类型。  1Mono&lt;Optional&lt;User&gt;&gt; findById(String userId);  使用.switchIfEmpty或.d">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-07T13:48:18.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="reactor">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="webflux">
+<meta property="article:tag" content="functional">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/java/">java</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-使用webflux与reactor" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      使用WebFlux与Reactor-当流为 Empty 时的注意事项
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/" class="article-date">
+  <time datetime="2019-05-07T13:48:18.000Z" itemprop="datePublished">2019-05-07</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-使用webflux与reactor" data-title="使用WebFlux与Reactor-当流为 Empty 时的注意事项" data-url="http://www.yangbajing.me/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><h3 id="empty会造成之后的所有转换操作不执行"><a href="#empty会造成之后的所有转换操作不执行" class="headerlink" title="empty会造成之后的所有转换操作不执行"></a>empty会造成之后的所有转换操作不执行</h3><p>当<code>Mono&lt;T&gt;</code>的计算结果为empty时，在它之后添加的多个转换操作都不会被触发执行。有一些方法可以解决这个问题：</p>
+<ol>
+<li>使用<code>Optional&lt;T&gt;</code>来包裹可能为空的数据类型。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mono&lt;Optional&lt;User&gt;&gt; findById(String userId);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用<code>.switchIfEmpty</code>或<code>.defaultIfEmpty</code>来将empty转换成其它有值的结果。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Mono&lt;User&gt; findById(String userId);</span><br><span class="line"></span><br><span class="line">findById(userId)</span><br><span class="line">    .switchIfEmpty(Mono.</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/" data-id="ckmlxnrbm005ps7ug6ourr66i" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/functional/" rel="tag">functional</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reactor/" rel="tag">reactor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webflux/" rel="tag">webflux</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/05/30/%E8%BD%AC%E5%8F%91%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%8A%A5%E9%94%99outofmemory-error%E7%9A%84%E5%A4%84%E7%90%86%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          转发：一次操作系统报错OutOfMemory Error的处理记录
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/04/21/%E5%8F%8D%E5%BA%94%E5%BC%8F%E7%9A%84spring/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">反应式的Spring</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/05/07/%E4%BD%BF%E7%94%A8webflux%E4%B8%8Ereactor/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

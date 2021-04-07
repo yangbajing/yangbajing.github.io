@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Akka实战：分散、聚合模式 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="分散、聚合模式：简单说就是一个任务需要拆分成多个小任务，每个小任务执行完后再把结果聚合在一起返回。 代码 https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;akka-action  实例背景本实例来自一个真实的线上产品，现将其需求简化如下：  传入一个关键词：key，根据key从网上抓取相关新闻 可选传入一个超时参数：duration，设置任务到期时必须反回数据（返回实际已抓取数据） 若">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka实战：分散、聚合模式">
+<meta property="og:url" content="http://www.yangbajing.me/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="分散、聚合模式：简单说就是一个任务需要拆分成多个小任务，每个小任务执行完后再把结果聚合在一起返回。 代码 https:&#x2F;&#x2F;github.com&#x2F;yangbajing&#x2F;akka-action  实例背景本实例来自一个真实的线上产品，现将其需求简化如下：  传入一个关键词：key，根据key从网上抓取相关新闻 可选传入一个超时参数：duration，设置任务到期时必须反回数据（返回实际已抓取数据） 若">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static.oschina.net/uploads/img/201511/26001500_p75y.png">
+<meta property="article:published_time" content="2015-11-25T11:41:46.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka实战">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.oschina.net/uploads/img/201511/26001500_p75y.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-akka实战：分散与聚合" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Akka实战：分散、聚合模式
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/" class="article-date">
+  <time datetime="2015-11-25T11:41:46.000Z" itemprop="datePublished">2015-11-25</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-akka实战：分散与聚合" data-title="Akka实战：分散、聚合模式" data-url="http://www.yangbajing.me/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong>分散、聚合模式</strong>：简单说就是一个任务需要拆分成多个小任务，每个小任务执行完后再把结果聚合在一起返回。</p>
+<p><strong>代码</strong> <a href="https://github.com/yangbajing/akka-action" target="_blank" rel="external">https://github.com/yangbajing/akka-action</a></p>
+<p><img src="https://static.oschina.net/uploads/img/201511/26001500_p75y.png" alt="分散、聚合模式图" title="分散、聚合模式图"></p>
+<h2 id="实例背景"><a href="#实例背景" class="headerlink" title="实例背景"></a>实例背景</h2><p>本实例来自一个真实的线上产品，现将其需求简化如下：</p>
+<ol>
+<li>传入一个关键词：<code>key</code>，根据<code>key</code>从网上抓取相关新闻</li>
+<li>可选传入一个超时参数：<code>duration</code>，设置任务到期时必须反回数据（返回实际已抓取数据）</li>
+<li>若超时到返回实际已爬取数据，则任务应继续运行直到所以数据抓取完成，并存库</li>
+</ol>
+<h2 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h2><p>根据需求，一个简化的分散、聚合模式可以使用两个<code>actor</code>来实现。</p>
+<ul>
+<li>NewsTask：接收请求，并设置超时时间</li>
+<li>SearchPageTask：执行实际的新闻抓取操作（本实例将使用TimeUnit模拟抓取耗时）</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p><strong>NewsTask</strong></p>
+<p><a href="https://github.com/yangbajing/akka-action/blob/master/src/main/scala/me/yangbajing/akkaaction/scattergather/SearchPageTask.scala" target="_blank" rel="external"><code>https://github.com/yangbajing/akka-action/blob/master/src/main/scala/me/yangbajing/akkaaction/scattergather/NewsTask.scala</code></a></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">metricPreStart</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">  context.system.scheduler.scheduleOnce(doneDuration, self, <span class="type">TaskDelay</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">metricReceive</span></span>: <span class="type">Receive</span> = &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">StartFetchNews</span> =&gt;</span><br><span class="line">    _receipt = sender()</span><br><span class="line">    (<span class="number">0</span> until <span class="type">NewsTask</span>.<span class="type">TASK_SIZE</span>).foreach &#123; i =&gt;</span><br><span class="line">      context.actorOf(<span class="type">SearchPageTask</span>.props(self), <span class="string">"scatter-"</span> + i) ! <span class="type">SearchPage</span>(key)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">case</span> <span class="type">GetNewsItem</span>(newsItem) =&gt;</span><br><span class="line">    _newses ::= newsItem</span><br><span class="line">    <span class="keyword">if</span> (_newses.size == <span class="type">NewsTask</span>.<span class="type">TASK_SIZE</span>) &#123;</span><br><span class="line">      logger.debug(<span class="string">s"分散任务，<span class="subst">$&#123;NewsTask.TASK_SIZE&#125;</span>个已全部完成"</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (_receipt != <span class="literal">null</span>) &#123;</span><br><span class="line">        _receipt ! <span class="type">NewsResult</span>(key, _newses)</span><br><span class="line">        _receipt = <span class="literal">null</span></span><br><span class="line">      &#125;</span><br><span class="line">      self ! <span class="type">PoisonPill</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">case</span> <span class="type">TaskDelay</span> =&gt;</span><br><span class="line">    <span class="keyword">if</span> (_receipt != <span class="literal">null</span>) &#123;</span><br><span class="line">      _receipt ! <span class="type">NewsResult</span>(key, _newses)</span><br><span class="line">      _receipt = <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>metricPreStart</code>方法中设置定时方法，调用时间为从代码运行开始到<code>doneDuration</code>时间为止。定时被触发时将向当前<code>Actor</code>发送一个<code>TaskDelay</code>消息。</p>
+<p>在<code>metricReceive</code>方法中，分别对<code>StartFetchNews</code>、<code>GetNewsItem</code>、<code>TaskDelay</code>三个消息进行操作。</p>
+<p>在收到<code>StartFetchNews</code>消息时，actor首先保存发送者actor的引用（结果将返回到此actor）。再根据<code>TASK_SIZE</code>生成相应子任务</p>
+<p><code>GetNewsItem</code>消息的处理中，每收到一个消息就将其添加到<code>_newses</code>列表中。并判断当<code>_newses</code>个数等于<code>TASK_SIZE</code>时（所有子任务已完成）将结果发送给<code>_receipt</code>。</p>
+<p><code>self ! PoisonPill</code>，这句代码停止actor自身。它将把“毒药”发送到<code>NewsTask</code> Actor的接收邮箱队列中。</p>
+<p><code>TaskDelay</code>消息被触发时，将直接返回已完成的新闻<code>_newses</code>。返回数据后并不终止当前还未运行完任务。</p>
+<p><strong>SearchPageTask</strong></p>
+<p><a href="https://github.com/yangbajing/akka-action/blob/master/src/main/scala/me/yangbajing/akkaaction/scattergather/SearchPageTask.scala" target="_blank" rel="external"><code>https://github.com/yangbajing/akka-action/blob/master/src/main/scala/me/yangbajing/akkaaction/scattergather/SearchPageTask.scala</code></a></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">metricReceive</span></span>: <span class="type">Receive</span> = &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">SearchPage</span>(key) =&gt;</span><br><span class="line">    <span class="comment">// XXX 模拟抓取新闻时间</span></span><br><span class="line">    <span class="type">TimeUtils</span>.sleep(<span class="type">Random</span>.nextInt(<span class="number">20</span>).seconds)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> item = <span class="type">NewsItem</span>(</span><br><span class="line">      <span class="string">"http://newssite/news/"</span> + self.path.name,</span><br><span class="line">      <span class="string">"测试新闻"</span> + self.path.name,</span><br><span class="line">      self.path.name,</span><br><span class="line">      <span class="type">TimeUtils</span>.now().toString,</span><br><span class="line">      <span class="string">"内容简介"</span>, <span class="string">"新闻正文"</span>)</span><br><span class="line"></span><br><span class="line">    taskRef ! <span class="type">GetNewsItem</span>(item)</span><br><span class="line">    context.stop(self)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>SearchPageTask</code>的代码逻辑就比较易懂了，这里使用<code>sleep</code>来模拟实际抓取新闻时的耗时。生成结果后返回数据给｀taskRef`，并终止自己。</p>
+<h2 id="执行测试"><a href="#执行测试" class="headerlink" title="执行测试"></a>执行测试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./sbt</span><br><span class="line">akka-action &gt; testOnly me.yangbajing.akkaaction.scattergather.ScatterGatherTest</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一个简单的<code>Akka</code>实例，实现了任务分发与结果聚合。提供了一种在指定时间内返回部份有效数据，同时任务继续执行的方式。这种分散、聚合的模式在实际生产中很常用，比如对多种数据源的整合，或某些需要长时间运行同时对返回数据完整性无强制要求的情况等。</p>
+<p><code>MetricActor</code>演示了怎么自定义<code>Actor</code>，并为其提供一些侦测点的方式。以后有时间会写篇详文介绍。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/" data-id="ckmlxnr9x002ss7ugst0ysf1k" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka%E5%AE%9E%E6%88%98/" rel="tag">akka实战</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/27/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E6%9E%84%E5%BB%BArest%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Akka实战：构建REST风格的微服务
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/11/21/jvm%E7%A8%8B%E5%BA%8F%E5%91%98%E4%B9%A6%E5%8D%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">JVM程序员书单</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/11/25/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E6%95%A3%E4%B8%8E%E8%81%9A%E5%90%88/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

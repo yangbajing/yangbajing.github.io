@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>怎样优雅的关闭 ActorSystem | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用 CoordinatedShutdown 可以优雅的方式关闭 ActorSystem。默认情况下，需要调用 ActorSystem 上的 terminate 方法才会触发 CoordinatedShutdown，但也可以设置为在 JVM 退出时自动运行（比如接收到操作系统的 SIGTERM 信号或Java虚拟机退出）。要使在程序退出时 CoordinatedShutdown 自动调用，需要如下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="怎样优雅的关闭 ActorSystem">
+<meta property="og:url" content="http://www.yangbajing.me/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="使用 CoordinatedShutdown 可以优雅的方式关闭 ActorSystem。默认情况下，需要调用 ActorSystem 上的 terminate 方法才会触发 CoordinatedShutdown，但也可以设置为在 JVM 退出时自动运行（比如接收到操作系统的 SIGTERM 信号或Java虚拟机退出）。要使在程序退出时 CoordinatedShutdown 自动调用，需要如下">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-20T12:03:19.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="coordinated-shutdown">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-怎样优雅的关闭-actorsystem" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      怎样优雅的关闭 ActorSystem
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/" class="article-date">
+  <time datetime="2020-02-20T12:03:19.000Z" itemprop="datePublished">2020-02-20</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-怎样优雅的关闭-actorsystem" data-title="怎样优雅的关闭 ActorSystem" data-url="http://www.yangbajing.me/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>使用 <code>CoordinatedShutdown</code> 可以优雅的方式关闭 <code>ActorSystem</code>。默认情况下，需要调用 <code>ActorSystem</code> 上的 <code>terminate</code> 方法才会触发 <code>CoordinatedShutdown</code>，但也可以设置为在 JVM 退出时自动运行（比如接收到操作系统的 <strong>SIGTERM</strong> 信号或Java虚拟机退出）。要使在程序退出时 <code>CoordinatedShutdown</code> 自动调用，需要如下配置：</p>
+<h2 id="启用-CoordinatedShutdown"><a href="#启用-CoordinatedShutdown" class="headerlink" title="启用 CoordinatedShutdown"></a>启用 CoordinatedShutdown</h2><p>确保启用如下配置，同时加载 <code>CoordinatedShutdown</code> 扩展。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">akka.jvm-shutdown-hooks = on</span><br><span class="line">akka.coordinated-shutdown.run-by-jvm-shutdown-hook = on</span><br><span class="line">akka.coordinated-shutdown.run-by-actor-system-terminate = on</span><br><span class="line">akka.coordinated-shutdown.terminate-actor-system = on</span><br></pre></td></tr></table></figure>
+<p>有两种方式加载 <code>CoordinatedShutdown</code> 扩展：</p>
+<ol>
+<li>通过配置文件随 <code>ActorSystem</code> 自动加载：<code>akka.extensions += &quot;akka.actor.CoordinatedShutdown&quot;</code></li>
+<li>在代码中手动调用 <code>CoordinatedShutdown(system)</code></li>
+</ol>
+<hr>
+<p><em style="color:blue;font-weight:bold;">注意</em></p>
+<p>当系统中应用了 <code>akka-cluster-typed</code>、<code>akka-cluster-sharding-typed</code> 等模块时，它们将在内部调用 <code>CoordinatedShutdown</code> 扩展。</p>
+<hr>
+<h2 id="使用-CoordinatedShutdown"><a href="#使用-CoordinatedShutdown" class="headerlink" title="使用 CoordinatedShutdown"></a>使用 CoordinatedShutdown</h2><h3 id="Phase（阶段）"><a href="#Phase（阶段）" class="headerlink" title="Phase（阶段）"></a>Phase（阶段）</h3><p><code>CoordinatedShutdown</code> 可通过 <strong>Phase</strong>(阶段) 来管理关闭时要执行任务的顺序。相同阶段内的多个任务将同时进行，不同阶段的任务以配置的顺序依次进行，默认阶段里 <code>before-service-unbind</code> 在关闭时最先执行。</p>
+<p>默认，<code>CoordinatedShutdown</code> 定义了如下阶段：</p>
+<ul>
+<li><code>before-service-unbind</code> 取消绑定自定义服务之前</li>
+<li><code>service-unbind</code> 服务已取消绑定，这时不再接收新的请求，但已进入的请求将继续。如：HTTP 请求</li>
+<li><code>service-requests-done</code> 已进入的请求全部执行完成</li>
+<li><code>service-stop</code> 服务已停止</li>
+<li><code>before-cluster-shutdown</code> 集群节点开始停止前</li>
+<li><code>cluster-sharding-shutdown-region</code> 集群节点的分片区域开始关闭</li>
+<li><code>cluster-leave</code> 集群节点发出 Leave 命令后</li>
+<li><code>cluster-exiting</code> 集群节点开始退出</li>
+<li><code>cluster-exiting-done</code> 集群节点退出结束</li>
+<li><code>cluster-shutdown</code> 集群节点已关闭</li>
+<li><code>before-actor-system-terminate</code> ActorSystem 终止前</li>
+<li><code>actor-system-terminate</code> ActorSystem 已终止</li>
+</ul>
+<hr>
+<p><em style="color:red;font-weight:bold;">警告</em></p>
+<p>注册到 <code>actor-system-terminate</code> 阶段的任务需要注意，这时候 <code>ActorSystem</code> 的线程调度和定时调度已经关闭。也就是说 <code>ActorSystem</code> 上的 <code>ExecutionContext</code> 和 <code>Scheduler</code> 已不可用。 </p>
+<hr>
+<h3 id="添加关闭任务"><a href="#添加关闭任务" class="headerlink" title="添加关闭任务"></a>添加关闭任务</h3><p>可以调用 <code>CoordinatedShutdown</code> 上的 <code>addTask</code> 方法来添加关闭任务，<code>addJvmShutdownHook</code> 方法来添加 JVM 退出时执行的关闭任务。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CoordinatedShutdown</span>(system)</span><br><span class="line">  .addCancellableTask(<span class="type">CoordinatedShutdown</span>.<span class="type">PhaseServiceRequestsDone</span>, <span class="string">"CloseJdbcDataSource"</span>) &#123; () =&gt;</span><br><span class="line">    <span class="type">Future</span> &#123;</span><br><span class="line">      println(<span class="string">"Close JDBC DataSource."</span>)</span><br><span class="line">      <span class="type">Done</span></span><br><span class="line">    &#125;(system.dispatcher)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="type">CoordinatedShutdown</span>(system).addJvmShutdownHook &#123;</span><br><span class="line">  println(<span class="string">"JVM shutdown hook."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>addCancellableTask</code> 和 <code>addCancellableJvmShutdownHook</code> 方法可以添加可取消的关闭任务，它们将返回 <code>akka.actor.Cancellable</code> 。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/" data-id="ckmlxnrcd006ys7ugnjbkaekq" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/coordinated-shutdown/" rel="tag">coordinated-shutdown</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          在 Scala/Java/Spring 微服务中使用日志
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2020/02/14/ambari%E7%BC%96%E8%AF%91%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Ambari编译记录</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

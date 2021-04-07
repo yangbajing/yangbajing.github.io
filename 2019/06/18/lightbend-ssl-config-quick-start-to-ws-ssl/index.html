@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>WS SSL快速起步 - lightbend SSL Config | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文：Quick Start to WS SSL 本文适用于需要通过 HTTPS 连接到远程 Web 服务而不想阅读整个手册的用户。如果需要设置 Web 服务或配置客户端身份认证，请阅读 Generating X.509 Certificates 。 通过 HTTPS 连接到远程服务器如果远程服务器正在使用一个由已知证书颁发机构签发的证书，那么WS应该在不进行任何额外配置的情况下即可正常工作。这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WS SSL快速起步 - lightbend SSL Config">
+<meta property="og:url" content="http://www.yangbajing.me/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="原文：Quick Start to WS SSL 本文适用于需要通过 HTTPS 连接到远程 Web 服务而不想阅读整个手册的用户。如果需要设置 Web 服务或配置客户端身份认证，请阅读 Generating X.509 Certificates 。 通过 HTTPS 连接到远程服务器如果远程服务器正在使用一个由已知证书颁发机构签发的证书，那么WS应该在不进行任何额外配置的情况下即可正常工作。这里">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-18T03:36:10.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="ssl-config">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-lightbend-ssl-config-quick-start-to-ws-ssl" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      WS SSL快速起步 - lightbend SSL Config
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/" class="article-date">
+  <time datetime="2019-06-18T03:36:10.000Z" itemprop="datePublished">2019-06-18</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-lightbend-ssl-config-quick-start-to-ws-ssl" data-title="WS SSL快速起步 - lightbend SSL Config" data-url="http://www.yangbajing.me/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><em>原文：<a href="https://lightbend.github.io/ssl-config/WSQuickStart.html" target="_blank" rel="external">Quick Start to WS SSL</a></em></p>
+<p>本文适用于需要通过 HTTPS 连接到远程 Web 服务而不想阅读整个手册的用户。如果需要设置 Web 服务或配置客户端身份认证，请阅读 <a href="https://lightbend.github.io/ssl-config/CertificateGeneration.html" target="_blank" rel="external">Generating X.509 Certificates</a> 。</p>
+<h2 id="通过-HTTPS-连接到远程服务器"><a href="#通过-HTTPS-连接到远程服务器" class="headerlink" title="通过 HTTPS 连接到远程服务器"></a>通过 HTTPS 连接到远程服务器</h2><p>如果远程服务器正在使用一个由已知证书颁发机构签发的证书，那么WS应该在不进行任何额外配置的情况下即可正常工作。这里就结束了！</p>
+<p>如果Web服务未使用众所周知的证书颁发机构，则它正在使用私有CA或自签名证书。您可以通过使用curl轻松确定这一点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://financialcryptography.com # uses cacert.org as a CA</span><br></pre></td></tr></table></figure>
+<p>如果收到以下错误，则必须获得CA的证书并将其添加到信任存储。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">curl: (60) SSL certificate problem: Invalid certificate chain</span><br><span class="line">More details here: http://curl.haxx.se/docs/sslcerts.html</span><br><span class="line"></span><br><span class="line">curl performs SSL certificate verification by default, using a &quot;bundle&quot;</span><br><span class="line"> of Certificate Authority (CA) public keys (CA certs). If the default</span><br><span class="line"> bundle file isn&apos;t adequate, you can specify an alternate file</span><br><span class="line"> using the --cacert option.</span><br><span class="line">If this HTTPS server uses a certificate signed by a CA represented in</span><br><span class="line"> the bundle, the certificate verification probably failed due to a</span><br><span class="line"> problem with the certificate (it might be expired, or the name might</span><br><span class="line"> not match the domain name in the URL).</span><br><span class="line">If you&apos;d like to turn off curl&apos;s verification of the certificate, use</span><br><span class="line"> the -k (or --insecure) option.</span><br></pre></td></tr></table></figure>
+<h2 id="获取根CA证书"><a href="#获取根CA证书" class="headerlink" title="获取根CA证书"></a>获取根CA证书</h2><p>理想情况下，这应该在外部完成：Web服务的所有者应该以一种不可伪造的方式，最好是亲自向您提供根CA证书。</p>
+<p>在没有通信的情况下（不建议这样做），您有时可以使用JDK 1.8中的<code>keytool</code>直接从证书链获取根CA证书：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -printcert -sslserver playframework.com</span><br></pre></td></tr></table></figure>
+<p>返回的 #2 部分即是根证书：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Certificate #2</span><br><span class="line">====================================</span><br><span class="line">Owner: CN=GlobalSign Root CA, OU=Root CA, O=GlobalSign nv-sa, C=BE</span><br><span class="line">Issuer: CN=GlobalSign Root CA, OU=Root CA, O=GlobalSign nv-sa, C=BE</span><br></pre></td></tr></table></figure>
+<p>要获得可导出格式的证书链，请使用-rfc选项：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -printcert -sslserver playframework.com -rfc</span><br></pre></td></tr></table></figure>
+<p>将返回一系列PEM格式的证书：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">...</span><br><span class="line">-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
+<p>可以复制粘贴到文件中。链中最后一个证书将是根CA证书。</p>
+<p><strong><em>注意</em></strong></p>
+<p><em>并非所有网站都包含根CA证书。您应该使用<code>keytool</code>或证书解码器对证书进行解码，以确保您拥有正确的证书。</em></p>
+<h2 id="将trust-manager（信任管理器）指向PEM文件"><a href="#将trust-manager（信任管理器）指向PEM文件" class="headerlink" title="将trust manager（信任管理器）指向PEM文件"></a>将trust manager（信任管理器）指向PEM文件</h2><p>将以下内容添加到<code>application.conf</code>中，具体指定<strong>pem</strong>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ssl-config &#123;</span><br><span class="line">  trustManager = &#123;</span><br><span class="line">    stores = [</span><br><span class="line">      &#123; type = &quot;PEM&quot;, path = &quot;/path/to/cert/globalsign.crt&quot; &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这将告诉信任管理器忽略证书的默认的<strong>cacerts</strong>存储，并且只使用您的自定义CA证书。</p>
+<p>之后，将配置WS，您可以测试您的连接是否可以使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WS.url(&quot;https://example.com&quot;).get()</span><br></pre></td></tr></table></figure>
+<p>您可以在 <a href="https://lightbend.github.io/ssl-config/ExampleSSLConfig.html" target="_blank" rel="external">示例配置</a> 页面上看到更多示例。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/" data-id="ckmlxnrbs005zs7ugb13isr8d" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssl-config/" rel="tag">ssl-config</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/06/18/akka%E5%90%AF%E7%94%A8ssl%E5%92%8Chttp-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Akka启用ssl和HTTP 2
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/06/01/akka%E5%AE%9E%E6%88%98%EF%BC%9A%E5%86%8D%E8%B0%88%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Akka实战：再谈断点上传</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/06/18/lightbend-ssl-config-quick-start-to-ws-ssl/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

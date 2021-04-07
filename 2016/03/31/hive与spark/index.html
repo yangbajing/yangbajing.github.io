@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Hive与Spark | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Spark与Hadoop安装见此：安装Spark1.5与Hadoop2.6  注意：Spark官方提供的二进制发行版是不支持hive的，需要自行编译。 安装hive12wget -c http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;apache&#x2F;hive&#x2F;hive-1.1.1&#x2F;apache-hive-1.1.1-bin.tar.gztar apache-hive-1.1.1-bin.tar.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hive与Spark">
+<meta property="og:url" content="http://www.yangbajing.me/2016/03/31/hive%E4%B8%8Espark/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Spark与Hadoop安装见此：安装Spark1.5与Hadoop2.6  注意：Spark官方提供的二进制发行版是不支持hive的，需要自行编译。 安装hive12wget -c http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;apache&#x2F;hive&#x2F;hive-1.1.1&#x2F;apache-hive-1.1.1-bin.tar.gztar apache-hive-1.1.1-bin.tar.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-31T03:27:39.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="spark">
+<meta property="article:tag" content="hive">
+<meta property="article:tag" content="hadoop">
+<meta property="article:tag" content="spark sql">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/bigdata/">bigdata</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/bigdata/spark/">spark</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-hive与spark" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Hive与Spark
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/03/31/hive%E4%B8%8Espark/" class="article-date">
+  <time datetime="2016-03-31T03:27:39.000Z" itemprop="datePublished">2016-03-31</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-hive与spark" data-title="Hive与Spark" data-url="http://www.yangbajing.me/2016/03/31/hive%E4%B8%8Espark/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <ul>
+<li>Spark与Hadoop安装见此：<a href="http://www.yangbajing.me/2016/02/27/%E5%AE%89%E8%A3%85spark1-5-2%E4%B8%8Ehadoop2-6-2/">安装Spark1.5与Hadoop2.6</a></li>
+</ul>
+<p><strong>注意：Spark官方提供的二进制发行版是不支持hive的，需要自行编译。</strong></p>
+<h1 id="安装hive"><a href="#安装hive" class="headerlink" title="安装hive"></a>安装hive</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -c http://mirrors.aliyun.com/apache/hive/hive-1.1.1/apache-hive-1.1.1-bin.tar.gz</span><br><span class="line">tar apache-hive-1.1.1-bin.tar.gz -C /opt/local</span><br></pre></td></tr></table></figure>
+<p>设置hive环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export HIVE_HOME=&quot;/opt/local/apache-hive-1.1.1-bin&quot;</span><br></pre></td></tr></table></figure>
+<p>编辑 <code>$HIVE_HOME/conf/hive-site.xml</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://192.168.31.101/metastore_db?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">description</span>&gt;</span>metadata is stored in a MySQL server<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">description</span>&gt;</span>MySQL JDBC driver class<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>hiveuser<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">description</span>&gt;</span>user name for connecting to mysql server<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>hive123<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">description</span>&gt;</span>password for connecting to mysql server<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>设置MySQL的Hive元数据库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br><span class="line"></span><br><span class="line">mysql&gt; CREATE DATABASE metastore_db;</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; CREATE USER &apos;hiveuser&apos;@&apos;%&apos; IDENTIFIED BY &apos;hive123&apos;;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; GRANT all on *.* to &apos;hiveuser&apos;@localhost identified by &apos;hive123&apos;;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>执行 <code>$HIVE_HOME/bin/hive</code> 即可进入 hive cli 控制台了。</p>
+<h1 id="一些注意事项"><a href="#一些注意事项" class="headerlink" title="一些注意事项"></a>一些注意事项</h1><h2 id="hive-optimize-ppd-BUG"><a href="#hive-optimize-ppd-BUG" class="headerlink" title="hive.optimize.ppd BUG"></a>hive.optimize.ppd BUG</h2><p>在执行一些 hiveQL 操作时，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.lang.NoSuchMethodError: org.apache.hadoop.hive.ql.ppd.ExprWalkerInfo.getConvertedNode(Lorg/apache/hadoop/hive/ql/lib/Node;)Lorg/apache/hadoop/hive/ql/plan/ExprNodeDesc;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; set hive.optimize.ppd=false;</span><br></pre></td></tr></table></figure>
+<h2 id="注意-hive-jline与hadoop-jline起冲突"><a href="#注意-hive-jline与hadoop-jline起冲突" class="headerlink" title="注意 hive jline与hadoop jline起冲突"></a><strong>注意</strong> hive jline与hadoop jline起冲突</h2><p><a href="https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Started" target="_blank" rel="external">https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Started</a></p>
+<p>Hive 已经更新 Jlive2 版本，而 hadoop 还是使用的 0.9x 系列。可以这样设置来解决这个问题：优先使用用户提供的jar包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export HADOOP_USER_CLASSPATH_FIRST=true</span><br></pre></td></tr></table></figure>
+<h2 id="为Spark添加mysql驱动"><a href="#为Spark添加mysql驱动" class="headerlink" title="为Spark添加mysql驱动"></a>为Spark添加mysql驱动</h2><p>编辑 <code>$SPARK_HOME/conf/spark-defaults.conf</code> 文件，设置以下依赖。当使用 <code>spark-submit</code><br>提交任务时需要 <code>spark.executor.extraClassPath</code> 配置，而使用 <code>spark-shell</code>和<code>spark-sql</code> 等方式时需要 <code>spark.driver.extraClassPath</code> 配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark.executor.extraClassPath	   /opt/local/libs/mysql-connector-java-5.1.38.jar</span><br><span class="line">spark.driver.extraClassPath	       /opt/local/libs/mysql-connector-java-5.1.38.jar</span><br></pre></td></tr></table></figure>
+<p>也可以在使用 <code>spark-sql</code> 时添加命令行参数来设置mysql驱动：<code>--driver-class-path /opt/local/libs/mysql-connector-java-5.1.38.jar</code></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/03/31/hive%E4%B8%8Espark/" data-id="ckmlxnraf003gs7ugs0isc8l9" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/03/31/hive%E4%B8%8Espark/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/" rel="tag">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/" rel="tag">hive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/" rel="tag">spark</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark-sql/" rel="tag">spark sql</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/03/%E6%88%91%E4%BC%9A%E5%81%9A%E7%9A%84%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          我会做的技术选型
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/03/12/spark%E5%AE%9E%E6%88%98%EF%BC%9A%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Spark实战：工程实践</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/03/31/hive%E4%B8%8Espark/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

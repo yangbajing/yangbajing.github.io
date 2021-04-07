@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala小题目：001 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="练手题 题目def strtr(src:String, from:String, to:String):String from 和 to是等长的字符串, 要求将src中值为from(i)的字符转换成to(i)例如: strtr(“abcdaf”, “ac”, “AC”) &#x3D;&#x3D; “AbCdAf” 先来个Java风格版的代码：def java1(src: String, from: String, t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala小题目：001">
+<meta property="og:url" content="http://www.yangbajing.me/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="练手题 题目def strtr(src:String, from:String, to:String):String from 和 to是等长的字符串, 要求将src中值为from(i)的字符转换成to(i)例如: strtr(“abcdaf”, “ac”, “AC”) &#x3D;&#x3D; “AbCdAf” 先来个Java风格版的代码：def java1(src: String, from: String, t">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-09-05T10:31:15.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.353Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-Scala小题目：001" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala小题目：001
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/" class="article-date">
+  <time datetime="2013-09-05T10:31:15.000Z" itemprop="datePublished">2013-09-05</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-Scala小题目：001" data-title="Scala小题目：001" data-url="http://www.yangbajing.me/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong><em>练手题</em></strong></p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><pre><code>def strtr(src:String, from:String, to:String):String
+</code></pre><p>from 和 to是等长的字符串, 要求将src中值为from(i)的字符转换成to(i)<br>例如: strtr(“abcdaf”, “ac”, “AC”) == “AbCdAf”</p>
+<h2 id="先来个Java风格版的代码："><a href="#先来个Java风格版的代码：" class="headerlink" title="先来个Java风格版的代码："></a>先来个Java风格版的代码：</h2><pre><code>def java1(src: String, from: String, to: String): String = {
+  val buffer = new StringBuffer()
+  val srcj = src.toVector
+  val fromj = from.toVector
+  val toj = to.toVector
+
+  var i = 0;
+  while (i &lt; srcj.size) {
+    var c = srcj(i)
+
+    var j = 0
+    while (j &lt; fromj.size) {
+      if (srcj(i) == fromj(j)) {
+          c = toj(j)
+        //break
+      }
+
+      j += 1
+    }
+
+    buffer append c
+    i += 1
+  }
+
+  buffer.toString
+}
+</code></pre><p>这段代码的主要意思就是：先把src, from, to三个字符串转换成三个序列，如：Vector。先迭代srcj，再将srcj(i)与from进行迭代比较。再将匹配的字符赋给buffer。</p>
+<p>哎，这个风格的代码太繁琐了，我不想再仔细分析下去了，大伙就凑合着看看吧。</p>
+<h2 id="Scala风格版-1"><a href="#Scala风格版-1" class="headerlink" title="Scala风格版(1)"></a>Scala风格版(1)</h2><pre><code>def scala1(src: String, from: String, to: String): String = {
+  val mat = from zip to
+  src.map(s =&gt; mat.find(_._1 == s).map(_._2).getOrElse(s))
+}
+</code></pre><p>这代码TM的一看就清爽多了，不解释！</p>
+<h2 id="Scala风格版-2"><a href="#Scala风格版-2" class="headerlink" title="Scala风格版(2)"></a>Scala风格版(2)</h2><pre><code>def scala2(src: String, from: String, to: String): String = {
+  val mat = (from zip to).toMap
+  src.map(s =&gt; mat.getOrElse(s, s))
+}
+</code></pre><p>嗯，这版更清爽。来，说说呗！<br><code>(from zip to)</code> 这句代码的意思是把from和zip两字符串合并成一个一一对应的IndexSeq，比如：from = “abc”, to = “XYZ”，那mat = IndexSeq((‘a’, ‘X’), (‘b’, ‘Y’), (‘c’, ‘Z’))。这后那个toMap就一目了然了。<br><code>s =&gt; mat.getOrElse(s, s)</code> 这函数的意思是有一个参数s，类型是Char，在mat中查找key为s的value，若key不存在则返回默认值s（就是getOrElse方法的第二个参数）。src.map(fcuntion)方法的意思就是对src这个字符串进行迭代，并对每次迭代的元素应用function这个函数进行计算并回返计算后的值。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>好了，一个简单的小问题。发现在使用了scala及函数式编程思维后它的确是一个小问题。但可惜的是在使用java和命令式思维的情况下它不见得会只是一个小问题……</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/" data-id="ckmlxnr96001cs7ugviafg143" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/12/12/Mac%2010.8%20%E4%B8%8B%E5%AE%89%E8%A3%85Sphinx%E5%B9%B6%E6%94%AF%E6%8C%81%E7%94%9F%E6%88%90%E4%B8%AD%E6%96%87PDF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Mac 10.8 下安装Sphinx并支持生成中文PDF
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2013/05/13/Mac%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Mac系统环境变量设置</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2013/09/05/Scala%E5%B0%8F%E9%A2%98%E7%9B%AE%EF%BC%9A001/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Archives | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:type" content="website">
+<meta property="og:title" content="羊八井花园">
+<meta property="og:url" content="http://www.yangbajing.me/archives/page/2/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="羊八井&#x2F;杨景的个人站点，Scala&#x2F;Java&#x2F;Javascript&#x2F;Cassandra&#x2F;Akka&#x2F;Elasticsearch&#x2F;BigData">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="杨景">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><i class="icon fa fa-archive"></i>归档</h1>
+            </div>
+            <div class="main-body-content">
+              
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2020-03-09T03:45:13.000Z" itemprop="datePublished">2020-03-09</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/03/09/%E5%9C%A8scala-java-spring-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/" class="title">在 Scala/Java/Spring 微服务中使用日志</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        应用开发、运行时，日志作为调试、留痕的重要工具非常重要。对此，Akka Fusion 库为日志处理提供了开箱即用的支持：
+
+预置的日志 encoder 配置
+通过 filebeat 输出日志到 Elasticsearch
+良好的自定义支持
+
+使用 fusion-log 库，需要添加以下依赖。
+12resolvers += Resolver.bintrayRepo(&quot;helloscala&
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2020-02-20T12:03:19.000Z" itemprop="datePublished">2020-02-20</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/02/20/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E5%85%B3%E9%97%AD-actorsystem/" class="title">怎样优雅的关闭 ActorSystem</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        使用 CoordinatedShutdown 可以优雅的方式关闭 ActorSystem。默认情况下，需要调用 ActorSystem 上的 terminate 方法才会触发 CoordinatedShutdown，但也可以设置为在 JVM 退出时自动运行（比如接收到操作系统的 SIGTERM 信号或Java虚拟机退出）。要使在程序退出时 CoordinatedShutdown 自动调用，需要如下
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"></p>
+        <p class="date"><time datetime="2020-02-14T12:54:36.000Z" itemprop="datePublished">2020-02-14</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/02/14/ambari%E7%BC%96%E8%AF%91%E8%AE%B0%E5%BD%95/" class="title">Ambari编译记录</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Download and build Ambari 2.7.5 source12345678wget https://www-eu.apache.org/dist/ambari/ambari-2.7.5/apache-ambari-2.7.5-src.tar.gz (use the suggested mirror from above)tar xfvz apache-ambari-2.7.5-s
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2020-02-06T09:06:12.000Z" itemprop="datePublished">2020-02-06</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/02/06/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E6%B1%82%E8%A7%A3-top-k-%E9%97%AE%E9%A2%98/" class="title">Scala实战：求解 Top K 问题</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        问题描述服务器上有一个 movies.csv 文件，里面保存了每部电影的评分（为了简化和专注问题，CSV文件每一行只有两个字段：movieId和rating）。文件通过HTTP服务器发布。要求从文件内找出排名最高的10部电影。
+解法1：全量排序求Top 10通过 wget、curl 等工具先将文件下载到本地，再读出文件内所有行并解析出 movieId和rating 字段，按 rating 字段排序
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2020-01-10T07:20:30.000Z" itemprop="datePublished">2020-01-10</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/01/10/oauth-2-%E6%9C%8D%E5%8A%A1%E7%9A%84-akka-%E5%AE%9E%E7%8E%B0%EF%BC%9Aaccess-token-%E7%AE%A1%E7%90%86/" class="title">OAuth 2 服务的 Akka 实现：access_token 管理</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        实现一个 OAuth 2 服务有几个核心点：
+
+OAuth 2 协议解析
+连接的用户可能很多，系统需支持横向扩展
+每个连接用户的 access_token 的状态控制：有效期控制
+服务要支持容错、可恢复、可扩展、高并发等特性
+
+使用 Akka 来实现 OAuth 2 服务会发现逻辑非常的清晰，且能很好的实现以上几个核心点。
+每个连接用户或 access_token 可抽像为一个 Actor，这样多
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2020-01-08T12:01:38.000Z" itemprop="datePublished">2020-01-08</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2020/01/08/%E6%80%8E%E6%A0%B7%E5%9C%A8akka-persistence%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/" class="title">怎样在 Akka Persistence 中实现分页查询</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        在 Akka Persistence 中，数据都缓存在服务内存（状态），后端存储的都是一些持久化的事件日志，没法使用类似 SQL 一样的 DSL 来进行分页查询。利用 Akka Streams 和 Actor 我们可以通过编码的方式来实现分页查询的效果，而且这个分页查询还是分步式并行的……
+EventSourcedBehaviorAkka Persistence的EventSourcedBehav
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/">作品</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/lecture/">lecture</a></p>
+        <p class="date"><time datetime="2019-12-22T02:37:52.000Z" itemprop="datePublished">2019-12-22</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/12/22/%E8%AE%B0%EF%BC%9A2019-12%E6%B7%B1%E5%9C%B3scala-meetup%E5%88%86%E4%BA%AB%E3%80%8Aakka-http%E3%80%81grpc%E3%80%81typed-actor%E4%B8%8Ecluster%E3%80%8B/" class="title">2019.12深圳Scala Meetup分享《Akka HTTP、gRPC、Typed Actor与Cluster工程实践》演讲视频</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        我在 2019年12月深圳Scala Meetup 上做了一次有关 Akka 应用的分享：《Akka HTTP、gRPC、Typed Actor与Cluster工程实践》。这次演讲通过一个注册配置和服务管理系统（Fusion-DiscoveryX）讲述了怎样使用 Akka 全家桶进行开发，可在此找到 DiscoveryX 代码：https://github.com/akka-fusion/fusi
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2019-12-16T02:06:55.000Z" itemprop="datePublished">2019-12-16</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/" class="title">2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        2019年12月深圳Scala Meetup1. 活动介绍
+好久不见，继Tubi TV赞助的两场北京Scala Meetup圆满落幕，深圳的Scala Meetup又要开幕啦！虽然连深圳都变冷了，但是Scalaer的热情丝毫不减，欢迎大家前来一起探讨Scala在生产环境中的实践和应用！
+2. 时间地点
+时间：2019年12月21日下午 13:00-18:00 （13:00开始签到）地点：深圳市罗湖
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a></p>
+        <p class="date"><time datetime="2019-11-25T01:49:03.000Z" itemprop="datePublished">2019-11-25</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/11/25/why-grpc-akka/" class="title">Why gRPC (Akka) ?</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        原文链接：https://doc.akka.io/docs/akka-grpc/current/whygrpc.html
+什么是gRPC？gRPC是一个支持请求/响应和流式处理（非持久化）用例的传输机制。
+它是一个模式优先的RPC框架，协议在 Protobuf服务描述符（protobuf service descriptor）中声明，请求和响应将通过 HTTP/2 连接流式的传输。
+它有几个优点：
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/">作品</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/%E4%BD%9C%E5%93%81/akka-cookbook/">akka-cookbook</a></p>
+        <p class="date"><time datetime="2019-11-24T11:08:10.000Z" itemprop="datePublished">2019-11-24</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/11/24/akka-cookbook/" class="title">Akka Cookbook</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        电子书：《Akka Cookbook》
+码云镜像：《Akka Cookbook》
+
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-11-11T14:29:25.000Z" itemprop="datePublished">2019-11-11</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/11/11/akka-typed-%E5%B8%B8%E7%94%A8%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F/" class="title">Akka Typed 常用交互模式</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        本文将探讨Akka Typed下actor的常用交互模式，相对经典的untyped actor，typed actor在交互与使用方式上有着显著的区别。对Akka Typed还不太了解的读者可以先参阅我的上一篇文章：《Akka Typed新特性一览》。
+本文大量参译了Akka官方文档《Interaction Patterns》一文（原文链接：https://doc.akka.io/docs/akk
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-11-06T13:54:36.000Z" itemprop="datePublished">2019-11-06</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/11/06/akka-typed%E6%96%B0%E7%89%B9%E6%80%A7%E4%B8%80%E8%A7%88/" class="title">Akka Typed新特性一览</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Hello Scala!Akka Typed Actor从2.4开始直到2.5可以商用，进而Akka 2.6已经把Akka Typed Actor做为推荐的Actor使用模式。Typed Actor与原先的Untyped Actor最大的区别Actor有类型了，其签名也改成了akka.actor.typed.ActorRef[T]。通过一个简单的示例来看看在Akka Typed环境下怎样使用Act
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/akka/">akka</a></p>
+        <p class="date"><time datetime="2019-09-21T14:13:20.000Z" itemprop="datePublished">2019-09-21</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/09/21/akka%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E8%B7%B5-%E5%88%9D%E6%8E%A2/" class="title">Akka微服务实践-初探</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        目录
+微服务
+配置
+Java Properties
+Typesafe Config
+
+
+服务发现
+Akka Discovery
+Nacos（溶入Spring Cloud）
+
+
+服务
+序列化
+JSON
+Protobuf
+
+
+服务协议
+RESTful（Akka HTTP）
+gRPC（HTTP 2）
+
+
+
+
+集群
+使用Akka Discovery + Akka gRPC构建微服务集群
+Akka Clus
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/work/">work</a></p>
+        <p class="date"><time datetime="2019-08-04T12:40:30.000Z" itemprop="datePublished">2019-08-04</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/08/04/%E4%BD%BF%E7%94%A8lightbend-config/" class="title">使用Lightbend Config</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Lightbend config 提供了一种叫 HOCON 的标记语言来进行配置管理，它是JVM上的配置管理工具，可用来替代Java自带的Properties；而相对于使用JSON来管理配置，它具有注释、变量、可组合等更丰富的特性。本文分享些日常开发工作中使用Lightbend config的经验和技巧。
+Lightbend config以前叫Typesafe config，Github地址为：h
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+      <div class="article-row">
+    
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="article-category-link" href="/categories/scala/scala%E5%AE%9E%E6%88%98/">scala实战</a></p>
+        <p class="date"><time datetime="2019-07-17T13:17:34.000Z" itemprop="datePublished">2019-07-17</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/07/17/scala%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BD%BF%E7%94%A8akka-stream%E4%BC%98%E5%8C%96%E5%BC%82%E6%AD%A5%E4%BB%A3%E7%A0%81/" class="title">Scala实战：使用Akka Stream优化异步代码</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        Scala扫盲行动
+背景今天同事在开发一个消息推送功能，业务还是比较简单的：
+
+通过地区查找这个区域内的所有组织
+通过组织ID获取每个组织的所有用户
+通过用户ID获得所有绑定了设备IMEI号
+通过IMEI号向设备上推送消息
+
+0 业务代码123456789101112131415implicit val system = ActorSystem()implicit val mat    = Act
+      </p>
+    </div>
+  </article>
+
+
+    
+  
+        
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      
+      <div class="article-meta">
+        <p class="category"></p>
+        <p class="date"><time datetime="2019-07-13T14:23:30.000Z" itemprop="datePublished">2019-07-13</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2019/07/13/postgresql%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%9Ajdbc%E4%BC%98%E5%8C%96/" class="title">PostgreSQL高可用：JDBC优化</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        JDBC URL连接参数
+targetServerType = String: 只允许连接到具有所需状态的服务器，许可的值有any、master、secondary、preferSecondary。主/从区别目前是通过观察服务器是否允许写入来实现的。如果有可用的值，preferSecondary将尝试连接到secondary，否则将返回到允许连接的master。
+loadBalanceHosts 
+      </p>
+    </div>
+  </article>
+
+
+    
+      </div>
+    
+  
+  
+    <nav id="page-nav">
+      <span class="pages">第 2 页，共 8 页</span>
+      <a class="extend prev" rel="prev" href="/archives/">&amp;laquo;</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/8/">8</a><a class="extend next" rel="next" href="/archives/page/3/">&amp;raquo;</a>
+    </nav>
+  
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Scala实战-通过微信聊天窗口实现应答式点餐 0 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="近来学习Play 2和Akka，想着找一个实战性的项目练练手。正好近来公司提供晚餐，每天看着程序媛拿着手机一个一个的找人点餐，耗时多、且容易点漏、又打断了自身的工作……哥觉得小妹儿工作好累啊。作为一个全栈工程师，为公司小妹儿减轻工作负担义不容辞啊。 就在想，就在想……用什么方法可以简化这个点餐流程呢？把玩着手中的微信，看到同事们在公司群里胡吹海吹，Duang！有了，就做一个基于微信公众号的点餐系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala实战-通过微信聊天窗口实现应答式点餐 0">
+<meta property="og:url" content="http://www.yangbajing.me/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="近来学习Play 2和Akka，想着找一个实战性的项目练练手。正好近来公司提供晚餐，每天看着程序媛拿着手机一个一个的找人点餐，耗时多、且容易点漏、又打断了自身的工作……哥觉得小妹儿工作好累啊。作为一个全栈工程师，为公司小妹儿减轻工作负担义不容辞啊。 就在想，就在想……用什么方法可以简化这个点餐流程呢？把玩着手中的微信，看到同事们在公司群里胡吹海吹，Duang！有了，就做一个基于微信公众号的点餐系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-08-14T01:08:40.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="微信开发">
+<meta property="article:tag" content="scala实战">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/scala%E5%AE%9E%E6%88%98/">scala实战</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-Scala实战-通过微信聊天窗口实现应答式点餐_0：介绍" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Scala实战-通过微信聊天窗口实现应答式点餐 0
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/" class="article-date">
+  <time datetime="2015-08-14T01:08:40.000Z" itemprop="datePublished">2015-08-14</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-Scala实战-通过微信聊天窗口实现应答式点餐_0：介绍" data-title="Scala实战-通过微信聊天窗口实现应答式点餐 0" data-url="http://www.yangbajing.me/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>近来学习Play 2和Akka，想着找一个实战性的项目练练手。正好近来公司提供晚餐，每天看着程序媛拿着手机一个一个的找人点餐，耗时多、且容易点漏、又打断了自身的工作……哥觉得小妹儿工作好累啊。作为一个全栈工程师，为公司小妹儿减轻工作负担义不容辞啊。</p>
+<p>就在想，就在想……用什么方法可以简化这个点餐流程呢？把玩着手中的微信，看到同事们在公司群里胡吹海吹，Duang！有了，就做一个基于微信公众号的点餐系统。</p>
+<h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><p>系统用到的技术有：</p>
+<ul>
+<li>Scala 2.11.7</li>
+<li>sbt 0.13.8</li>
+<li>Play 2.4.2</li>
+<li>Akka 2.11.12</li>
+<li>Slick 3.0.1</li>
+<li>PostgreSQL 9.4</li>
+<li>Heroku（项目部署在此）</li>
+<li>Github（项目托管在此：<a href="https://github.com/yangbajing/wechat-meal" target="_blank" rel="external">https://github.com/yangbajing/wechat-meal</a>）</li>
+</ul>
+<h2 id="系统功能"><a href="#系统功能" class="headerlink" title="系统功能"></a>系统功能</h2><p>经过深思熟虑的思考，做一个基于WEB的点餐，通过微信打开内置游戏器访问。这个，感觉B格不够高，就是做一个网站了，Low……。我得做一个与微信深度集成的点餐功能，就像一个聊天机器人一下。用户输入指令，系统返回菜单。甚至用户输入语音，系统也返回菜单，哈哈哈！</p>
+<p>在聊天窗口输入指令显示菜单，如：</p>
+<ul>
+<li>0：所有指令</li>
+<li>1：注册用户</li>
+<li>2：今日菜单</li>
+<li>3：我的历史（返回连接，直接进入我的历史点餐记录）</li>
+</ul>
+<p>选择今日菜单后，系统在聊天窗口返回：</p>
+<ol>
+<li>菜品一</li>
+<li>菜品二</li>
+<li>菜品三</li>
+<li>菜品四<br>。。。。。</li>
+</ol>
+<p>用户选中一个菜品后系统应返回一个确认提示：</p>
+<ul>
+<li>1：确认，2（其它）：取消</li>
+</ul>
+<p><strong>用户注册</strong></p>
+<p>这个系统只限于公司内部使用，所以不能让随便一个关注了公司号的人都可以进行点餐操作。所以用户注册功能是必需得有的。注册也采用应答的方式，用户在微信聊天窗口输入相关信息，系统验证成功后注册成功。</p>
+<p>有注册了，那登录呢？登录？都已经用微信做入口了，就直接登录了吧。</p>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p><strong>Play</strong></p>
+<p><code>Play</code>用来做什么？根据微信公众号的开发文档，接入微信公众号需要80端口，并使用HTTP协议。这不是要开发<code>WEB</code>嘛，哥用<code>Scala</code>做开发，那自然就是<code>Play 2</code>了。其实也不当当这个，<code>Scala</code>下可使用的<code>Web</code>框架还是很多的，甚至<code>Spring</code>也可以的嘛。不过我就是想用用<code>Play 2</code>，OK。</p>
+<p>用<code>Play</code>其实还有一些网页的开发工作，虽然是通过聊天窗口进行点餐。但还是得有个简单的管理后台的，用于餐品管理、统计等。这些还是做个<code>WEB</code>程序比较方便。</p>
+<p><strong>Akka</strong></p>
+<p><code>Akka</code>有一个很好的特性，根据<code>actor</code>模型开发，自然而然就是一个树型结构。很适合用来管理每个微信用户的菜单选择状态。</p>
+<p><strong>Slick</strong> </p>
+<p><code>Slick</code>是<a href="http://www.typesafe.com" target="_blank" rel="external">typesafe</a>开发的一套用于访问数据库的工具库。最新的3.x系列版本实现了一个非阻塞的数据库访问API，底层使用了<code>JDBC</code>驱动。</p>
+<p><code>Slick</code>是一个现代的访问数据库的<code>Scala</code>库，使用编写访问数据库代码和平常编写代码一样，使用类集合操作的方式来访问数据库。同时也提供了以原生<code>SQL</code>语言的方式来读取数据库，并同时保证类型检查。</p>
+<h2 id="注册微信号"><a href="#注册微信号" class="headerlink" title="注册微信号"></a>注册微信号</h2><p>到<a href="https://mp.weixin.qq.com" target="_blank" rel="external">https://mp.weixin.qq.com</a>官网注册订阅号或服务号。步骤就不详述了。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="http://www.yangbajing.me/post/scala/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D.html">Scala实战-通过微信聊天窗口实现应答式点餐 0</a></li>
+<li><a href="http://www.yangbajing.me/post/scala/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API.html">Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API</a></li>
+</ol>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/" data-id="ckmlxnr9h0025s7ug3oir06mr" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala%E5%AE%9E%E6%88%98/" rel="tag">scala实战</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91/" rel="tag">微信开发</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/15/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_1%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%BE%AE%E4%BF%A1API/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Scala实战-通过微信聊天窗口实现应答式点餐 1：连接微信API
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2015/08/11/%E4%BD%BF%E7%94%A8Akka%20Http%EF%BC%8CActiveMQ%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">使用Akka Http，ActiveMQ搭建一个邮件发送服务器</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2015/08/14/Scala%E5%AE%9E%E6%88%98-%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%AD%94%E5%BC%8F%E7%82%B9%E9%A4%90_0%EF%BC%9A%E4%BB%8B%E7%BB%8D/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

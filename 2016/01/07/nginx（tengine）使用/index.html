@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Nginx（Tengine）使用 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="用了一段时间Tengine了，主要用于静态资源、后端服务的反向代理、负载均衡方面。也有了一些使用经验，现在将一些配置及心得记录于此。 Tengine的安装Tengine的安装非常简单，就是： 123$ .&#x2F;configure$ make$ sudo make install 官方有更详细的说明：http:&#x2F;&#x2F;tengine.taobao.org&#x2F;document_cn&#x2F;install_cn.htm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx（Tengine）使用">
+<meta property="og:url" content="http://www.yangbajing.me/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="用了一段时间Tengine了，主要用于静态资源、后端服务的反向代理、负载均衡方面。也有了一些使用经验，现在将一些配置及心得记录于此。 Tengine的安装Tengine的安装非常简单，就是： 123$ .&#x2F;configure$ make$ sudo make install 官方有更详细的说明：http:&#x2F;&#x2F;tengine.taobao.org&#x2F;document_cn&#x2F;install_cn.htm">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-07T03:37:16.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="tengine">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/work/">work</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-nginx（tengine）使用" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx（Tengine）使用
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2016-01-07T03:37:16.000Z" itemprop="datePublished">2016-01-07</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-nginx（tengine）使用" data-title="Nginx（Tengine）使用" data-url="http://www.yangbajing.me/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>用了一段时间Tengine了，主要用于静态资源、后端服务的反向代理、负载均衡方面。也有了一些使用经验，现在将一些配置及心得记录于此。</p>
+<h2 id="Tengine的安装"><a href="#Tengine的安装" class="headerlink" title="Tengine的安装"></a>Tengine的安装</h2><p>Tengine的安装非常简单，就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./configure</span><br><span class="line">$ make</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure>
+<p>官方有更详细的说明：<a href="http://tengine.taobao.org/document_cn/install_cn.html" target="_blank" rel="external">http://tengine.taobao.org/document_cn/install_cn.html</a>。<br>我们现在的使用是使用默认编译指令编译的，以后看需要可能会对其进行一些定制化。</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><ul>
+<li>work_processes: Nginx的work进程，一般设为CPU核数</li>
+<li>events.worker_connections: 设置每个worker可服务的最大连接数</li>
+<li>events.reuse_port: 设置端口可重用，支持SO_REUSEPORT套接字参数，打开此特性后可明显提高系统响应能力（Linux从内核3.9开始支持）</li>
+</ul>
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><p>Nginx的日志主要分两类：access和error，从名称就可以看出是访问日志和错误日志。这里分别给出两种日志的示例。</p>
+<p><strong>访问日志</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xxx.xxx.xxx.xxx - - [07/Jan/2016:13:39:36 +0800] &quot;GET /api/jobui?companyName=%E4%B8%B4%E5%AE%89%E5%B0%9A%E5%BA%90%E6%96%87%E5%8C%96%E5%88%9B%E6%84%8F%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 HTTP/1.1&quot; &quot;404&quot; 69 &quot;-&quot; &quot;python-requests/2.9.0&quot; &quot;-&quot; &quot;-&quot; 0.005 239 273</span><br><span class="line">xx.xxx.xx.xx - - [07/Jan/2016:13:39:37 +0800] &quot;GET /api/news?companyName=%E4%B8%B4%E5%AE%89%E5%B0%9A%E5%BA%90%E6%96%87%E5%8C%96%E5%88%9B%E6%84%8F%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8 HTTP/1.1&quot; &quot;200&quot; 70323 &quot;-&quot; &quot;AHC/1.0&quot; &quot;-&quot; &quot;-&quot; 0.066 70547 223</span><br></pre></td></tr></table></figure>
+<p>日志格式log_format设置为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                                    &apos;&quot;$status&quot; $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                                    &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot; &apos;</span><br><span class="line">                                    &apos;&quot;$gzip_ratio&quot; $request_time $bytes_sent $request_length&apos;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>$remote_addr: 请求的远程地址</li>
+<li>$remote_user: 远程客户端用户名称</li>
+<li>$time_local: 用户访问的时间与时区</li>
+<li>$request: 请求HTTP方法、URL与HTTP协议</li>
+<li>$status: 响应状态</li>
+<li>$body_types_sent: 响应主体内容大小（字节）</li>
+<li>$http_refere: 请求从哪个页面链接过来</li>
+<li>$http_user_agent: 客户端用户User-Agent</li>
+<li>$http_x_forwarded_for: 若HTTP头信息中有X-Forwarded-For记录客户端的真实IP，这时Nginx日志就可以使用其记录真实IP（一般用于反向代理中）</li>
+<li>$gzip_ratio: gzip压缩率？</li>
+<li>$request_time: 请求处理时间，单位为秒，精度毫秒；从读入客户端的第一个字节开始，直到把最后一个字符发送给客户端后进行日志写入为止</li>
+<li>$bytes_sent: 发送给客户端的总字节数</li>
+<li>$request_length: 请求的长度（包括请求行，请求头和请求正文）</li>
+</ul>
+<p><strong>错误日志</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2016/01/07 13:15:48 [error] 2874#0: check time out with peer: 10.51.xx.xx:7100 </span><br><span class="line">2016/01/07 13:15:53 [error] 2874#0: check time out with peer: 10.51.xx.xx:7100</span><br></pre></td></tr></table></figure>
+<p>错误日志显示Nginx运行或启动时的一此错误情况，示例是做负载均衡时检测节点健康状态失败时的错误消息。</p>
+<h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><p>用Nginx做HTTP反向代理是一个很好的解决方案，代理配置一般放在 <code>location</code> 段。一个示例配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_pass http://scnginx001;</span><br><span class="line">    proxy_http_version 1.1;</span><br><span class="line">    proxy_set_header Connection &quot;&quot;;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_set_header Host $http_host;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>proxy_pass: 指定将HTTP请求代理到哪个后端地址</li>
+<li>proxy_http_version: 指定代理使用的HTTP协议版本</li>
+<li>proxy_set_header: 设置一系列代理HTTP header</li>
+</ul>
+<p>其中需要关注的是 <code>proxy_http_version</code> 和 <code>proxy_set_header Connection &quot;&quot;</code> 两条指令，它确定了代理将使用HTTP 1.1的keep-alive功能，<br>这样可以显著提高Nginx与后端被代理服务之间的响应，因为它减少了两者建立连接的次数。</p>
+<h2 id="负载均衡与健康检查（Tengine）"><a href="#负载均衡与健康检查（Tengine）" class="headerlink" title="负载均衡与健康检查（Tengine）"></a>负载均衡与健康检查（Tengine）</h2><p>（注：之前写了一篇介绍 Nginx 官方的健康检查方案文章：<a href="http://www.yangbajing.me/2015/11/20/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">Nginx负载均衡与反向代理</a>）</p>
+<p>因为Nginx官方的健康检查是一个收费方案，所以这里的设置是基于 <strong>Tengine</strong> 提供的方案。先给出配置，再细说各指令的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">upstream scnginx001 &#123;</span><br><span class="line">    #dynamic_resolve fallback=stale fail_timeout=30s;</span><br><span class="line">    server xx.xxx.xxx.216:7100;</span><br><span class="line">    server xx.xxx.xx.147:7100;</span><br><span class="line"></span><br><span class="line">    check interval=3000 rise=2 fall=5 timeout=1000 type=http;</span><br><span class="line">    check_keepalive_requests 100;</span><br><span class="line">    check_http_send &quot;GET /api/health_check HTTP/1.1\r\nConnection: keep-alive\r\nHost: scnginx-001\r\n\r\n&quot;;</span><br><span class="line">    check_http_expect_alive http_2xx http_3xx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，使用 <code>upstream</code> 要指定一个名字，这里指定为 <strong>scnginx001</strong> ，在配置 <code>proxy_pass</code> 时需要使用这个名字来告诉代理使用哪个 <strong>upstream</strong> 配置。</p>
+<ul>
+<li>server: 每个后端节点一个配置， <code>proxy_pass</code> 指令将把请求代理到这些节点上</li>
+<li>check: 设置健康查检参数，这里为间隔3秒做一次检查，连续失败2次认为后端服务器状态为<strong>down</strong>，连续成功5次认为后端服务器状态为<strong>up</strong>，对后端健康请求的超时时间为1秒，检查类型为 <strong>http</strong>。</li>
+<li>check_keepalive_requests: 设置 Tengine 完成几次请求后关闭连接，默认值为1。对于连接频繁的服务，适当提高此值可以显著提高性能。</li>
+<li>check_http_send: 配置 HTTP 健康健查包发送的内容。</li>
+<li>check_http_expect_alive: 指定 HTTP 回复成功状态，默认为 2XX 和 3XX 的状态认为后端服务状态是健康的。</li>
+</ul>
+<h2 id="Tengine状态"><a href="#Tengine状态" class="headerlink" title="Tengine状态"></a>Tengine状态</h2><p>Tengine自带了两个服务状态查检器，配置后可以通过HTTP实时看到Tengine和健康检查服务的运行状态。配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">location /nginx_status &#123;</span><br><span class="line">    stub_status on;</span><br><span class="line">    access_log off;</span><br><span class="line">    allow xxx.xxx.xxx.xxx;</span><br><span class="line">    deny all;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /status &#123;</span><br><span class="line">    check_status;</span><br><span class="line">    access_log off;</span><br><span class="line">    allow xxx.xxx.xxx.xxx;</span><br><span class="line">    deny all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>stub_status: 显示Tengine服务状态</li>
+<li>check_status: 显示每个后端服务的健康检查服务状态</li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/" data-id="ckmlxnrao003ws7ug0wvvczdg" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tengine/" rel="tag">tengine</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/11/mongodb-3-x-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Mongodb 3.x 用户认证
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/01/06/linux%E4%B8%8B%E5%AF%B9%E5%A4%A7%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%E8%BF%9B%E8%A1%8C%E5%88%86%E5%89%B2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Linux下对大文件（日志）进行分割</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/01/07/nginx%EF%BC%88tengine%EF%BC%89%E4%BD%BF%E7%94%A8/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

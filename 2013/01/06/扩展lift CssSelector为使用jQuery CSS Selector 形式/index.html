@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>扩展lift CssSelector为使用jQuery CSS Selector形式 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="啥也不说了，直接上代码 12345678910111213141516171819202122232425262728293031323334353637383940414243444546import scala.xml.&amp;#123; Text, NodeSeq &amp;#125;import net.liftweb.http.js.&amp;#123; JsExp, JE &amp;#125;import net.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩展lift CssSelector为使用jQuery CSS Selector形式">
+<meta property="og:url" content="http://www.yangbajing.me/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="啥也不说了，直接上代码 12345678910111213141516171819202122232425262728293031323334353637383940414243444546import scala.xml.&amp;#123; Text, NodeSeq &amp;#125;import net.liftweb.http.js.&amp;#123; JsExp, JE &amp;#125;import net.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-01-06T15:16:58.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.353Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="liftweb">
+<meta property="article:tag" content="jquery">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-扩展lift CssSelector为使用jQuery CSS Selector 形式" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      扩展lift CssSelector为使用jQuery CSS Selector形式
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/" class="article-date">
+  <time datetime="2013-01-06T15:16:58.000Z" itemprop="datePublished">2013-01-06</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-扩展lift CssSelector为使用jQuery CSS Selector 形式" data-title="扩展lift CssSelector为使用jQuery CSS Selector形式" data-url="http://www.yangbajing.me/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p><strong><em>啥也不说了，直接上代码</em></strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.xml.&#123; <span class="type">Text</span>, <span class="type">NodeSeq</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> net.liftweb.http.js.&#123; <span class="type">JsExp</span>, <span class="type">JE</span> &#125;</span><br><span class="line"><span class="keyword">import</span> net.liftweb.util.&#123; <span class="type">CssSel</span>, <span class="type">ComputeTransformRules</span> &#125;</span><br><span class="line"><span class="keyword">import</span> net.liftweb.util.<span class="type">Helpers</span>._</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Imports</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> _selRegex = <span class="keyword">new</span> scala.util.matching.<span class="type">Regex</span>(<span class="string">""</span><span class="string">"(\S)+"</span><span class="string">""</span>)</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> _selMatch = <span class="type">Set</span>('*', '-', '[', '^')</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">YStringToCssSel</span>(<span class="params">exp: <span class="type">String</span></span>) </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">#&gt;&gt;</span></span>[<span class="type">T</span>](content: =&gt; <span class="type">T</span>)(<span class="keyword">implicit</span> computer: <span class="type">ComputeTransformRules</span>[<span class="type">T</span>]): <span class="type">CssSel</span> = &#123;</span><br><span class="line">      <span class="keyword">val</span> selects = _selRegex.findAllMatchIn(exp).map(_.matched).toList</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> (init, last) =</span><br><span class="line">        <span class="keyword">if</span> (_selMatch.contains(selects.last.head))</span><br><span class="line">          selects.dropRight(<span class="number">2</span>) -&gt; selects.takeRight(<span class="number">2</span>).mkString(<span class="string">" "</span>)</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          selects.dropRight(<span class="number">1</span>) -&gt; selects.takeRight(<span class="number">1</span>).mkString</span><br><span class="line"></span><br><span class="line">      init.foldRight(last #&gt; content)((s, c) =&gt; s #&gt; c)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">val</span> doubleTransform: <span class="type">ComputeTransformRules</span>[<span class="type">Double</span>] = <span class="keyword">new</span> <span class="type">ComputeTransformRules</span>[<span class="type">Double</span>] &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeTransform</span></span>(str: =&gt; <span class="type">Double</span>, ns: <span class="type">NodeSeq</span>): <span class="type">Seq</span>[<span class="type">NodeSeq</span>] = <span class="type">List</span>(<span class="type">Text</span>(str.toString))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">val</span> shortTransform: <span class="type">ComputeTransformRules</span>[<span class="type">Short</span>] = <span class="keyword">new</span> <span class="type">ComputeTransformRules</span>[<span class="type">Short</span>] &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeTransform</span></span>(str: =&gt; <span class="type">Short</span>, ns: <span class="type">NodeSeq</span>): <span class="type">Seq</span>[<span class="type">NodeSeq</span>] = <span class="type">List</span>(<span class="type">Text</span>(str.toString))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">val</span> byteTransform: <span class="type">ComputeTransformRules</span>[<span class="type">Byte</span>] = <span class="keyword">new</span> <span class="type">ComputeTransformRules</span>[<span class="type">Byte</span>] &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeTransform</span></span>(str: =&gt; <span class="type">Byte</span>, ns: <span class="type">NodeSeq</span>): <span class="type">Seq</span>[<span class="type">NodeSeq</span>] = <span class="type">List</span>(<span class="type">Text</span>(str.toString))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">val</span> charTransform: <span class="type">ComputeTransformRules</span>[<span class="type">Char</span>] = <span class="keyword">new</span> <span class="type">ComputeTransformRules</span>[<span class="type">Char</span>] &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeTransform</span></span>(str: =&gt; <span class="type">Char</span>, ns: <span class="type">NodeSeq</span>): <span class="type">Seq</span>[<span class="type">NodeSeq</span>] = <span class="type">List</span>(<span class="type">Text</span>(str.toString))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">implicit</span> <span class="keyword">val</span> floatTransform: <span class="type">ComputeTransformRules</span>[<span class="type">Float</span>] = <span class="keyword">new</span> <span class="type">ComputeTransformRules</span>[<span class="type">Float</span>] &#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeTransform</span></span>(str: =&gt; <span class="type">Float</span>, ns: <span class="type">NodeSeq</span>): <span class="type">Seq</span>[<span class="type">NodeSeq</span>] = <span class="type">List</span>(<span class="type">Text</span>(str.toString))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还是给个测试吧：</p>
+<pre><code class="scala">(<span class="string">"#id .class span *+"</span> #&gt;&gt; <span class="string">"羊八井！"</span>).apply(&lt;div id=<span class="string">"id"</span>&gt;&lt;a <span class="class"><span class="keyword">class</span></span>=<span class="string">"class"</span>&gt;&lt;span&gt;您好，&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;)
+</code></pre>
+<ul>
+<li><script src="https://gist.github.com/yangbajing/5010139.js"></script>
+
+</li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/" data-id="ckmlxnr8r0012s7ugaw3k71n4" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jquery/" rel="tag">jquery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/liftweb/" rel="tag">liftweb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/02/16/Option-Either-Try/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Option，Either和Try
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2013/01/01/%E5%9C%A8liftweb%20%E4%B8%AD%E6%89%A9%E5%B1%95%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%BC%BC%20jQuery%E7%9A%84%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">在liftweb中扩展一个类似jQuery的方法</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2013/01/06/%E6%89%A9%E5%B1%95lift%20CssSelector%E4%B8%BA%E4%BD%BF%E7%94%A8jQuery%20CSS%20Selector%20%E5%BD%A2%E5%BC%8F/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

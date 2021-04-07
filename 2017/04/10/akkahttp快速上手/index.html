@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Akka HTTP 快速上手 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Akka Http 是Akka社区提供的一个 Http服务端&#x2F;客户端通用工具包，支持 Http 1.0&#x2F;1.1标准及WebSocket，现在 Http 2 的支持也在紧锣密鼓的实现中。 这篇文章将介绍Akka HTTP Server，我们将介绍Akka Http的常用功能模块及使用方式。Akka Http提供了一套强大、易用、易扩展的route dsl来构建路由。Akka Http Client因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka HTTP 快速上手">
+<meta property="og:url" content="http://www.yangbajing.me/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="Akka Http 是Akka社区提供的一个 Http服务端&#x2F;客户端通用工具包，支持 Http 1.0&#x2F;1.1标准及WebSocket，现在 Http 2 的支持也在紧锣密鼓的实现中。 这篇文章将介绍Akka HTTP Server，我们将介绍Akka Http的常用功能模块及使用方式。Akka Http提供了一套强大、易用、易扩展的route dsl来构建路由。Akka Http Client因">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-04-10T11:53:50.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka http">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a><i class="icon fa fa-angle-right"></i><a class="page-title-link" href="/categories/scala/akka/">akka</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-akkahttp快速上手" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Akka HTTP 快速上手
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" class="article-date">
+  <time datetime="2017-04-10T11:53:50.000Z" itemprop="datePublished">2017-04-10</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-akkahttp快速上手" data-title="Akka HTTP 快速上手" data-url="http://www.yangbajing.me/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>Akka Http 是Akka社区提供的一个 Http服务端/客户端通用工具包，支持 Http 1.0/1.1标准及WebSocket，现在 Http 2 的支持也在紧锣密鼓的实现中。</p>
+<p>这篇文章将介绍Akka HTTP Server，我们将介绍Akka Http的常用功能模块及使用方式。Akka Http提供了一套强大、易用、易扩展的route dsl来构建路由。Akka Http Client因还不支持超时功能，现在不建议在产品中使用。</p>
+<p><em>本文代码：<a href="https://github.com/yangbajing/akka-action/tree/master/akka-http-starter" target="_blank" rel="external">akka-http-starter</a></em></p>
+<h2 id="第一个服务"><a href="#第一个服务" class="headerlink" title="第一个服务"></a>第一个服务</h2><p>我们可以从官方提供的 <code>HttpApp</code> 特质开始，它提供了快捷的方式来启动一个Akka HTTP Server。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebServer</span> <span class="keyword">extends</span> <span class="title">HttpApp</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">route</span></span>: <span class="type">Route</span> =</span><br><span class="line">    path(<span class="string">"hello"</span>) &#123;</span><br><span class="line">      get &#123;</span><br><span class="line">        <span class="keyword">import</span> akka.http.scaladsl.marshallers.xml.<span class="type">ScalaXmlSupport</span>._</span><br><span class="line">        complete(&lt;h1&gt;<span class="type">Say</span> hello to akka-http&lt;/h1&gt;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>path(&quot;hello&quot;)</code>定义了一个HTTP访问路由，<code>get</code>代表这个路由提供了<strong>GET</strong>请示，而<code>complete</code>涵数允许我们提供响应结果来完成这个路由定义，这里我们返回了一段文本。Akka Http的路由看起来向<strong>声明式</strong>的，以一直新颖而又直观的方式来定义HTTP服务。</p>
+<p>用户第一次接触这种涵数套涵数（又像树型结构）的代码方式可能不大习惯，其实我们可以换种方式来实现这段代码：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">traditionRoute</span></span>: <span class="type">Route</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> respResult = complete(<span class="string">"result"</span>) <span class="comment">// 响应结果</span></span><br><span class="line">  <span class="keyword">val</span> hPath = path(<span class="string">"hello"</span>) <span class="comment">// 绑定的HTTP访问路径</span></span><br><span class="line">  hPath(get(result)) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>路径(Http方法(结果))</code>，我们用Java式的风格来实现同样的功能。这样是不是更符合你对代码的预期？</p>
+<p>让我们来启动服务：</p>
+<figure class="highlight scala"><figcaption><span>StartBoot01.scala</span><a href="https://github.com/yangbajing/akka-action/blob/master/akka-http-starter/src/main/scala/starter/akka/http/demo01/StartBoot01.scala" target="_blank" rel="external">StartBoot01.scala</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StartBoot01</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> server = <span class="keyword">new</span> <span class="type">WebServer</span></span><br><span class="line">    server.startServer(<span class="string">"0.0.0.0"</span>, <span class="number">8888</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<strong>curl</strong>命令来测试下我们的第一个Akka HTTP服务（-i选项可以打印HTTP响应头）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -i http://localhost:8888/hello</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: akka-http/10.0.5</span><br><span class="line">Date: Fri, 31 Mar 2017 17:05:12 GMT</span><br><span class="line">Content-Type: text/html; charset=UTF-8</span><br><span class="line">Content-Length: 31</span><br><span class="line"></span><br><span class="line">&lt;h1&gt;Say hello to akka-http&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="Route"><a href="#Route" class="headerlink" title="Route"></a>Route</h2><p>Akka HTTP 提供了一个灵活的<strong>DSL</strong>，它有很多可组合的元素（Directive 指令）以简洁、易读的方式来构建服务。<br>让我们来看下面这个示例：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">path(<span class="string">"book"</span>) &#123;</span><br><span class="line">  get &#123;</span><br><span class="line">    parameters(<span class="symbol">'name</span>.as[<span class="type">Option</span>[<span class="type">String</span>]], <span class="symbol">'isbn</span>.as[<span class="type">Option</span>[<span class="type">String</span>]], <span class="symbol">'author</span>.as[<span class="type">Option</span>[<span class="type">String</span>]]) &#123;</span><br><span class="line">      (maybeName, maybeIsbn, maybeAuthor) =&gt;</span><br><span class="line">        complete(<span class="string">s"name: <span class="subst">$maybeName</span>, isbn: <span class="subst">$maybeIsbn</span>, author: <span class="subst">$maybeAuthor</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于上面这个定义，类似的 <strong>Play</strong> 路由定义如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET  /book controller.Page.book(name: Option[String], isbn: Option[String], author: Option[String)</span><br></pre></td></tr></table></figure>
+<p>我们可以看到，对一个API路由的定义拆成了几个函数嵌套的形式。<code>path</code>指定访问路径，<code>get</code>决定这个API提供HTTP GET服务，<code>parameters</code>可以抽取请求参数，而<code>complete</code>将一个字符串返回给前端。</p>
+<h2 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h2><p>现在大部分的服务都提供JSON格式的数据，Akka HTTP提供了 Mashaller/Unmashaller机制，用户可以基于此灵活的定制自己的序列化/反序列化方式。这里我们使用 Jackson 来解析/处理 JSON。</p>
+<p>首选，我们实现自定义的 Mashaller/Unmashaller：</p>
+<figure class="highlight scala"><figcaption><span>JacksonSupport.scala</span><a href="https://github.com/yangbajing/akka-action/blob/master/akka-http-starter/src/main/scala/starter/akka/http/json/JacksonSupport.scala" target="_blank" rel="external">JacksonSupport.scala</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">JacksonSupport</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> jsonStringUnmarshaller =</span><br><span class="line">    <span class="type">Unmarshaller</span>.byteStringUnmarshaller</span><br><span class="line">      .forContentTypes(<span class="type">MediaTypes</span>.`application/json`)</span><br><span class="line">      .mapWithCharset &#123;</span><br><span class="line">        <span class="keyword">case</span> (<span class="type">ByteString</span>.empty, _) =&gt; <span class="keyword">throw</span> <span class="type">Unmarshaller</span>.<span class="type">NoContentException</span></span><br><span class="line">        <span class="keyword">case</span> (data, charset) =&gt; data.decodeString(charset.nioCharset.name)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// HTTP entity =&gt; `A`</span></span><br><span class="line">  <span class="keyword">implicit</span> <span class="function"><span class="keyword">def</span> <span class="title">unmarshaller</span></span>[<span class="type">A</span>](</span><br><span class="line">                                <span class="keyword">implicit</span> ct: <span class="type">ClassTag</span>[<span class="type">A</span>],</span><br><span class="line">                                objectMapper: <span class="type">ObjectMapper</span> = <span class="type">Jackson</span>.defaultObjectMapper</span><br><span class="line">                              ): <span class="type">FromEntityUnmarshaller</span>[<span class="type">A</span>] =</span><br><span class="line">    jsonStringUnmarshaller.map(</span><br><span class="line">      data =&gt; objectMapper.readValue(data, ct.runtimeClass).asInstanceOf[<span class="type">A</span>]</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">  <span class="comment">// `A` =&gt; HTTP entity</span></span><br><span class="line">  <span class="keyword">implicit</span> <span class="function"><span class="keyword">def</span> <span class="title">marshaller</span></span>[<span class="type">A</span>](</span><br><span class="line">                              <span class="keyword">implicit</span> objectMapper: <span class="type">ObjectMapper</span> = <span class="type">Jackson</span>.defaultObjectMapper</span><br><span class="line">                            ): <span class="type">ToEntityMarshaller</span>[<span class="type">A</span>] = &#123;</span><br><span class="line">    <span class="type">JacksonHelper</span>.marshaller[<span class="type">A</span>](objectMapper)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现自定义的 Marshaller/Unmarshaller 后，我们就可以在 Akka HTTP 中提供 Json 支持了。</p>
+<figure class="highlight scala"><figcaption><span>PageRoute.scala</span><a href="https://github.com/yangbajing/akka-action/blob/master/akka-http-starter/src/main/scala/starter/akka/http/route/PageRoute.scala" target="_blank" rel="external">PageRoute.scala</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> akka.http.scaladsl.server.<span class="type">Directives</span>._</span><br><span class="line"><span class="keyword">import</span> akka.http.scaladsl.server.<span class="type">Route</span></span><br><span class="line"><span class="keyword">import</span> starter.akka.http.json.<span class="type">JacksonSupport</span>._</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">PageInput</span>(<span class="params">title: <span class="type">String</span>, content: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">PageRoute</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">route</span></span>: <span class="type">Route</span> =</span><br><span class="line">    path(<span class="string">"page"</span>) &#123;</span><br><span class="line">      post &#123;</span><br><span class="line">        entity(as[<span class="type">PageInput</span>]) &#123; pageInput =&gt;</span><br><span class="line">          complete(pageInput)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Akka HTTP使用了Scala的隐式转换特性来自定义数据序列化，这是一个非侵入式的设计，用户可以在每个模块选择自己的数据序列化方式。</p>
+<h2 id="Route类型"><a href="#Route类型" class="headerlink" title="Route类型"></a>Route类型</h2><p><strong>Route</strong> 是 Akka HTTP 路由 DSL 里的核心概念，用它构建的所有结构，不管是一条线还是很多条线组成，它们都会是这个类型的实例。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">type</span> <span class="title">Route</span> </span>= <span class="type">RequestContext</span> =&gt; <span class="type">Future</span>[<span class="type">RouteResult</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>组合路由</strong></p>
+<p>Akka HTTP 提供3个基本的操作来让我们创建更复杂的路由链：</p>
+<ol>
+<li>路由转换：它代理一个“内部”的路由，并在这个过程中改变一些请求传入的属性，然后传出响应或两者。</li>
+<li>路由过滤：只允许满足给定条件的请求被传递，并拒绝所有其它访问请求。</li>
+<li>路由链：如果第一个请求被拒绝，将尝试第二个路由。使用 <code>~</code> 操作符连接多个路由定义。</li>
+</ol>
+<p>Akka HTTP 实现了很多默认的指令 <code>akka.http.scaladsl.server.Directives._</code> ，你也可以很轻松地创建自己的指令。指令提供了强大和灵活的方式来构建 Akka HTTP。</p>
+<p><strong>路由树</strong></p>
+<p>当通过嵌套和操作符组合指令和自定义路径时，将构建一个路由结构并形成一颗树。当一个 HTTP 请求进来，它将从根进行这颗树，并以深度优先的方式流过所有分支，直到某个节点完成或全部被拒绝为止。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> route =</span><br><span class="line">  a &#123;</span><br><span class="line">    b &#123;</span><br><span class="line">      c &#123;</span><br><span class="line">        ... <span class="comment">// route 1</span></span><br><span class="line">      &#125; ~</span><br><span class="line">      d &#123;</span><br><span class="line">        ... <span class="comment">// route 2</span></span><br><span class="line">      &#125; ~</span><br><span class="line">      ... <span class="comment">// route 3</span></span><br><span class="line">    &#125; ~</span><br><span class="line">    e &#123;</span><br><span class="line">      ... <span class="comment">// route 4</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这里由5个指令构建了一个路由树：</p>
+<ol>
+<li>当 a, b, c都通过，才到到达路由 1</li>
+<li>当 a 和 b 通过，但 c 被拒绝且 d 通过，将到达路由 2</li>
+<li>当 a 和 b 通过，但 c 和 d 被拒绝，路由 3 被到达</li>
+</ol>
+<p>若路由 3 前面的请求都被拒绝，则它将“捕获”所有请求。这个机制使复杂的过滤逻辑可以很容易的实现。把简单和最具体的放在顶端，一般和普通的放到最后。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" data-id="ckmlxnraz004es7ugpd7thd5x" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-http/" rel="tag">akka http</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/" rel="tag">scala</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/12/%E4%BD%BF%E7%94%A8hanlp%E5%A2%9E%E5%BC%BAelasticsearch%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          使用HanLP增强Elasticsearch分词功能
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2017/04/06/%E4%BD%BF%E7%94%A8ambari2-5%EF%BC%88hdp2-6%EF%BC%89%E6%90%AD%E5%BB%BA%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%8E%AF%E5%A2%83/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">使用Ambari2.5（HDP2.6）搭建大数据环境</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2017/04/10/akkahttp%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

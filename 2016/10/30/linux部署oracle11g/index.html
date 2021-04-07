@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>Linux部署Oracle11G | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装Oracle数据库本文基于RHEL6&#x2F;Centos6&#x2F;Neokylin6，其它发行版请注意区别。 安装依赖软件包 1sudo yum install binutils compat-libcap1 compat-libstdc++-33 compat-libstdc++-33.i686 gcc-c++ glibc glibc.i686 glibc-devel glibc-devel.i686">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux部署Oracle11G">
+<meta property="og:url" content="http://www.yangbajing.me/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="安装Oracle数据库本文基于RHEL6&#x2F;Centos6&#x2F;Neokylin6，其它发行版请注意区别。 安装依赖软件包 1sudo yum install binutils compat-libcap1 compat-libstdc++-33 compat-libstdc++-33.i686 gcc-c++ glibc glibc.i686 glibc-devel glibc-devel.i686">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-10-30T14:40:09.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.357Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="oracle">
+<meta property="article:tag" content="neokylin">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/data/">data</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-linux部署oracle11g" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Linux部署Oracle11G
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/" class="article-date">
+  <time datetime="2016-10-30T14:40:09.000Z" itemprop="datePublished">2016-10-30</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-linux部署oracle11g" data-title="Linux部署Oracle11G" data-url="http://www.yangbajing.me/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="安装Oracle数据库"><a href="#安装Oracle数据库" class="headerlink" title="安装Oracle数据库"></a>安装Oracle数据库</h2><p>本文基于RHEL6/Centos6/Neokylin6，其它发行版请注意区别。</p>
+<p><strong>安装依赖软件包</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install binutils compat-libcap1 compat-libstdc++-33 compat-libstdc++-33.i686 gcc-c++ glibc glibc.i686 glibc-devel glibc-devel.i686 ksh libgcc libgcc.i686 libstdc++ libstdc++.i686 libstdc++-devel libstdc++-devel.i686 libaio libaio.i686 libaio-devel libaio-devel.i686 make sysstat unixODBC unixODBC.i686 unixODBC-devel unixODBC-devel.i686 elfutils-libelf-devel mksh</span><br></pre></td></tr></table></figure>
+<p><strong>创建操作系统用户和组</strong></p>
+<ol>
+<li>查看<code>/etc/oraInst.loc</code>文件是否存在，不存在则创建：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># more /etc/oraInst.loc</span><br></pre></td></tr></table></figure>
+<p>不存在则创建文件并保存如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inventory_loc=/opt/app/oraInventory</span><br><span class="line">inst_group=oinstall</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>创建用户组</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo groupadd oinstall</span><br><span class="line">sudo groupadd dba</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>创建用户</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd -g oinstall -G dba oracle</span><br></pre></td></tr></table></figure>
+<p>用户存在则修改用户：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo usermod -g oinstall -G dba oracle</span><br></pre></td></tr></table></figure>
+<h2 id="配置内核参数"><a href="#配置内核参数" class="headerlink" title="配置内核参数"></a>配置内核参数</h2><p>编辑<code>/etc/sysct.conf</code>文件，添加或修改如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">fs.aio-max-nr = 1048576</span><br><span class="line">fs.file-max = 6815744</span><br><span class="line">kernel.shmall = 2097152</span><br><span class="line">kernel.shmmax = 536870912</span><br><span class="line">kernel.shmmni = 4096</span><br><span class="line">kernel.sem = 250 32000 100 128</span><br><span class="line">net.ipv4.ip_local_port_range = 9000 65500</span><br><span class="line">net.core.rmem_default = 262144</span><br><span class="line">net.core.rmem_max = 4194304</span><br><span class="line">net.core.wmem_default = 262144</span><br><span class="line">net.core.wmem_max = 1048576</span><br></pre></td></tr></table></figure>
+<p>编辑<code>/etc/security/limits.conf</code>文件，添加或修改如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*      soft      nofile        4996</span><br><span class="line">*      hard      nofile        65536</span><br><span class="line">*      soft      stack         10240</span><br><span class="line">*      hard      stack         32768</span><br><span class="line">*      soft      nproc         2047</span><br><span class="line">*      hard      nproc         16384</span><br></pre></td></tr></table></figure>
+<h2 id="创建需要的目录"><a href="#创建需要的目录" class="headerlink" title="创建需要的目录"></a>创建需要的目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /opt/app/oracle</span><br><span class="line">sudo chown -R oracle:oinstall /opt/app/</span><br><span class="line">sudo chmod -R 775 /opt/app/</span><br></pre></td></tr></table></figure>
+<h2 id="设置用户环境变量"><a href="#设置用户环境变量" class="headerlink" title="设置用户环境变量"></a>设置用户环境变量</h2><p>切换到<code>oracle</code>用户，编辑<code>~/.bash_profile</code>文件添加如下配置荐：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">export ORACLE_BASE=&quot;/opt/app/oracle&quot;</span><br><span class="line">export ORACLE_UNQNAME=DB11G</span><br><span class="line">export ORACLE_SID=DB11G</span><br><span class="line">export ORACLE_HOME=&quot;$ORACLE_BASE/product/11.2.0/dbhome_1&quot;</span><br><span class="line">export LD_LIBRARY_PATH=&quot;$ORACLE_HOME/lib:$LD_LIBRARY_PATH&quot;</span><br><span class="line">export PATH=&quot;$ORACLE_HOME/bin:$PATH:$HOME/bin&quot;</span><br></pre></td></tr></table></figure>
+<h1 id="安装数据库"><a href="#安装数据库" class="headerlink" title="安装数据库"></a>安装数据库</h1><p>为了使之前的配置生效，<strong>需要重启操作系统</strong>。使用<strong>oracle</strong>账号登录系统，并执行<code>runInstaller</code>命令安装Oracle11G数据库系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./runInstaller</span><br></pre></td></tr></table></figure>
+<p><strong>安装时注意事项</strong></p>
+<ol>
+<li><p>使用静态IP安装Oracle11G</p>
+</li>
+<li><p>若安装时报虚拟内存不足，可以挂一个文件做为虚拟内存：</p>
+</li>
+</ol>
+<p>创建一个1G大小的空白文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo if=/dev/zero bs=/opt/swapfile bs=1024k count=1024</span><br></pre></td></tr></table></figure>
+<p>创建swap文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /sbin/mkswap swapfile</span><br></pre></td></tr></table></figure>
+<p>挂载swap文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon swapfile</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><p>本文介绍的Oracle数据库安装需要Linux图形界面支持。</p>
+</li>
+<li><p>在执行安装数据库步骤：17/20 检查 依赖项时提示某些程序包未找到，其实这里相应报已经安装。可以使用<code>rpm -qa | grep &lt;package name&gt;</code>命令查看，在确认已安装后可以<strong>全部忽略</strong>。</p>
+</li>
+</ol>
+<h1 id="使用Oracle11G"><a href="#使用Oracle11G" class="headerlink" title="使用Oracle11G"></a>使用Oracle11G</h1><h2 id="手动启动Oracle数据库"><a href="#手动启动Oracle数据库" class="headerlink" title="手动启动Oracle数据库"></a>手动启动Oracle数据库</h2><p><strong>启动数据库</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br><span class="line">&gt; start</span><br></pre></td></tr></table></figure>
+<p><strong>启动网络监听</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsnrctl start</span><br></pre></td></tr></table></figure>
+<p><strong>启动管理控制台</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emctl start dbconsole</span><br></pre></td></tr></table></figure>
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><p><strong>创建用户</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create user 用户名 identified by 密码;</span><br><span class="line">alter user 用户名 account unlock;</span><br></pre></td></tr></table></figure>
+<p><strong>授权</strong></p>
+<p>TODO</p>
+<h2 id="资源限制"><a href="#资源限制" class="headerlink" title="资源限制"></a>资源限制</h2><p>查看<strong>resource_limit</strong>参数：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; show parameter resource_limit</span><br></pre></td></tr></table></figure>
+<p>若为FALSE，则设置资源限制参数为TRUE：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> resource_limit = <span class="literal">TRUE</span>;</span><br></pre></td></tr></table></figure>
+<p>该改变对密码资源无效，密码资源总是可用的</p>
+<p>创建PROFILE：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; create profile user_session_limit limit sessions_per_user 5; --最大连接数限制为5</span><br></pre></td></tr></table></figure>
+<p>将PROFILE指定给用户：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; alter user ydgwb profile sess;</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/" data-id="ckmlxnrar003zs7ugg54w42di" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neokylin/" rel="tag">neokylin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oracle/" rel="tag">oracle</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/01/cassandra%E8%AE%BE%E7%BD%AE/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Cassandra设置
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2016/10/10/java-scala%E4%BA%92%E6%93%8D%E4%BD%9C%E5%AE%9E%E8%B7%B5%201%EF%BC%9A%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Java/Scala互操作实践 1：基础操作</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2016/10/30/linux%E9%83%A8%E7%BD%B2oracle11g/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

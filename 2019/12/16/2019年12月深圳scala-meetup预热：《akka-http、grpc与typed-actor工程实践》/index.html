@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="2019年12月深圳Scala Meetup1. 活动介绍 好久不见，继Tubi TV赞助的两场北京Scala Meetup圆满落幕，深圳的Scala Meetup又要开幕啦！虽然连深圳都变冷了，但是Scalaer的热情丝毫不减，欢迎大家前来一起探讨Scala在生产环境中的实践和应用！ 2. 时间地点 时间：2019年12月21日下午 13:00-18:00 （13:00开始签到）地点：深圳市罗湖">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》">
+<meta property="og:url" content="http://www.yangbajing.me/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="2019年12月深圳Scala Meetup1. 活动介绍 好久不见，继Tubi TV赞助的两场北京Scala Meetup圆满落幕，深圳的Scala Meetup又要开幕啦！虽然连深圳都变冷了，但是Scalaer的热情丝毫不减，欢迎大家前来一起探讨Scala在生产环境中的实践和应用！ 2. 时间地点 时间：2019年12月21日下午 13:00-18:00 （13:00开始签到）地点：深圳市罗湖">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-16T02:06:55.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.361Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="akka">
+<meta property="article:tag" content="akka-http">
+<meta property="article:tag" content="akka-cluster">
+<meta property="article:tag" content="akka-persistence">
+<meta property="article:tag" content="akka-grpc">
+<meta property="article:tag" content="akka-typed">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/scala/">scala</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-2019年12月深圳scala-meetup预热：《akka-http、grpc与typed-actor工程实践》" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/" class="article-date">
+  <time datetime="2019-12-16T02:06:55.000Z" itemprop="datePublished">2019-12-16</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-2019年12月深圳scala-meetup预热：《akka-http、grpc与typed-actor工程实践》" data-title="2019年12月深圳Scala Meetup预热：《Akka HTTP、gRPC与Typed Actor工程实践》" data-url="http://www.yangbajing.me/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="2019年12月深圳Scala-Meetup"><a href="#2019年12月深圳Scala-Meetup" class="headerlink" title="2019年12月深圳Scala Meetup"></a>2019年12月深圳Scala Meetup</h2><p><strong>1. 活动介绍</strong></p>
+<p>好久不见，继Tubi TV赞助的两场北京Scala Meetup圆满落幕，深圳的Scala Meetup又要开幕啦！虽然连深圳都变冷了，但是Scalaer的热情丝毫不减，欢迎大家前来一起探讨Scala在生产环境中的实践和应用！</p>
+<p><strong>2. 时间地点</strong></p>
+<p>时间：2019年12月21日下午 13:00-18:00 （13:00开始签到）<br>地点：深圳市罗湖区春风路1005号联城联合大厦二楼 麦子艺术会议厅（地铁9号线文锦站B出口，或者2号线湖贝站A出口步行5分钟）</p>
+<p><strong>3. 日程安排</strong></p>
+<ul>
+<li>13:00-13:30：活动签到</li>
+<li>13:30-13:40：主持人杜宇介绍本次主题和流程</li>
+<li>13:40-14:40：《Akka HTTP、gRPC与Typed Actor工程实践》– by 羊八井（杨景）</li>
+<li>14:40-15:40：《Scala 的一些实践: Scala、Akka与Slick》– by 刘涛</li>
+<li>15:40-16:00：茶歇&amp;互动交流</li>
+<li>16:00-17:00：《Scalajs 与前端反应式编程》– by 杜宇</li>
+<li>17:00-18:00：《如何用Scala构建数据和通用服务—Scala生态系统和工程实践小结》– by 凤凰木</li>
+</ul>
+<p><strong>活动详细介绍和报名链接：</strong></p>
+<ul>
+<li>OSC活动：<a href="https://www.oschina.net/event/2313392" target="_blank" rel="external">https://www.oschina.net/event/2313392</a></li>
+<li>活动行：<a href="https://www.huodongxing.com/event/8521930173900" target="_blank" rel="external">https://www.huodongxing.com/event/8521930173900</a></li>
+</ul>
+<p><em>感谢开源中国的赞助，交流会期间将抽奖送出<strong>码云（Gitee）超大号鼠标垫</strong>3份</em></p>
+<h2 id="《Akka-HTTP、gRPC与Typed-Actor工程实践》"><a href="#《Akka-HTTP、gRPC与Typed-Actor工程实践》" class="headerlink" title="《Akka HTTP、gRPC与Typed Actor工程实践》"></a>《Akka HTTP、gRPC与Typed Actor工程实践》</h2><p>羊八井在本次活动讲述的主题为：<strong>Akka HTTP、gRPC与Typed Actor工程实践</strong>，主要通过一个示例来拉通介绍Akka的工程实践，示例为一个配置管理与服务发现应用（类似于阿里的Nacos）。这个实例除了标题提到的 Akka HTTP、Akka gRPC与最新的Akka Typed Actor，还有Akka Cluster与Akka Persistence的应用……也许主题名应该叫：《Akka HTTP、gRPC，Cluster，Persistence与Typed Actor工程实践》。</p>
+<h3 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a>主要内容</h3><ol>
+<li><strong>Typed Actor</strong>：Typed Actor与经典Actor异同，生命周期、兼管、消息类型……</li>
+<li><strong>Akka gRPC</strong>：通过ScalaPB自动生成case class消息，Protobuf怎样声明<code>ActorRef[T]</code>类型的字段、区分声明gRPC服务使用消息与Actor使用消息，怎样运用gRPC的双向通信……</li>
+<li><strong>Akka HTTP</strong>：HTTP 2、怎样同时提供gRPC与REST服务……</li>
+<li><strong>Akka Cluster</strong>：怎样使用<code>ClusterSingleton</code>，怎样使用<code>DistributedPubSub</code>，怎样使用Protobuf作为集群数据序例化协议，怎样使用<code>ClusterSharding</code>将Actor自动分片到集群节点……</li>
+<li><strong>Akka Persistence</strong>：怎样应用<code>EventSourcedBehavior</code>实例Actor状态的自动持久化，使用JDBC或Cassandra做为底层持久化存储……</li>
+</ol>
+<p>更多精彩内容请报名现场参与，到时大家一起讨论、交流……</p>
+<h3 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h3><p>内容比较多，在Meetup上很难一下子全部讲清，不过不用慌，羊八井提供了示例代码，你可以完整的运行、测试、阅读。代码仓库地址：</p>
+<ul>
+<li>Gitee：<a href="https://gitee.com/akka-fusion/fusion-discoveryx" target="_blank" rel="external">https://gitee.com/akka-fusion/fusion-discoveryx</a></li>
+<li>Github：<a href="https://github.com/akka-fusion/fusion-discoveryx" target="_blank" rel="external">https://github.com/akka-fusion/fusion-discoveryx</a></li>
+</ul>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/" data-id="ckmlxnrc4006ls7ugx1bjnr8a" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka/" rel="tag">akka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-cluster/" rel="tag">akka-cluster</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-grpc/" rel="tag">akka-grpc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-http/" rel="tag">akka-http</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-persistence/" rel="tag">akka-persistence</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/akka-typed/" rel="tag">akka-typed</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/12/22/%E8%AE%B0%EF%BC%9A2019-12%E6%B7%B1%E5%9C%B3scala-meetup%E5%88%86%E4%BA%AB%E3%80%8Aakka-http%E3%80%81grpc%E3%80%81typed-actor%E4%B8%8Ecluster%E3%80%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          2019.12深圳Scala Meetup分享《Akka HTTP、gRPC、Typed Actor与Cluster工程实践》演讲视频
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2019/11/25/why-grpc-akka/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">Why gRPC (Akka) ?</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2019/12/16/2019%E5%B9%B412%E6%9C%88%E6%B7%B1%E5%9C%B3scala-meetup%E9%A2%84%E7%83%AD%EF%BC%9A%E3%80%8Aakka-http%E3%80%81grpc%E4%B8%8Etyped-actor%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E3%80%8B/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

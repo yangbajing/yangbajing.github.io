@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-cn">
+  
+  <title>C语言连接MySQL中文字符集问题 | 羊八井花园</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在学习《Linux程序设计》第8章MySQL数据库8.3节： 使用C语言访问MySQL访问数据库时尝试把SQL数据换成了中文，但是在运行示例程序时终端输出却乱码，MySQL C 语言连接默认字符集是latin1，查了下API找到如下函数可解决中文乱码问题。 1int mysql_set_character_set(MYSQL *mysql, char *csname) 描述: 该函数用于为当前连接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言连接MySQL中文字符集问题">
+<meta property="og:url" content="http://www.yangbajing.me/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="羊八井花园">
+<meta property="og:description" content="在学习《Linux程序设计》第8章MySQL数据库8.3节： 使用C语言访问MySQL访问数据库时尝试把SQL数据换成了中文，但是在运行示例程序时终端输出却乱码，MySQL C 语言连接默认字符集是latin1，查了下API找到如下函数可解决中文乱码问题。 1int mysql_set_character_set(MYSQL *mysql, char *csname) 描述: 该函数用于为当前连接">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2011-09-18T12:36:58.000Z">
+<meta property="article:modified_time" content="2020-09-03T06:06:33.353Z">
+<meta property="article:author" content="杨景">
+<meta property="article:tag" content="c">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="中文字符集">
+<meta name="twitter:card" content="summary">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+
+
+  
+
+  
+    <link href='//fonts.useso.com/css?family=Titillium+Web:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="wrap">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div class="container">
+      <div class="container-inner">
+        <div id="header-title">
+          <!--<h1 class="logo-wrap">
+            <a href="/" class="logo">羊八井花园</a>
+          </h1>-->
+          
+        </div>
+        <div id="header-inner" class="nav-container">
+          <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+          <div class="nav-container-inner">
+            <ul id="main-nav">
+              
+            </ul>
+            <nav id="sub-nav">
+              <div id="search-form-wrap">
+                <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><input type="hidden" name="sitesearch" value="http://www.yangbajing.me"></form>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <div class="main-body container-inner">
+        <div class="main-body-inner">
+          <section id="main">
+            <div class="main-body-header">
+
+              <h1 class="header"><a class="page-title-link" href="/categories/c-c/">c/c++</a></h1>
+            </div>
+            <div class="main-body-content">
+              
+  <article id="post-c语言连接mysql中文字符集问题" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+      <!--  -->
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      C语言连接MySQL中文字符集问题
+    </h1>
+  
+
+        </header>
+      
+      <p class="article-byline">
+        <a href="/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2011-09-18T12:36:58.000Z" itemprop="datePublished">2011-09-18</time>
+</a>
+      </p>
+  <div class="ds-share flat" data-thread-key="post-c语言连接mysql中文字符集问题" data-title="C语言连接MySQL中文字符集问题" data-url="http://www.yangbajing.me/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/">
+<!--
+      <div class="ds-share-inline">
+        <ul  class="ds-share-icons-16">
+
+          <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+          <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+          <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+          <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+        </ul>
+        <div class="ds-share-icons-more">
+      </div>
+    </div>
+-->
+  </div>
+      <div class="article-entry" itemprop="articleBody">
+        <p>在学习《Linux程序设计》第8章MySQL数据库8.3节：</p>
+<p>使用C语言访问MySQL访问数据库时尝试把SQL数据换成了中文，但是在运行示例程序时终端输出却乱码，MySQL C 语言连接默认字符集是latin1，查了下API找到如下函数可解决中文乱码问题。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mysql_set_character_set</span><span class="params">(MYSQL *mysql, <span class="keyword">char</span> *csname)</span></span></span><br></pre></td></tr></table></figure>
+<p>描述:</p>
+<p>该函数用于为当前连接设置默认的字符集。字符串csname指定了1个有效的字符集名称。连接校对成为字符集的默认校对。该函数的工作方式与SET NAMES语句类似，但它还能设置mysql-&gt;charset的值，从而影响了由mysql_real_escape_string()设置的字符集。该函数是在MySQL 5.0.7中增加的。返回值0表示成功，非0值表示出现错误。</p>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">#include &quot;mysql.h&quot;</span><br><span class="line"></span><br><span class="line">MYSQL my_connection;</span><br><span class="line">MYSQL_RES *res_ptr;</span><br><span class="line">MYSQL_ROW sqlrow;</span><br><span class="line"></span><br><span class="line">void display_row();</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    int res;</span><br><span class="line"></span><br><span class="line">    mysql_init(&amp;my_connection);</span><br><span class="line">    if (mysql_real_connect(&amp;my_connection, &quot;localhost&quot;, &quot;rick&quot;,</span><br><span class="line">             &quot;secret&quot;, &quot;foo&quot;, 0, NULL, 0)) &#123;</span><br><span class="line">        /* 设置数据库默认字符集 */</span><br><span class="line">        if (mysql_set_character_set(&amp;my_connection, &quot;utf8&quot;)) &#123;</span><br><span class="line">            fprintf(stderr, &quot;错误, %s\n&quot;, mysql_error(&amp;my_connection));</span><br><span class="line">        &#125;</span><br><span class="line">        res = mysql_query(&amp;my_connection,</span><br><span class="line">                &quot;SELECT childno, fname, age FROM children WHERE age &gt; 5&quot;);</span><br><span class="line">        if (res) &#123;</span><br><span class="line">            fprintf(stderr, &quot;SELECT error: %s\n&quot;,</span><br><span class="line">                    mysql_error(&amp;my_connection));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            res_ptr = mysql_use_result(&amp;my_connection);</span><br><span class="line">           if (res_ptr) &#123;</span><br><span class="line">                while ((sqlrow = mysql_fetch_row(res_ptr))) &#123;</span><br><span class="line">                    display_row();</span><br><span class="line">                &#125;</span><br><span class="line">                if (mysql_errno(&amp;my_connection)) &#123;</span><br><span class="line">                    fprintf(stderr, &quot;Retrive error: %s\n&quot;,</span><br><span class="line">                            mysql_error(&amp;my_connection));</span><br><span class="line">                &#125;</span><br><span class="line">                mysql_free_result(res_ptr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        mysql_close(&amp;my_connection);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        fprintf(stderr, &quot;Connection failed\n&quot;);</span><br><span class="line">        if (mysql_errno(&amp;my_connection)) &#123;</span><br><span class="line">            fprintf(stderr, &quot;Connection error %d: %s\n&quot;,</span><br><span class="line">                    mysql_errno(&amp;my_connection),</span><br><span class="line">                    mysql_error(&amp;my_connection));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return EXIT_SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void display_row()</span><br><span class="line">&#123;</span><br><span class="line">    unsigned int field_count;</span><br><span class="line"></span><br><span class="line">    field_count = 0;</span><br><span class="line">    while (field_count &lt; mysql_field_count(&amp;my_connection)) &#123;</span><br><span class="line">        if (sqlrow[field_count])</span><br><span class="line">            printf(&quot;%s &quot;, sqlrow[field_count]);</span><br><span class="line">        else</span><br><span class="line">            printf(&quot;NULL&quot;);</span><br><span class="line">        field_count++;</span><br><span class="line">    &#125;</span><br><span class="line">    printf(&quot;\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://www.yangbajing.me/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/" data-id="ckmlxnr8g000ns7ugxsslmsb8" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+        
+          <a href="http://www.yangbajing.me/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/#comments" class="article-comment-link"><i class="fa fa-comments"></i>评论</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/" rel="tag">c</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/" rel="tag">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86/" rel="tag">中文字符集</a></li></ul>
+
+      </footer>
+    </div>
+  </article>
+  
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    </section>
+  
+
+
+
+            </div>
+          </section>
+          <aside id="sidebar">
+  <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+  <div class="sidebar-top">
+    <p>关注我 :</p>
+    <ul class="social-links">
+      
+    </ul>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2011/10/12/Linux%E4%B8%8B%E5%AE%89%E8%A3%85Postgresql-9.0.x%E6%8F%90%E7%A4%BA%EF%BC%9ACannot%20read%20termcap%20database/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <p class="article-nav-title">
+        
+          Linux下安装Postgresql-9.0.x提示：Cannot read termcap databass
+        
+      </p>
+      <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+  
+  
+    <a href="/2010/10/29/%E8%A7%A3%E5%86%B3eclipse-access-restriction%EF%BC%9A%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <p class="article-nav-title">解决Eclipse Access restriction：问题</p>
+      <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+    </a>
+  
+</nav>
+
+  
+  <div class="widgets-container">
+    
+  </div>
+</aside>
+        </div>
+      </div>
+    </div>
+    <footer id="footer">
+  
+  <div class="container">
+    <div class="container-inner">
+      <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+      <div class="credit">
+        <h1 class="logo-wrap">
+          <a href="/" class="logo"></a>
+        </h1>
+        <p>&copy; 2021 杨景</p>
+        <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'yangbajing';
+  
+  var disqus_url = 'http://www.yangbajing.me/2011/09/18/c%E8%AF%AD%E8%A8%80%E8%BF%9E%E6%8E%A5mysql%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/html-patch.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
