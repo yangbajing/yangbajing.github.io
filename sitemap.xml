@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yangbajing.github.io/2024/06/17/%E4%BD%BF%E7%94%A8clap%E5%92%8Copendal%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E4%BA%91%E5%AD%98%E5%82%A8cli/</loc>
+    
+    <lastmod>2024-06-17</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yangbajing.github.io/2023/04/29/%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E7%AD%89%E6%80%A7%E6%AF%94%E8%BE%83%E5%BC%95%E5%8F%91%E7%9A%84bug/</loc>
     
     <lastmod>2023-04-28</lastmod>
@@ -830,7 +837,7 @@
 
   <url>
     <loc>https://yangbajing.github.io/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -838,1372 +845,1435 @@
   
   <url>
     <loc>https://yangbajing.github.io/tags/spring/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/spring-boot/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/reactor/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/r2dbc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/reactive/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/kafka/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/alpakka-kafka/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/postgresql/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jdbc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jackson/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/enum/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/java/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E5%B9%B6%E5%8F%91/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E4%BA%92%E6%93%8D%E4%BD%9C/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/eclipse/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/c/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/c/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mysql/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E9%9B%86/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/linux/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/unix/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/network/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/qt/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/liftweb/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jquery/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/option/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/either/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/try/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mac/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/rest/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/playframework/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/redis/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/accesstoken/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/sphinx-doc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/pdf/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jenkins/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/git/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/maven/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/sbt/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/reactivemongo/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E6%B4%BB%E5%8A%A8%E6%8A%A5%E5%90%8D/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/spark/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/gatling/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/activemq/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/email/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala%E5%AE%9E%E6%88%98/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cassandra/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E9%9B%86%E7%BE%A4/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/elasticsearch/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/nginx/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/upstream/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/proxy/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-http/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/micro-service/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/json4s/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka%E5%AE%9E%E6%88%98/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/crawler/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/future/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/promise/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E5%B7%A5%E4%BD%9C/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E7%94%9F%E6%B4%BB/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/python/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/tengine/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mongodb/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/log/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/logrotate/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/hadoop/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/system-manager/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/devops/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/upgrading/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/hive/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/spark-sql/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Java/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Node/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Go/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Python/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala-akka-actor/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E5%85%A5%E9%97%A8/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/collection/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/about/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/gradle/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/oracle/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/neokylin/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/ambari/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/hdp/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/centos7/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-http/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cluster/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/hanlp/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/Sphinx-%E6%92%B0%E5%86%99-%E7%94%B5%E5%AD%90%E6%96%87%E6%A1%A3/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/idea/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/postgres/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/postgresql-10/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/shell/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/vim/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/bash/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scalatest/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-http-testkit/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/route/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/etl/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/elt/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/reactivestream/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mass-data/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mass-rdi/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/test/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/4a/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/user-system/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/book/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala-web/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/slick/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/slick-pg/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/html5/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E6%96%AD%E7%82%B9%E4%B8%8A%E4%BC%A0/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E6%96%AD%E7%82%B9%E4%B8%8B%E8%BD%BD/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/gitlab/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jenkins-pipeline/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jenkinsfile/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/alpakka/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-stream/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/webflux/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/functional/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/script/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala-script/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mybatis-plus/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/mybatis/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/outofmemory/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/vm-overcommit-memory/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/firewall/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/ssl/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/https/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/http-2/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E9%80%BB%E8%BE%91%E5%A4%8D%E5%88%B6/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/logical-replication/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/replication/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/wal/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/ssl-config/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/config/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E9%85%8D%E7%BD%AE/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-typed/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-grpc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-2-6/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/%E7%AD%96%E6%9C%8D%E5%8A%A1/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-cookbook/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-streams/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-cluster/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-persistence/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/design-pattern/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/grpc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cluster-sharding/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cluster-distributedata/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cluster-singleton/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cqrs/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/event-sourced/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/oauth-2/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/oauth2/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/access-token/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-cluster-sharding/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/coordinated-shutdown/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/top-k/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scala-logging/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-log/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/slf4j/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/spring-log/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/fusion-log/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/at-least-once-delivery/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/akka-http-chinese/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/nacos/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/spring-cloud/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/play/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/docker/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/flink/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/exactly-once/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/batch-insert/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/json/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/jackson-module-scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/scheduler/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/realtime-etl/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/greenplum/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/centos/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/DDD/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/api-design/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/api/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/protobuf/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/pulsar/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/cdc/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/functions/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/tags/debezium/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/clap/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/opendal/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/rust/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/tokio/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/obs/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/oss/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/%E5%8D%8E%E4%B8%BA%E4%BA%91/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/%E9%98%BF%E9%87%8C%E4%BA%91/</loc>
+    <lastmod>2024-06-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yangbajing.github.io/tags/toml/</loc>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2212,175 +2282,175 @@
   
   <url>
     <loc>https://yangbajing.github.io/categories/java/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/scala/akka/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/work/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/c-c/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/unix-linux/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/scala/scala%E5%AE%9E%E6%88%98/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/spark/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/cassandra/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/elasticsearch/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/essay/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/data/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/ambari-hdp/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/scala/learning-scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/postgresql/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/scala-web-development/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/akka-cookbook/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/lecture/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/akka-http-chinese/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/%E4%BD%9C%E5%93%81/nacos-sdk-scala/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/flink/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/greenplum/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yangbajing.github.io/categories/bigdata/pulsar/</loc>
-    <lastmod>2024-05-27</lastmod>
+    <lastmod>2024-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
