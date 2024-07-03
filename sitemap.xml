@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yangbajing.github.io/2024/07/03/%E9%80%9A%E8%BF%87-Pulsar-CDC-%E8%8E%B7%E5%8F%96-Postgres-%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95/</loc>
+    
+    <lastmod>2024-07-03</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yangbajing.github.io/2023/04/29/%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E7%AD%89%E6%80%A7%E6%AF%94%E8%BE%83%E5%BC%95%E5%8F%91%E7%9A%84bug/</loc>
     
     <lastmod>2024-07-03</lastmod>
@@ -10,13 +17,6 @@
   
   <url>
     <loc>https://yangbajing.github.io/2024/06/17/%E4%BD%BF%E7%94%A8clap%E5%92%8Copendal%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E4%BA%91%E5%AD%98%E5%82%A8cli/</loc>
-    
-    <lastmod>2024-07-03</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://yangbajing.github.io/2024/07/03/%E9%80%9A%E8%BF%87-Pulsar-CDC-%E8%8E%B7%E5%8F%96-Postgres-%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95/</loc>
     
     <lastmod>2024-07-03</lastmod>
     
