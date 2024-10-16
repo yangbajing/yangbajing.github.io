@@ -21,7 +21,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yangbajing.github.io/img/fusion-data/scheduler/scheduler-worker.svg">
 <meta property="article:published_time" content="2024-10-09T04:58:55.000Z">
-<meta property="article:modified_time" content="2024-10-09T09:40:10.713Z">
+<meta property="article:modified_time" content="2024-10-16T08:04:16.810Z">
 <meta property="article:author" content="杨景">
 <meta property="article:tag" content="scheduler">
 <meta property="article:tag" content="process">
@@ -184,7 +184,7 @@
 <div class="article-date">
   <i class="fa fa-calendar-plus-o"></i>
   <a href="/2024/10/09/%E9%80%9A%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" class="article-date">
-     <time datetime="2024-10-09T09:40:10.713Z" itemprop="dateModified">2024-10-09</time>
+     <time datetime="2024-10-16T08:04:16.810Z" itemprop="dateModified">2024-10-16</time>
   </a>
 </div>
 
@@ -223,7 +223,6 @@
 <p>对于 Scheduler 和 Worker，设计为一种节点角色，也既一个节点可以同时作为 Scheduler 和 Worker 节点运行，比如在本机开发时只需要启动一个服务即可拥有所有功能。而在线上环境，可以根据负载和作业执行时需要的特殊性来部署合适数量的 Scheduler 和 Worker 节点。</p>
 <p><img src="/img/fusion-data/scheduler/scheduler&worker.svg" alt="Scheduler 和 Worker 集成"></p>
 <p>fusion-scheduler 采用最小化设计原则，不依赖第三方中间件，采用 Rust 语言和 PostgreSQL（以后简称：PG）数据库开发。PG 将作为集群选主、任务定义管理、任务执行状态等集群状态数据存储库。</p>
-<p>TODO</p>
 <h3 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a>集群管理</h3><p>集群节点有两种角色：Scheduler 和 Job Worker，</p>
 <h4 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h4><p>Scheduler 角色的节点负责调度作业任务管理，任务分发到 Worker 节点执行。Scheduler 角色节点的主要简化执行流程可如下描述：</p>
 <ol>
@@ -238,12 +237,12 @@
 <li>收到一个 Job 后执行，并将执行状态、执行结果及时送回 Scheduler 角色节点（<code>SchedulerScheduler</code>）</li>
 </ol>
 <h3 id="流程（任务）"><a href="#流程（任务）" class="headerlink" title="流程（任务）"></a>流程（任务）</h3><h4 id="流程概念"><a href="#流程概念" class="headerlink" title="流程概念"></a>流程概念</h4><h5 id="流程定义-ProcessDefinition"><a href="#流程定义-ProcessDefinition" class="headerlink" title="流程定义: ProcessDefinition"></a>流程定义: <code>ProcessDefinition</code></h5><p><code>fusion-scheduler</code> 管理的单位是流程（<code>ProcessDefinition</code>），描述一个流程的执行规则，包括流程名称、执行参数、执行数据、标签等。每个流程可以由多个任务（<code>Task</code>）组成，任务依赖由 DAG 进行管理。</p>
-<h5 id="任务-Task"><a href="#任务-Task" class="headerlink" title="任务: Task"></a>任务: <code>Task</code></h5><p>流程中实际执行的任务，它可能是一段 Rust&#x2F;Java&#x2F;Python&#x2F;Shell&#x2F;SQL 代码，也可能是一个 HTTP API 调用等，由 <code>TaskType</code> 来决定。</p>
-<h5 id="作业-TaskJob"><a href="#作业-TaskJob" class="headerlink" title="作业: TaskJob"></a>作业: <code>TaskJob</code></h5><p>任务作业。Task 的一次实际执行，当任务失败或因其它原因被重试时也会生成一个 TaskJob。<code>TaskJob</code> 将由（被调度到）Job Worker 节点执行。</p>
 <h5 id="触发器定义-TriggerDefinition"><a href="#触发器定义-TriggerDefinition" class="headerlink" title="触发器定义: TriggerDefinition"></a>触发器定义: <code>TriggerDefinition</code></h5><p>触发器定义。描述一个任务触发规则，包括触发方式、触发参数、……</p>
 <p>触发器定义通常关联到一个 <code>ProcessDefinition</code>，当触发器定义被触发时，会生成一个 <code>ProcessInstance</code>。</p>
 <h5 id="流程实例-ProcessInstance"><a href="#流程实例-ProcessInstance" class="headerlink" title="流程实例: ProcessInstance"></a>流程实例: <code>ProcessInstance</code></h5><p>流程实例。描述一个流程的运行状态，包括流程开始时间、结束时间、执行状态、执行参数、执行数据、……一个流程实例可以由关联的 <code>TriggerDefinition</code> 触发执行，也可以通过 API 编程触发执行</p>
-<h4 id="流程与任务"><a href="#流程与任务" class="headerlink" title="流程与任务"></a>流程与任务</h4><p>可以看到，<code>Task</code> 更像传统的作业调度系统的概念，而 <code>ProcessDefinition</code> 更像 BPMN 中的一个业务流程（<em>当一个流程只有一个任务时，就类似于传统的作业调度系统，比如：Quartz 的 Job</em>）。这是 <code>fusion-scheduler</code> 分布式通用任务调度系统架构设计的核心。它既可用于定义任务作业，也可以用于编排业务流程微服务，还可以用于工作流和审批流调度。</p>
+<h5 id="任务-ProcessTask"><a href="#任务-ProcessTask" class="headerlink" title="任务: ProcessTask"></a>任务: <code>ProcessTask</code></h5><p>流程中实际执行的任务，它可能是一段 Rust&#x2F;Java&#x2F;Python&#x2F;Shell&#x2F;SQL 代码，也可能是一个 HTTP API 调用等，由 <code>TaskType</code> 来决定。</p>
+<h5 id="作业-TaskJob"><a href="#作业-TaskJob" class="headerlink" title="作业: TaskJob"></a>作业: <code>TaskJob</code></h5><p>任务作业。Task 的一次实际执行，当任务失败或因其它原因被重试时也会生成一个 TaskJob。<code>TaskJob</code> 将由（被调度到）Job Worker 节点执行。</p>
+<h3 id="流程与任务"><a href="#流程与任务" class="headerlink" title="流程与任务"></a>流程与任务</h3><p>可以看到，<code>ProcessTask</code> 更像传统的作业调度系统的概念，而 <code>ProcessDefinition</code> 更像 BPMN 中的一个业务流程（<em>当一个流程只有一个任务时，就类似于传统的作业调度系统，比如：Quartz 的 Job</em>）。这是 <code>fusion-scheduler</code> 分布式通用任务调度系统架构设计的核心。它既可用于定义任务作业，也可以用于编排业务流程微服务，还可以用于工作流和审批流调度。</p>
 <h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>技术上，fusion-scheduler 采用了 Rust 语言和 PostgreSQL 作为主要开发语言和数据库。计划用到的主要库和框架有：</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://crates.io/crates/tokio">tokio</a>: 异步执行库</li>
@@ -254,8 +253,26 @@
 <li><a target="_blank" rel="noopener" href="https://www.postgresql.org/">PostgreSQL</a>: 数据存储、集群状态</li>
 <li><a target="_blank" rel="noopener" href="https://sqlite.org/">sqlite</a>: 计划用于 Worker 节点本地缓存和持久化数据（日志）存储</li>
 </ul>
-<h3 id="Scheduler-1"><a href="#Scheduler-1" class="headerlink" title="Scheduler"></a>Scheduler</h3><p>Scheduler 时序图</p>
-<ol>
+<p>调度系统集群将主要有 3 个（服务）角色：</p>
+<ul>
+<li><code>Master</code>: 集群主节点，负责平衡 <code>Scheduler</code> 可调度的 <code>Namespace</code> 列表，监听并&#x2F;检查名节点状态，包括：Scheduler 和 Worker 节点。</li>
+<li><code>Scheduler</code>: 负责任务调度，生成任务作业，管理任务作业状态，管理任务作业执行结果</li>
+<li><code>Worker</code>: 接受任务并在工作节点上执行</li>
+</ul>
+<h3 id="Master"><a href="#Master" class="headerlink" title="Master"></a>Master</h3><p>同一时间段内，只有一个 <code>Master</code> 节点活跃，其它节点的 Master 处于 Standby 状态。Master 的工作职责有</p>
+<ul>
+<li>检查 Scheduler 活跃状态，更新 Scheduler 关联的 Namespace 节点列表</li>
+<li>检查未分配 Namespace 节点（比如新增）并分配给 Scheduler</li>
+</ul>
+<h3 id="Scheduler-1"><a href="#Scheduler-1" class="headerlink" title="Scheduler"></a>Scheduler</h3><h4 id="Scheduler-主要职责"><a href="#Scheduler-主要职责" class="headerlink" title="Scheduler 主要职责"></a>Scheduler 主要职责</h4><ol>
+<li>从数据库获取待执行触发器，并生成流程实例</li>
+<li>从数据库获取待执行流程实例，并生成任务作业，将作业分发到 Worker 节点执行。</li>
+<li>接收 API 任务执行命令，以可编程形式手动触发作业</li>
+<li>接收 Worker 节点的作业执行结果，更新作业状态和结果</li>
+<li>处理失败任务</li>
+<li>接收任务执行日志等，……</li>
+</ol>
+<h4 id="Scheduler-调度任务流程"><a href="#Scheduler-调度任务流程" class="headerlink" title="Scheduler 调度任务流程"></a>Scheduler 调度任务流程</h4><ol>
 <li>Scheduler init</li>
 <li>register to pg sched_scheduler</li>
 <li>尝试向 sched_namespace 表感兴趣的 namespace 写入自己的 scheduler_id</li>
@@ -270,8 +287,8 @@
 <li>遍历待执行的 process_task，生成 task_job</li>
 <li>分发 task_job 到相关的 job_worker</li>
 </ol>
-<h4 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h4><p>Scheduler 采用 PostgreSQL 作为集群状态数据存储库，当 Scheduler 启动后将向 <code>sched_scheduler</code> 表写入一条记录，并注册到集群中。当 Scheduler 节点重启时，会尝试向 <code>sched_scheduler</code> 表中写入一个记录，如果写入失败，则说明当前 Scheduler 节点已经存在，则将当前 Scheduler 节点标记为下线，并尝试向 <code>sched_scheduler</code> 表中写入一个记录，如果写入失败，则说明当前 Scheduler节点已经下线，则将当前 Scheduler 节点标记为下线。</p>
-<h4 id="按-namespace-隔离任务"><a href="#按-namespace-隔离任务" class="headerlink" title="按 namespace 隔离任务"></a>按 namespace 隔离任务</h4><p>当集群中只有一个 Scheduler 节点时，SchedulerScheduler 将关联所有 <code>namespace</code> 的任务。</p>
+<h4 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h4><p>对于每一个（流程）任务，都将先在数据库中插入一条记录（<code>ProcessTask</code>），再由 <code>Scheduler</code> 分发到对应的 <code>Worker</code> 节点执行。这样，就算 <code>Worker</code> 节点挂掉或因定时问题错过任务执行，后续 <code>Scheduler</code> 也可以对 <code>ProcessTask</code> 重新分发或继续执行。</p>
+<h4 id="按-namespace-隔离任务"><a href="#按-namespace-隔离任务" class="headerlink" title="按 namespace 隔离任务"></a>按 namespace 隔离任务</h4><p>namespace 可作为任务的分组，以方便管理类似业务的所有流程。</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>市面上已有很多优秀的分布式调度库&#x2F;框架&#x2F;系统，如：<a target="_blank" rel="noopener" href="https://www.quartz-scheduler.org/">Quartz</a>、<a target="_blank" rel="noopener" href="https://dolphinscheduler.apache.org/">DolphinScheduler</a>、<a target="_blank" rel="noopener" href="https://airflow.apache.org/">Airflow</a>、<a target="_blank" rel="noopener" href="http://www.powerjob.tech/">PowerJob</a>、<a target="_blank" rel="noopener" href="https://www.xuxueli.com/xxl-job/">Xxl-Job</a> 等。这些系统都给了我设计上的思路和帮助，在此表达感谢。</p>
 
         </div>
@@ -356,14 +373,14 @@
         "genre": "essay",
         "datePublished": "2024-10-09",
         "dateCreated": "2024-10-09",
-        "dateModified": "2024-10-09",
+        "dateModified": "2024-10-16",
         "url": "https://yangbajing.github.io/2024/10/09/通用分布式任务调度系统设计/",
         "description": "目标设计一款可靠、易用、可扩展、轻量的通用分布式任务调度系统。暂且将此系统称为：fusion-scheduler，融合各类业务的调度系统之意。
 
 可靠：采用分布式设计，避免任务丢失，支持对失败任务的自动或手动重试
 易用：支持固定间隔、固定延迟、CRON 表达式、API 触发、工作流、MapReduce 等调度方式，满足各类业务需求
 可扩展：支持动态添加、删除任务、动态修改任务配置，支持动态添加、删",
-        "wordCount": 306
+        "wordCount": 341
     }
 </script>
 
